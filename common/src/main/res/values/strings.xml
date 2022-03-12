@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Неизвестная ошибка, попробуйте позднее.</string>
+    <string name="error_connection">Ошибка подключения к серверу, попробуйте позднее.</string>
+
+    <string name="menu_test">Тест</string>
+
+    <string name="description_back">Вернуться назад</string>
+</resources>
