@@ -3,9 +3,11 @@ package ru.spbstu.common.extenstions
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.PointF
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewPropertyAnimator
 import android.view.WindowInsetsController
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -82,3 +84,13 @@ inline fun <reified T : ViewGroup.LayoutParams> View.layoutParams(block: T.() ->
 }
 
 fun View.dpToPx(dp: Float): Float = context.dpToPx(dp)
+
+fun View.scale(scale: Float) {
+    scaleX = scale
+    scaleY = scale
+}
+
+fun View.setPivot(point: PointF) {
+    pivotX = point.x
+    pivotY = point.y
+}

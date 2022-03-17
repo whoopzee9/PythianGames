@@ -25,6 +25,10 @@ class TestFragment : ToolbarFragment<TestViewModel>(
 
     override fun setupViews() {
         super.setupViews()
+//        binding.cardStack.setOnClickListener {
+//            binding.cardStack.count--
+//            binding.cardStack.invalidate()
+//        }
         initAdapter()
     }
 

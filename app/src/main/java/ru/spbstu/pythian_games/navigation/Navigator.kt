@@ -44,7 +44,7 @@ class Navigator : FeatureRouter {
     fun checkBottomBar() {
         EventBus.getDefault().post(
             SetBottomNavVisibility(
-                !navBarHiddenIdsList.contains(navController?.currentDestination?.id),
+                false /*!navBarHiddenIdsList.contains(navController?.currentDestination?.id)*/,
                 true
             )
         )
