@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
@@ -16,6 +18,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
+import ru.spbstu.common.extenstions.scale
+import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.toBitmap
 import kotlin.math.max
 import kotlin.math.min
@@ -49,6 +53,14 @@ class CardStack @JvmOverloads constructor(
     private var prevY = 0f
     private var moveStarted = false
 
+    private val originContentRect by lazy {
+        run {
+            val array = IntArray(2)
+            getLocationOnScreen(array)
+            Rect(array[0], array[1], (array[0] + width).toInt(), (array[1] + height).toInt())
+        }
+    }
+
     var count = 5
 
     init {
@@ -57,11 +69,6 @@ class CardStack @JvmOverloads constructor(
         thirdLayer = ContextCompat.getDrawable(context, R.drawable.ic_third_layer_36)
         fourthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fourth_layer_36)
         fifthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fifth_layer_36)
-//        firstLayerBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_first_layer_36)
-//        secondLayerBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_second_layer_36)
-//        thirdLayerBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_third_layer_36)
-//        fourthLayerBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_fourth_layer_36)
-//        fifthLayerBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_fifth_layer_36)
         firstLayerBitmap = firstLayer!!.toBitmap()
         secondLayerBitmap = secondLayer!!.toBitmap()
         thirdLayerBitmap = thirdLayer!!.toBitmap()
@@ -125,14 +132,14 @@ class CardStack @JvmOverloads constructor(
     }
 
     override fun getSuggestedMinimumWidth(): Int {
-        return context.dpToPx(315f).toInt()
+        return context.dpToPx(350f).toInt()
         //return width.toInt()
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.save()
-        canvas?.scale(scaleFactor, scaleFactor)
+        //canvas?.scale(scaleFactor, scaleFactor)
         val dx = 32f
         val dy = 19f
 
@@ -213,7 +220,8 @@ class CardStack @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event == null || scaleX == 1f) return false
+        scaleGestureDetector.onTouchEvent(event)
+        if (event == null) return false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 prevX = event.x
@@ -247,22 +255,85 @@ class CardStack @JvmOverloads constructor(
 
             MotionEvent.ACTION_UP -> {
                 if (!moveStarted) return false
-//                reset()
+                reset()
 //                translateToOriginalRect()
             }
         }
-        scaleGestureDetector.onTouchEvent(event)
         return true
     }
 
-    private inner class ScaleListener : SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            scaleFactor *= detector.scaleFactor
+    private fun reset() {
+        prevX = 0f
+        prevY = 0f
+        moveStarted = false
+    }
 
-            // Don't let the object get too small or too large.
-            scaleFactor = max(0.1f, min(scaleFactor, 5.0f))
-            invalidate()
+    private fun translateToOriginalRect() {
+        getContentViewTranslation().takeIf { it != PointF(0f, 0f) }?.let { translation ->
+            this.animate().cancel()
+            this.animate()
+                    .translationXBy(translation.x)
+                    .translationYBy(translation.y)
+                    .apply { duration = CORRECT_LOCATION_ANIMATION_DURATION }
+                    .start()
+            }
+        }
+
+
+    private fun getContentViewTranslation(): PointF {
+        return run {
+            originContentRect.let { rect ->
+                val array = IntArray(2)
+                getLocationOnScreen(array)
+                PointF(
+                    when {
+                        array[0] > rect.left -> rect.left - array[0].toFloat()
+                        array[0] + width * scaleX < rect.right -> rect.right - (array[0] + width * scaleX)
+                        else -> 0f
+                    },
+                    when {
+                        array[1] > rect.top -> rect.top - array[1].toFloat()
+                        array[1] + height * scaleY < rect.bottom -> rect.bottom - (array[1] + height * scaleY)
+                        else -> 0f
+                    }
+                )
+            }
+        }
+    }
+
+    private inner class ScaleListener : SimpleOnScaleGestureListener() {
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            run {
+                val actualPivot = PointF(
+                    (detector.focusX - translationX + pivotX * (scaleFactor - 1)) / scaleFactor,
+                    (detector.focusY - translationY + pivotY * (scaleFactor - 1)) / scaleFactor,
+                )
+
+                translationX -= (pivotX - actualPivot.x) * (scaleFactor - 1)
+                translationY -= (pivotY - actualPivot.y) * (scaleFactor - 1)
+                setPivot(actualPivot)
+            }
             return true
         }
+
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            Log.d("qwerty", "scale")
+            scaleFactor *= detector.scaleFactor
+            scaleFactor = scaleFactor.coerceIn(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR)
+            run {
+                scale(scaleFactor)
+                getContentViewTranslation().run {
+                    translationX += x
+                    translationY += y
+                }
+            }
+            return true
+        }
+    }
+
+    companion object {
+        private const val MAX_SCALE_FACTOR = 5f
+        private const val MIN_SCALE_FACTOR = 1f
+        private const val CORRECT_LOCATION_ANIMATION_DURATION = 300L
     }
 }
