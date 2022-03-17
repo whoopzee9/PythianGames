@@ -46,21 +46,6 @@ class CardStack @JvmOverloads constructor(
     private var width: Float
     private var spacing: Float
 
-    private var scaleFactor = 1f
-    private var scaleGestureDetector: ScaleGestureDetector
-
-    private var prevX = 0f
-    private var prevY = 0f
-    private var moveStarted = false
-
-    private val originContentRect by lazy {
-        run {
-            val array = IntArray(2)
-            getLocationOnScreen(array)
-            Rect(array[0], array[1], (array[0] + width).toInt(), (array[1] + height).toInt())
-        }
-    }
-
     var count = 5
 
     init {
@@ -78,8 +63,6 @@ class CardStack @JvmOverloads constructor(
         height = context.dpToPx(35f)
         width = context.dpToPx(58f)
         spacing = context.dpToPx(2f)
-
-        scaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -127,213 +110,73 @@ class CardStack @JvmOverloads constructor(
     }
 
     override fun getSuggestedMinimumHeight(): Int {
-        return context.dpToPx(288f).toInt()
-        //return height.toInt() + spacing.toInt() * 5
+        return height.toInt() + spacing.toInt() * 5
     }
 
     override fun getSuggestedMinimumWidth(): Int {
-        return context.dpToPx(350f).toInt()
-        //return width.toInt()
+        return width.toInt()
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.save()
-        //canvas?.scale(scaleFactor, scaleFactor)
-        val dx = 32f
-        val dy = 19f
-
-        canvas?.translate(suggestedMinimumWidth / 2f - 90, 0f)
-        for (i in 0 until 5) {
-            for (j in 0 until 5) {
-                val newX = -i * dx + j * dx
-                val newY = i * dy + j * dy
-                val newXpx = context.dpToPx(newX)
-                val newYpx = context.dpToPx(newY)
-                canvas?.translate(newXpx, newYpx)
-                //count = (1 + Math.random() * 5).toInt()
-                when (count) {
-                    5 -> {
-                        if (canvas != null) {
-                            canvas.translate(0f, spacing * 4)
-                            fifthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            fourthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            thirdLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            secondLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            firstLayer?.draw(canvas)
-                        }
-                    }
-                    4 -> {
-                        if (canvas != null) {
-                            canvas.translate(0f, spacing * 4)
-                            fifthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            fourthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            thirdLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            secondLayer?.draw(canvas)
-                            canvas.translate(0f, spacing * (-1))
-                        }
-                    }
-                    3 -> {
-                        if (canvas != null) {
-                            canvas.translate(0f, spacing * 4)
-                            fifthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            fourthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            thirdLayer?.draw(canvas)
-                            canvas.translate(0f, spacing * (-2))
-                        }
-                    }
-                    2 -> {
-                        if (canvas != null) {
-                            canvas.translate(0f, spacing * 4)
-                            fifthLayer?.draw(canvas)
-                            canvas.translate(0f, -spacing)
-                            fourthLayer?.draw(canvas)
-                            canvas.translate(0f, spacing * (-3))
-                        }
-                    }
-                    1 -> {
-                        if (canvas != null) {
-                            canvas.translate(0f, spacing * 4)
-                            fifthLayer?.draw(canvas)
-                            canvas.translate(0f, spacing * (-4))
-                        }
-                    }
-                    else -> {
-
-                    }
-                }
-
-                canvas?.translate(-newXpx, -newYpx)
-            }
-        }
-
-        canvas?.restore()
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        if (event == null) return false
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                prevX = event.x
-                prevY = event.y
-            }
-
-            MotionEvent.ACTION_POINTER_UP -> {
-                if (event.actionIndex == 0) {
-                    try {
-                        prevX = event.getX(1)
-                        prevY = event.getY(1)
-                    } catch (e: Exception) {
-                    }
+        when (count) {
+            5 -> {
+                if (canvas != null) {
+                    canvas.translate(0f, spacing * 4)
+                    fifthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    fourthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    thirdLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    secondLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    firstLayer?.draw(canvas)
                 }
             }
-
-            MotionEvent.ACTION_MOVE -> {
-                if (event.pointerCount > 1) {
-                    prevX = event.x
-                    prevY = event.y
-                    return false
-                }
-                moveStarted = true
-                this.run {
-                    translationX += (event.x - prevX)
-                    translationY += (event.y - prevY)
-                }
-                prevX = event.x
-                prevY = event.y
-            }
-
-            MotionEvent.ACTION_UP -> {
-                if (!moveStarted) return false
-                reset()
-//                translateToOriginalRect()
-            }
-        }
-        return true
-    }
-
-    private fun reset() {
-        prevX = 0f
-        prevY = 0f
-        moveStarted = false
-    }
-
-    private fun translateToOriginalRect() {
-        getContentViewTranslation().takeIf { it != PointF(0f, 0f) }?.let { translation ->
-            this.animate().cancel()
-            this.animate()
-                    .translationXBy(translation.x)
-                    .translationYBy(translation.y)
-                    .apply { duration = CORRECT_LOCATION_ANIMATION_DURATION }
-                    .start()
-            }
-        }
-
-
-    private fun getContentViewTranslation(): PointF {
-        return run {
-            originContentRect.let { rect ->
-                val array = IntArray(2)
-                getLocationOnScreen(array)
-                PointF(
-                    when {
-                        array[0] > rect.left -> rect.left - array[0].toFloat()
-                        array[0] + width * scaleX < rect.right -> rect.right - (array[0] + width * scaleX)
-                        else -> 0f
-                    },
-                    when {
-                        array[1] > rect.top -> rect.top - array[1].toFloat()
-                        array[1] + height * scaleY < rect.bottom -> rect.bottom - (array[1] + height * scaleY)
-                        else -> 0f
-                    }
-                )
-            }
-        }
-    }
-
-    private inner class ScaleListener : SimpleOnScaleGestureListener() {
-        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            run {
-                val actualPivot = PointF(
-                    (detector.focusX - translationX + pivotX * (scaleFactor - 1)) / scaleFactor,
-                    (detector.focusY - translationY + pivotY * (scaleFactor - 1)) / scaleFactor,
-                )
-
-                translationX -= (pivotX - actualPivot.x) * (scaleFactor - 1)
-                translationY -= (pivotY - actualPivot.y) * (scaleFactor - 1)
-                setPivot(actualPivot)
-            }
-            return true
-        }
-
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            Log.d("qwerty", "scale")
-            scaleFactor *= detector.scaleFactor
-            scaleFactor = scaleFactor.coerceIn(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR)
-            run {
-                scale(scaleFactor)
-                getContentViewTranslation().run {
-                    translationX += x
-                    translationY += y
+            4 -> {
+                if (canvas != null) {
+                    canvas.translate(0f, spacing * 4)
+                    fifthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    fourthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    thirdLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    secondLayer?.draw(canvas)
+                    canvas.translate(0f, spacing * (-1))
                 }
             }
-            return true
-        }
-    }
+            3 -> {
+                if (canvas != null) {
+                    canvas.translate(0f, spacing * 4)
+                    fifthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    fourthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    thirdLayer?.draw(canvas)
+                    canvas.translate(0f, spacing * (-2))
+                }
+            }
+            2 -> {
+                if (canvas != null) {
+                    canvas.translate(0f, spacing * 4)
+                    fifthLayer?.draw(canvas)
+                    canvas.translate(0f, -spacing)
+                    fourthLayer?.draw(canvas)
+                    canvas.translate(0f, spacing * (-3))
+                }
+            }
+            1 -> {
+                if (canvas != null) {
+                    canvas.translate(0f, spacing * 4)
+                    fifthLayer?.draw(canvas)
+                    canvas.translate(0f, spacing * (-4))
+                }
+            }
+            else -> {
 
-    companion object {
-        private const val MAX_SCALE_FACTOR = 5f
-        private const val MIN_SCALE_FACTOR = 1f
-        private const val CORRECT_LOCATION_ANIMATION_DURATION = 300L
+            }
+        }
     }
 }
