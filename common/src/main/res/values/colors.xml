@@ -3,16 +3,22 @@
     <color name="ic_launcher_background">#FFFFFF</color>
 
     <color name="background_secondary">#FFFFFF</color>
-    <color name="background_primary">#F3F2F7</color>
-    <color name="button_tint_primary">#0091C9</color>
+    <color name="background_primary">#FFFFFF</color>
+    <color name="button_tint_primary">#9A1AFF</color>
+    <color name="button_tint_secondary">#FFF500</color>
+    <color name="button_tint_third">#FFFFFF</color>
     <color name="button_disabled_tint">#A3A2A7</color>
 
-    <color name="text_color_primary">#161616</color>
+    <color name="text_color_primary">#000000</color>
     <color name="text_color_secondary">#FFFFFF</color>
+    <color name="text_color_third">#FFF500</color>
     <color name="text_color_hint_primary">#A3A2A7</color>
 
     <color name="menu_icon_color_primary">#161616</color>
     <color name="menu_icon_color_secondary">#000000</color>
 
     <color name="toolbar_background">#FFFFFF</color>
+
+    <color name="stroke_color_primary">#FFF500</color>
+
 </resources>

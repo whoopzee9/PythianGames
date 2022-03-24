@@ -36,6 +36,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view1" />
 
+    <View
+        android:id="@+id/zoom_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/cardStack"
+        app:layout_constraintBottom_toBottomOf="@id/cardStack"
+        app:layout_constraintStart_toStartOf="@id/cardStack"
+        app:layout_constraintEnd_toEndOf="@id/cardStack"/>
+
     <include
         android:id="@+id/frg_test__layout_toolbar"
         layout="@layout/include_toolbar"

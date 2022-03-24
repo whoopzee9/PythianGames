@@ -6,4 +6,12 @@
     <string name="menu_test">Тест</string>
 
     <string name="description_back">Вернуться назад</string>
+    <string name="next">Далее</string>
+    <string name="play">Играть</string>
+    <string name="onboarding_excavations_title">УЧАСТВУЙ\nВ РАСКОПКАХ</string>
+    <string name="onboarding_excavations_description">Узнай сотни увлекательных фактов и понятий родом из Древней Греции</string>
+    <string name="onboarding_artifacts_title">СОБИРАЙ\nАРТЕФАКТЫ</string>
+    <string name="onboarding_artifacts_description">Получи зачёт по философии в форме захватывающего соревнования</string>
+    <string name="onboarding_teamup_title">РАБОТАЙ\nВ КОМАНДЕ</string>
+    <string name="onboarding_teamup_description">Играй индивидуально или объединяйся с товарищами, чтобы одолеть оппонентов</string>
 </resources>

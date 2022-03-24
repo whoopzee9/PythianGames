@@ -179,4 +179,33 @@ class CardStack @JvmOverloads constructor(
             }
         }
     }
+
+    private var moveStarted = false
+
+
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        super.onTouchEvent(event)
+//        when (event.actionMasked) {
+//            MotionEvent.ACTION_MOVE -> {
+//                Log.d("qwerty", "move")
+//                moveStarted = true
+//            }
+//            MotionEvent.ACTION_DOWN -> {
+//                Log.d("qwerty", "down")
+//                return false
+//            }
+//            MotionEvent.ACTION_UP -> {
+//                Log.d("qwerty", "up")
+//                Log.d("qwerty", "moveStarted: $moveStarted")
+//                if (!moveStarted) {
+//                    Log.d("qwerty", "before perform click")
+//                    performClick()
+//                    return false
+//                }
+//                moveStarted = false
+//            }
+//        }
+//        //Log.d("qwerty", "onTouchEvent super val: ${super.onTouchEvent(event)}")
+//        return false
+//    }
 }
