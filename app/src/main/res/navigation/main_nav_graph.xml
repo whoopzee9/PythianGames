@@ -3,11 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/onboardingFragment">
+    app:startDestination="@id/authFragment">
 
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="ru.spbstu.feature.onboarding.presentation.OnboardingFragment"
         android:label="OnboardingFragment"
         tools:layout="@layout/fragment_onboarding" />
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="ru.spbstu.feature.auth.presentation.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/fragment_auth" />
 </navigation>

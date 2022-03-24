@@ -5,6 +5,7 @@ import dagger.Component
 import ru.spbstu.common.di.CommonApi
 import ru.spbstu.common.di.scope.FeatureScope
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.auth.di.AuthComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
 import ru.spbstu.feature.test.di.TestComponent
 
@@ -22,6 +23,7 @@ interface FeatureComponent {
 
     fun testComponentFactory(): TestComponent.Factory
     fun onboardingComponentFactory(): OnboardingComponent.Factory
+    fun authComponentFactory(): AuthComponent.Factory
 
     @Component.Factory
     interface Factory {

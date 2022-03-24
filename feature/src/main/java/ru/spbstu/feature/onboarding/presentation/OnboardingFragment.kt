@@ -4,6 +4,8 @@ import androidx.core.content.ContextCompat
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setDebounceClickListener
+import ru.spbstu.common.extenstions.setLightStatusBar
+import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentOnboardingBinding
@@ -18,6 +20,8 @@ class OnboardingFragment : BaseFragment<OnboardingViewModel>(
 
     override fun setupViews() {
         super.setupViews()
+        requireActivity().setStatusBarColor(R.color.background_primary)
+        requireView().setLightStatusBar()
         binding.frgOnboardingMbNext.setDebounceClickListener {
             viewModel.nextState()
         }

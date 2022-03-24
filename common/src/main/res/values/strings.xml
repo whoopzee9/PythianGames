@@ -14,4 +14,6 @@
     <string name="onboarding_artifacts_description">Получи зачёт по философии в форме захватывающего соревнования</string>
     <string name="onboarding_teamup_title">РАБОТАЙ\nВ КОМАНДЕ</string>
     <string name="onboarding_teamup_description">Играй индивидуально или объединяйся с товарищами, чтобы одолеть оппонентов</string>
+    <string name="login">Вход</string>
+    <string name="registration">Регистрация</string>
 </resources>
