@@ -7,6 +7,7 @@ import ru.spbstu.common.di.scope.FeatureScope
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.auth.di.AuthComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
+import ru.spbstu.feature.registration.di.RegistrationComponent
 import ru.spbstu.feature.test.di.TestComponent
 
 @Component(
@@ -24,6 +25,7 @@ interface FeatureComponent {
     fun testComponentFactory(): TestComponent.Factory
     fun onboardingComponentFactory(): OnboardingComponent.Factory
     fun authComponentFactory(): AuthComponent.Factory
+    fun registrationComponentFactory(): RegistrationComponent.Factory
 
     @Component.Factory
     interface Factory {

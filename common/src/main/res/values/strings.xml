@@ -16,4 +16,11 @@
     <string name="onboarding_teamup_description">Играй индивидуально или объединяйся с товарищами, чтобы одолеть оппонентов</string>
     <string name="login">Вход</string>
     <string name="registration">Регистрация</string>
+    <string name="email">email</string>
+    <string name="password">пароль</string>
+    <string name="repeat_password">повторите пароль</string>
+    <string name="enter_email">Введите почту</string>
+    <string name="wrong_email">Неверная почта</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="passwords_dont_match">Пароли не совпадают</string>
 </resources>

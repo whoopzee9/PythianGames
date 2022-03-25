@@ -61,6 +61,7 @@
         <item name="android:backgroundTint">@color/button_background_color</item>
         <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
         <item name="android:textAllCaps">false</item>
+
     </style>
 
     <style name="MaterialButton.Onboarding" parent="MaterialButton.Default">
@@ -68,6 +69,34 @@
         <item name="strokeColor">@color/stroke_color_primary</item>
         <item name="strokeWidth">@dimen/dp_1</item>
         <item name="android:backgroundTint">@color/button_onboarding_background_color</item>
+    </style>
+
+    <style name="EditText.InputFormMultiLine" parent="Widget.MaterialComponents.TextView">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:maxLines">5</item>
+        <item name="backgroundTint">@color/background_primary</item>
+        <item name="android:textCursorDrawable">@drawable/text_cursor</item>
+    </style>
+
+    <style name="EditText.InputForm" parent="EditText.InputFormMultiLine">
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="TextInputLayout.InputForm" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/text_color_hint_primary</item>
+        <item name="boxStrokeColor">@color/button_tint_primary</item>
+        <item name="android:textColorHint">@color/text_color_hint_primary</item>
+    </style>
+
+    <!--This style needs for apply to hint in TextInputLayout -->
+    <style name="TextInputLayout.TextForm" parent="TextInputLayout.InputForm" />
+
+    <style name="TextInputLayout.HintAppearance" parent="TextInputLayout.InputForm">
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="hintTextColor">@color/text_color_primary</item>
     </style>
 
 </resources>
