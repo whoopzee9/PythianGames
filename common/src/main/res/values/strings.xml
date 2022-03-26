@@ -23,4 +23,6 @@
     <string name="wrong_email">Неверная почта</string>
     <string name="enter_password">Введите пароль</string>
     <string name="passwords_dont_match">Пароли не совпадают</string>
+    <string name="login_in">Войти</string>
+    <string name="register">Зарегистрироваться</string>
 </resources>

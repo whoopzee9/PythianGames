@@ -4,4 +4,12 @@ import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.feature.FeatureRouter
 
 class AuthViewModel(val router: FeatureRouter) : BackViewModel(router) {
+
+    fun openLogin() {
+        router.openLoginFragment()
+    }
+
+    fun openRegistration() {
+        router.openRegistrationFragment()
+    }
 }

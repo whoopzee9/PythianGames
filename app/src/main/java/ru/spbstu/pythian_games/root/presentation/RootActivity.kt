@@ -1,8 +1,10 @@
 package ru.spbstu.pythian_games.root.presentation
 
+import androidx.navigation.fragment.NavHostFragment
 import ru.spbstu.common.base.BaseActivity
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.viewBinding
+import ru.spbstu.pythian_games.R
 import ru.spbstu.pythian_games.databinding.ActivityRootBinding
 import ru.spbstu.pythian_games.navigation.Navigator
 import ru.spbstu.pythian_games.root.di.RootApi
@@ -20,11 +22,16 @@ class RootActivity : BaseActivity<RootViewModel>() {
     override fun setupViews() {
         super.setupViews()
         navigator.attachActivity(this)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
+        val navController = navHostFragment.navController
+        navigator.attachNavController(navController)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         navigator.detachActivity()
+        navigator.detachNavController()
     }
 
     override fun inject() {

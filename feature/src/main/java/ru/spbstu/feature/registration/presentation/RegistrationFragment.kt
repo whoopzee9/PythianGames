@@ -1,6 +1,5 @@
 package ru.spbstu.feature.registration.presentation
 
-import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
@@ -66,7 +65,8 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
 
         if (!viewModel.arePasswordsMatch(password, repeatPassword)) {
             binding.frgRegistrationEtPasswordLayout.error = " "
-            binding.frgRegistrationEtRepeatPasswordLayout.error = getString(R.string.passwords_dont_match)
+            binding.frgRegistrationEtRepeatPasswordLayout.error =
+                getString(R.string.passwords_dont_match)
             return
         }
 

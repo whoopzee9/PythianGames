@@ -2,6 +2,7 @@ package ru.spbstu.feature.auth.presentation
 
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.viewBinding
@@ -19,6 +20,12 @@ class AuthFragment : BaseFragment<AuthViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+        binding.frgAuthMbLogin.setDebounceClickListener {
+            viewModel.openLogin()
+        }
+        binding.frgAuthMbRegistration.setDebounceClickListener {
+            viewModel.openRegistration()
+        }
     }
 
     override fun inject() {

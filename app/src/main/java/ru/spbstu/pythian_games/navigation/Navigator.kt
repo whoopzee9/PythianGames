@@ -7,6 +7,8 @@ import androidx.navigation.NavDestination
 import org.greenrobot.eventbus.EventBus
 import ru.spbstu.common.events.SetBottomNavVisibility
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.pythian_games.R
+import timber.log.Timber
 
 class Navigator : FeatureRouter {
 
@@ -21,16 +23,42 @@ class Navigator : FeatureRouter {
         }
     }
 
+    fun clearBackStackAndOpenAuthFragment() {
+        if (navController?.currentDestination?.id == R.id.onboardingFragment) {
+            return
+        }
+        while (navController?.popBackStack() == true) {
+            Timber.tag(TAG).d("Skipped backstack entry")
+        }
+        navController?.navigate(R.id.open_auth_fragment)
+    }
+
+    override fun openRegistrationFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.authFragment -> navController?.navigate(R.id.action_authFragment_to_registrationFragment)
+        }
+    }
+
+    override fun openLoginFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.authFragment -> navController?.navigate(R.id.action_authFragment_to_loginFragment)
+        }
+    }
+
+    override fun openAuthFragment() {
+        clearBackStackAndOpenAuthFragment()
+    }
+
+    override fun openOnboarding() {
+
+    }
+
     fun attachActivity(activity: AppCompatActivity) {
         this.activity = activity
     }
 
     fun attachNavController(navController: NavController) {
-        this.navController = navController.apply {
-            this.addOnDestinationChangedListener { _: NavController, _: NavDestination, _: Bundle? ->
-                checkBottomBar()
-            }
-        }
+        this.navController = navController
     }
 
     fun detachActivity() {
@@ -41,16 +69,7 @@ class Navigator : FeatureRouter {
         navController = null
     }
 
-    fun checkBottomBar() {
-        EventBus.getDefault().post(
-            SetBottomNavVisibility(
-                false /*!navBarHiddenIdsList.contains(navController?.currentDestination?.id)*/,
-                true
-            )
-        )
-    }
-
     private companion object {
-        val navBarHiddenIdsList = listOf<Int>()
+        val TAG = Navigator::class.simpleName
     }
 }
