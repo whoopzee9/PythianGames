@@ -66,6 +66,12 @@ class Navigator : FeatureRouter {
         }
     }
 
+    override fun openTeamSelectionFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.roomConnectionFragment -> navController?.navigate(R.id.action_roomConnectionFragment_to_teamSelectionFragment)
+        }
+    }
+
     fun attachActivity(activity: AppCompatActivity) {
         this.activity = activity
     }

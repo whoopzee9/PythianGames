@@ -11,6 +11,7 @@ import ru.spbstu.feature.main.di.MainComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
 import ru.spbstu.feature.registration.di.RegistrationComponent
 import ru.spbstu.feature.room_connection.di.RoomConnectionComponent
+import ru.spbstu.feature.team_selection.di.TeamSelectionComponent
 import ru.spbstu.feature.test.di.TestComponent
 
 @Component(
@@ -32,6 +33,7 @@ interface FeatureComponent {
     fun loginComponentFactory(): LoginComponent.Factory
     fun mainComponentFactory(): MainComponent.Factory
     fun roomConnectionComponentFactory(): RoomConnectionComponent.Factory
+    fun teamSelectionComponentFactory(): TeamSelectionComponent.Factory
 
     @Component.Factory
     interface Factory {

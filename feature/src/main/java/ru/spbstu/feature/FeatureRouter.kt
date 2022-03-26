@@ -10,4 +10,5 @@ interface FeatureRouter : BaseBackRouter {
     fun openOnboarding()
     fun openMainFragment()
     fun openRoomConnectionFragment(mode: RoomConnectionFragment.Companion.RoomMode)
+    fun openTeamSelectionFragment()
 }

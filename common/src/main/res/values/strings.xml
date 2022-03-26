@@ -32,4 +32,9 @@
     <string name="access_code">код доступа</string>
     <string name="enter_room_name">введите название</string>
     <string name="enter_code">введите код</string>
+    <string name="choose_team">Выбери команду</string>
+    <string name="red_team">Красная</string>
+    <string name="orange_team">Оранжевая</string>
+    <string name="blue_team">Синяя</string>
+    <string name="green_team">Зеленая</string>
 </resources>

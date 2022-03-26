@@ -92,5 +92,19 @@
         android:id="@+id/roomConnectionFragment"
         android:name="ru.spbstu.feature.room_connection.presentation.RoomConnectionFragment"
         android:label="RoomConnectionFragment"
-        tools:layout="@layout/fragment_room_connection" />
+        tools:layout="@layout/fragment_room_connection" >
+        <action
+            android:id="@+id/action_roomConnectionFragment_to_teamSelectionFragment"
+            app:destination="@id/teamSelectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/teamSelectionFragment"
+        android:name="ru.spbstu.feature.team_selection.presentation.TeamSelectionFragment"
+        android:label="TeamSelectionFragment"
+        tools:layout="@layout/fragment_team_selection" />
 </navigation>

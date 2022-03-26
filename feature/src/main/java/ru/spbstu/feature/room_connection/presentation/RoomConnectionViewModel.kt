@@ -5,10 +5,10 @@ import ru.spbstu.feature.FeatureRouter
 
 class RoomConnectionViewModel(val router: FeatureRouter) : BackViewModel(router) {
     fun createRoom(name: String, code: String) {
-
+        router.openTeamSelectionFragment()
     }
 
     fun joinRoom(name: String, code: String) {
-
+        router.openTeamSelectionFragment()
     }
 }
