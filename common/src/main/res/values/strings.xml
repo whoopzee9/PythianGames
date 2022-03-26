@@ -25,4 +25,7 @@
     <string name="passwords_dont_match">Пароли не совпадают</string>
     <string name="login_in">Войти</string>
     <string name="register">Зарегистрироваться</string>
+    <string name="create">Создать</string>
+    <string name="join">Присоединиться</string>
+    <string name="tutorial">Обучение</string>
 </resources>

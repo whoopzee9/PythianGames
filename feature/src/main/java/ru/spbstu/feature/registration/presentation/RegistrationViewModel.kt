@@ -15,6 +15,6 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
     }
 
     fun register(email: String, password: String) {
-        TODO("Not yet implemented")
+        router.openMainFragment()
     }
 }

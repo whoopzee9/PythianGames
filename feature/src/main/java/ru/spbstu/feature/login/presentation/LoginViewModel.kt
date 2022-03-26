@@ -10,6 +10,6 @@ class LoginViewModel(val router: FeatureRouter) : BackViewModel(router) {
     }
 
     fun login(email: String, password: String) {
-
+        router.openMainFragment()
     }
 }

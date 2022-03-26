@@ -1,11 +1,7 @@
 package ru.spbstu.pythian_games.navigation
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import org.greenrobot.eventbus.EventBus
-import ru.spbstu.common.events.SetBottomNavVisibility
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.pythian_games.R
 import timber.log.Timber
@@ -51,6 +47,13 @@ class Navigator : FeatureRouter {
 
     override fun openOnboarding() {
 
+    }
+
+    override fun openMainFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.loginFragment -> navController?.navigate(R.id.action_loginFragment_to_mainFragment)
+            R.id.registrationFragment -> navController?.navigate(R.id.action_registrationFragment_to_mainFragment)
+        }
     }
 
     fun attachActivity(activity: AppCompatActivity) {

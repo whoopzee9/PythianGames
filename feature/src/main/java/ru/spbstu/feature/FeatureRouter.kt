@@ -7,4 +7,5 @@ interface FeatureRouter : BaseBackRouter {
     fun openLoginFragment()
     fun openAuthFragment()
     fun openOnboarding()
+    fun openMainFragment()
 }
