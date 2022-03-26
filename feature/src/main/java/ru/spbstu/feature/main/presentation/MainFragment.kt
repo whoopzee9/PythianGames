@@ -2,6 +2,7 @@ package ru.spbstu.feature.main.presentation
 
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.viewBinding
@@ -9,6 +10,7 @@ import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentMainBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.room_connection.presentation.RoomConnectionFragment
 
 class MainFragment : BaseFragment<MainViewModel>(
     R.layout.fragment_main,
@@ -19,6 +21,14 @@ class MainFragment : BaseFragment<MainViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+
+        binding.frgMainMbCreate.setDebounceClickListener {
+            viewModel.openRoomConnectionFragment(RoomConnectionFragment.Companion.RoomMode.Create)
+        }
+        binding.frgMainMbJoin.setDebounceClickListener {
+            viewModel.openRoomConnectionFragment(RoomConnectionFragment.Companion.RoomMode.Join)
+        }
+        binding.frgMainMbTutorial.setDebounceClickListener {}
     }
 
     override fun inject() {

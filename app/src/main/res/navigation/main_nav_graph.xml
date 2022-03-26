@@ -78,5 +78,19 @@
         android:id="@+id/mainFragment"
         android:name="ru.spbstu.feature.main.presentation.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_roomConnectionFragment"
+            app:destination="@id/roomConnectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/roomConnectionFragment"
+        android:name="ru.spbstu.feature.room_connection.presentation.RoomConnectionFragment"
+        android:label="RoomConnectionFragment"
+        tools:layout="@layout/fragment_room_connection" />
 </navigation>

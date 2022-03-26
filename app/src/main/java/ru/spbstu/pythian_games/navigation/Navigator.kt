@@ -3,6 +3,7 @@ package ru.spbstu.pythian_games.navigation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.room_connection.presentation.RoomConnectionFragment
 import ru.spbstu.pythian_games.R
 import timber.log.Timber
 
@@ -53,6 +54,15 @@ class Navigator : FeatureRouter {
         when (navController?.currentDestination?.id) {
             R.id.loginFragment -> navController?.navigate(R.id.action_loginFragment_to_mainFragment)
             R.id.registrationFragment -> navController?.navigate(R.id.action_registrationFragment_to_mainFragment)
+        }
+    }
+
+    override fun openRoomConnectionFragment(mode: RoomConnectionFragment.Companion.RoomMode) {
+        when (navController?.currentDestination?.id) {
+            R.id.mainFragment -> navController?.navigate(
+                R.id.action_mainFragment_to_roomConnectionFragment,
+                RoomConnectionFragment.makeBundle(mode)
+            )
         }
     }
 

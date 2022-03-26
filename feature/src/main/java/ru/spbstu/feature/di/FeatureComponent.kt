@@ -10,6 +10,7 @@ import ru.spbstu.feature.login.di.LoginComponent
 import ru.spbstu.feature.main.di.MainComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
 import ru.spbstu.feature.registration.di.RegistrationComponent
+import ru.spbstu.feature.room_connection.di.RoomConnectionComponent
 import ru.spbstu.feature.test.di.TestComponent
 
 @Component(
@@ -30,6 +31,7 @@ interface FeatureComponent {
     fun registrationComponentFactory(): RegistrationComponent.Factory
     fun loginComponentFactory(): LoginComponent.Factory
     fun mainComponentFactory(): MainComponent.Factory
+    fun roomConnectionComponentFactory(): RoomConnectionComponent.Factory
 
     @Component.Factory
     interface Factory {
