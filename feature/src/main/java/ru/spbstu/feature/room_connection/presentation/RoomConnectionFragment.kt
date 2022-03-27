@@ -1,6 +1,8 @@
 package ru.spbstu.feature.room_connection.presentation
 
 import android.os.Bundle
+import android.view.View
+import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import ru.spbstu.common.base.BaseFragment
@@ -29,6 +31,13 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
         binding.frgRoomConnectionEtAccessCode.addTextChangedListener {
             binding.frgRoomConnectionEtAccessCodeLayout.error = null
         }
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_spinner_layout,
+            resources.getStringArray(R.array.number_of_players)
+        )
+        adapter.setDropDownViewResource(R.layout.item_spinner_row_item)
+        binding.frgRoomConnectionSpPlayers.adapter = adapter
     }
 
     override fun setupFromArguments(args: Bundle) {
@@ -37,6 +46,7 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
             when (it as RoomMode) {
                 RoomMode.Create -> {
                     binding.frgRoomConnectionMbNext.setText(R.string.create)
+                    binding.frgRoomConnectionSpPlayers.visibility = View.VISIBLE
                     binding.frgRoomConnectionMbNext.setDebounceClickListener {
                         checkFields { name, code ->
                             viewModel.createRoom(name, code)
@@ -45,6 +55,7 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
                 }
                 RoomMode.Join -> {
                     binding.frgRoomConnectionMbNext.setText(R.string.join)
+                    binding.frgRoomConnectionSpPlayers.visibility = View.GONE
                     binding.frgRoomConnectionMbNext.setDebounceClickListener {
                         checkFields { name, code ->
                             viewModel.joinRoom(name, code)

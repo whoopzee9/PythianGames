@@ -4,4 +4,7 @@ import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.feature.FeatureRouter
 
 class TeamSelectionViewModel(val router: FeatureRouter) : BackViewModel(router) {
+    fun openCharacterSelectionFragment() {
+        router.openCharacterSelectionFragment()
+    }
 }

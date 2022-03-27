@@ -72,6 +72,12 @@ class Navigator : FeatureRouter {
         }
     }
 
+    override fun openCharacterSelectionFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.teamSelectionFragment -> navController?.navigate(R.id.action_teamSelectionFragment_to_characterSelectionFragment)
+        }
+    }
+
     fun attachActivity(activity: AppCompatActivity) {
         this.activity = activity
     }

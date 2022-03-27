@@ -39,4 +39,20 @@
     <string name="green_team">Зеленая</string>
     <string name="choose_character">Выбери персонажа</string>
     <string name="character_name">имя персонажа</string>
+
+    <string name="two_players">2 игрока (поле 3х3, 2 команды)</string>
+    <string name="four_players_2_teams">4 игрока (поле 3х3, 2 команды)</string>
+    <string name="four_players_4_teams">4 игрока (поле 3х3, 4 команды)</string>
+    <string name="six_players">6 игроков (поле 5х5, 3 команды)</string>
+    <string name="eight_players_2_teams">8 игроков (поле 5х5, 2 команды)</string>
+    <string name="eight_players_4_teams">8 игроков (поле 5х5, 4 команды)</string>
+
+    <string-array name="number_of_players">
+        <item>@string/two_players</item>
+        <item>@string/four_players_2_teams</item>
+        <item>@string/four_players_4_teams</item>
+        <item>@string/six_players</item>
+        <item>@string/eight_players_2_teams</item>
+        <item>@string/eight_players_4_teams</item>
+    </string-array>
 </resources>

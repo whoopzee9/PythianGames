@@ -56,6 +56,9 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
             binding.frgTeamSelectionMbFourthTeam.changeToActiveStyle(R.color.button_green)
             binding.frgTeamSelectionMbNext.isEnabled = true
         }
+        binding.frgTeamSelectionMbNext.setDebounceClickListener {
+            viewModel.openCharacterSelectionFragment()
+        }
     }
 
     override fun inject() {
