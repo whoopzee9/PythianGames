@@ -37,4 +37,6 @@
     <string name="orange_team">Оранжевая</string>
     <string name="blue_team">Синяя</string>
     <string name="green_team">Зеленая</string>
+    <string name="choose_character">Выбери персонажа</string>
+    <string name="character_name">имя персонажа</string>
 </resources>

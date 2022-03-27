@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/characterSelectionFragment">
 
     <action
         android:id="@+id/open_auth_fragment"
@@ -106,5 +106,19 @@
         android:id="@+id/teamSelectionFragment"
         android:name="ru.spbstu.feature.team_selection.presentation.TeamSelectionFragment"
         android:label="TeamSelectionFragment"
-        tools:layout="@layout/fragment_team_selection" />
+        tools:layout="@layout/fragment_team_selection" >
+        <action
+            android:id="@+id/action_teamSelectionFragment_to_characterSelectionFragment"
+            app:destination="@id/characterSelectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/characterSelectionFragment"
+        android:name="ru.spbstu.feature.character_selection.presentation.CharacterSelectionFragment"
+        android:label="CharacterSelectionFragment"
+        tools:layout="@layout/fragment_character_selection" />
 </navigation>
