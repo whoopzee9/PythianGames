@@ -24,24 +24,19 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
-        lifecycleScope.launch {
-            binding.flat.addPlayer(Player(R.drawable.character_2, 1, 1, "sdfsdf"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_1, 1, 2, "qweqwe"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_3, 2, 1, "123123"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_4, 3, 1, "fgdаывываfg"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_5, 2, 2, "gdf"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_6, 3, 2, "12"))
-            //delay(3000)
-            binding.flat.addPlayer(Player(R.drawable.character_7, 4, 1, "12dfgd3123"))
-            binding.flat.addPlayer(Player(R.drawable.character_8, 4, 2, "12wew3123"))
-            //delay(3000)
+        binding.frgTeamsDisplayBoard.numOfTeams = 4
+        binding.frgTeamsDisplayBoard.numOfPlayers = 8
+        binding.frgTeamsDisplayBoard.size = 5
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_2, 1, 1, "sdfsdf"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_1, 1, 2, "qweqwe"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_3, 2, 1, "123123"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_5, 2, 2, "gdf"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_4, 3, 1, "fgdаывываfg"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_6, 3, 2, "12"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_7, 4, 1, "12dfgddfgdf3123"))
+        binding.frgTeamsDisplayBoard.addPlayer(Player(R.drawable.character_8, 4, 2, "12wewfsddfs3123"))
 
-        }
+
     }
 
     override fun inject() {

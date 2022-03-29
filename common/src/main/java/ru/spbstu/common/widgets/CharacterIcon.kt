@@ -17,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.model.Player
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,20 +34,21 @@ class CharacterIcon @JvmOverloads constructor(
     var scale = 1f
     private var defScale = 1f
     private var maxScale = 1.2f
-    private var animationDuration = 100L
     private var bounds = Rect()
     private var textWidth = 0
     var additionalWidth = 0
     private var paint = Paint()
     private var textPadding = 10
     var fontHeight = 0f
-    var drawab : Drawable?
+    var drawable : Drawable?
+    val rect = Rect()
+    private var offset = 0
 
     private lateinit var player: Player
 
     init {
         drawableRes = R.drawable.character_1
-        drawab = ContextCompat.getDrawable(context, drawableRes)
+        drawable = ContextCompat.getDrawable(context, drawableRes)
 
         paint.textSize = resources.getDimension(R.dimen.sp_14)
         paint.color = ContextCompat.getColor(context, R.color.text_color_primary)
@@ -57,7 +59,7 @@ class CharacterIcon @JvmOverloads constructor(
 
     fun setDrawableResource(@DrawableRes res: Int) {
         drawableRes = res
-        drawab = ContextCompat.getDrawable(context, drawableRes)
+        drawable = ContextCompat.getDrawable(context, drawableRes)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -122,7 +124,7 @@ class CharacterIcon @JvmOverloads constructor(
     }
 
     private fun computeMaximumWidth(): Int {
-        return (imageWidth * scale).toInt() + additionalWidth
+        return (imageWidth * scale).toInt() + (additionalWidth * maxScale).toInt() + offset
     }
 
     fun setPlayer(player: Player) {
@@ -136,18 +138,33 @@ class CharacterIcon @JvmOverloads constructor(
     fun getPlayer() = player
 
     override fun onDraw(canvas: Canvas?) {
+        val group = parent as ViewGroup
+        getDrawingRect(rect)
+        group.offsetDescendantRectToMyCoords(this, rect)
+        val relativeLeft = rect.left
+        val relativeRight = rect.right
+
         if (scale > defScale) {
             val text = player.name
             paint.getTextBounds(text, 0, text.length, bounds)
             textWidth = bounds.width()
             additionalWidth = if (textWidth > imageWidth) (textWidth - imageWidth).toInt() else 0
-
-            canvas?.drawText(text, if (textWidth > imageWidth) 0f else (imageWidth - textWidth) / 2, fontHeight - textPadding, paint)
+            offset = if (relativeLeft < 50 && textWidth > imageWidth) abs(rect.left) else 0
+            val x = if (textWidth > imageWidth) {
+                if (relativeLeft < 50) {
+                    abs(40f)
+                } else if (relativeRight > group.width) {
+                    (group.width - relativeRight).toFloat()
+                } else {
+                    0f
+                }
+            } else (imageWidth - textWidth) / 2
+            canvas?.drawText(text, x, fontHeight - textPadding, paint)
         }
 
         canvas?.translate(additionalWidth / 2f, fontHeight)
-        drawab?.setBounds(0,0,imageWidth.toInt(), imageHeight.toInt())
-        drawab?.draw(canvas!!)
+        drawable?.setBounds(0,0,imageWidth.toInt(), imageHeight.toInt())
+        drawable?.draw(canvas!!)
         canvas?.translate(-additionalWidth / 2f, -fontHeight)
     }
 }

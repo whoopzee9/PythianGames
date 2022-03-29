@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ru.spbstu.common.widgets.FlatBoard
-        android:id="@+id/flat"
-        android:layout_width="wrap_content"
+        android:id="@+id/frg_teams_display__board"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/dp_40"
         app:layout_constraintStart_toStartOf="parent"
@@ -14,18 +14,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/frg_teams_display__mb_next"
-        style="@style/MaterialButton.Default"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/frg_teams_display__tv_teams_display"
+        style="@style/TextView.H1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_16"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:text="@string/create"
+        android:layout_marginTop="@dimen/dp_40"
+        android:text="@string/teams_placement"
+        android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/frg_teams_display__tv_waiting_for_players"
+        style="@style/TextView.H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_40"
+        android:text="@string/waiting_for_players"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_teams_display__board" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

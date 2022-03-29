@@ -46,6 +46,8 @@
     <string name="six_players">6 игроков (поле 5х5, 3 команды)</string>
     <string name="eight_players_2_teams">8 игроков (поле 5х5, 2 команды)</string>
     <string name="eight_players_4_teams">8 игроков (поле 5х5, 4 команды)</string>
+    <string name="teams_placement">Расположение команд</string>
+    <string name="waiting_for_players">Ожидание игроков: %d / %d</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

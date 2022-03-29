@@ -32,6 +32,7 @@ class FlatBoard @JvmOverloads constructor(
     private var playersCount = 0
     private var leftPlayerOffset = 0
     private var topPlayerOffset = 0
+    private var additionalMatchParentOffset = 0
 
     init {
         for (i in 0 until size * size) {
@@ -108,7 +109,7 @@ class FlatBoard @JvmOverloads constructor(
 
                 calculatePlayerOffset(child.getPlayer())
 
-                val left = context.dpToPx(5f).toInt() + padding + leftPlayerOffset - child.additionalWidth / 2
+                val left = context.dpToPx(5f).toInt() + padding + leftPlayerOffset - child.additionalWidth / 2 + additionalMatchParentOffset
                 val top = -context.dpToPx(10f).toInt() + padding * 4 + topPlayerOffset
 
                 child.layout(left, top, curWidth + left, curHeight + top)
@@ -117,7 +118,7 @@ class FlatBoard @JvmOverloads constructor(
                 val h = i / size
                 val w = i % size
 
-                val curLeft = w * (squareWidth + padding) + padding
+                val curLeft = w * (squareWidth + padding) + padding + additionalMatchParentOffset
                 val curTop = h * (squareHeight + padding) + padding * 4
                 val curRight = curLeft + squareWidth
                 val curBottom = curTop + squareHeight
@@ -324,8 +325,8 @@ class FlatBoard @JvmOverloads constructor(
                 LayoutParams.WRAP_CONTENT
             )
 
-        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec)
-        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec)
+        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec, true)
+        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec, false)
 
         width += paddingLeft + paddingRight
         height += paddingTop + paddingBottom
@@ -333,10 +334,14 @@ class FlatBoard @JvmOverloads constructor(
         setMeasuredDimension(width, height)
     }
 
-    private fun calculateSize(suggestedSize: Int, paramSize: Int, measureSpec: Int): Int {
+    private fun calculateSize(suggestedSize: Int, paramSize: Int, measureSpec: Int, isWidth: Boolean): Int {
         var result = 0
         val size = MeasureSpec.getSize(measureSpec)
         val mode = MeasureSpec.getMode(measureSpec)
+
+        if (paramSize == LayoutParams.MATCH_PARENT && isWidth) {
+            additionalMatchParentOffset = (size - suggestedSize) / 2
+        }
 
         when (mode) {
             MeasureSpec.AT_MOST ->
@@ -463,12 +468,12 @@ class FlatBoard @JvmOverloads constructor(
                     3 -> {
                         when (player.playerNum) {
                             1 -> {
-                                leftPlayerOffset = (squareWidth + padding) * (size / 2)
-                                topPlayerOffset = 0
+                                leftPlayerOffset = 0
+                                topPlayerOffset = (squareWidth + padding) * (size / 2)
                             }
                             2 -> {
-                                leftPlayerOffset = (squareWidth + padding) * (size / 2)
-                                topPlayerOffset = (squareHeight + padding) * (size - 1)
+                                leftPlayerOffset = (squareHeight + padding) * (size - 1)
+                                topPlayerOffset = (squareWidth + padding) * (size / 2)
                             }
                         }
                     }
