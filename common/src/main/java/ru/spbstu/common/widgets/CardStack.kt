@@ -36,11 +36,6 @@ class CardStack @JvmOverloads constructor(
     private var thirdLayer: Drawable?
     private var fourthLayer: Drawable?
     private var fifthLayer: Drawable?
-    private var firstLayerBitmap: Bitmap
-    private var secondLayerBitmap: Bitmap
-    private var thirdLayerBitmap: Bitmap
-    private var fourthLayerBitmap: Bitmap
-    private var fifthLayerBitmap: Bitmap
 
     private var height: Float
     private var width: Float
@@ -54,11 +49,6 @@ class CardStack @JvmOverloads constructor(
         thirdLayer = ContextCompat.getDrawable(context, R.drawable.ic_third_layer_36)
         fourthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fourth_layer_36)
         fifthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fifth_layer_36)
-        firstLayerBitmap = firstLayer!!.toBitmap()
-        secondLayerBitmap = secondLayer!!.toBitmap()
-        thirdLayerBitmap = thirdLayer!!.toBitmap()
-        fourthLayerBitmap = fourthLayer!!.toBitmap()
-        fifthLayerBitmap = fifthLayer!!.toBitmap()
 
         height = context.dpToPx(35f)
         width = context.dpToPx(58f)
