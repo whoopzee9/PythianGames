@@ -29,5 +29,6 @@
     <color name="ripple_color_primary">#A3A3A3</color>
 
     <color name="image_disabled_tint">#80A3A2A7</color>
+    <color name="stack_shade">#4D000000</color>
 
 </resources>

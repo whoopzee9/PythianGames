@@ -1,114 +1,51 @@
-package ru.spbstu.common.widgets
+package ru.spbstu.feature.game.presentation
 
-import android.content.Context
 import android.graphics.PointF
 import android.graphics.Rect
-import android.util.AttributeSet
-import android.util.Log
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
-import android.widget.Toast
-import ru.spbstu.common.extenstions.dpToPx
+import ru.spbstu.common.base.BaseFragment
+import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.scale
-import ru.spbstu.common.extenstions.setDebounceClickListener
+import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
+import ru.spbstu.common.extenstions.setStatusBarColor
+import ru.spbstu.common.extenstions.viewBinding
+import ru.spbstu.common.widgets.Board
+import ru.spbstu.feature.R
+import ru.spbstu.feature.databinding.FragmentGameBinding
+import ru.spbstu.feature.di.FeatureApi
+import ru.spbstu.feature.di.FeatureComponent
 
-class Board @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ViewGroup(context, attrs, defStyleAttr) {
+class GameFragment : BaseFragment<GameViewModel>(
+    R.layout.fragment_game,
+) {
+    override val binding by viewBinding(FragmentGameBinding::bind)
 
-    private var size = 5
-    private val dx = 32f
-    private val dy = 19f
+    override fun setupViews() {
+        super.setupViews()
+        requireActivity().setStatusBarColor(R.color.background_primary)
+        requireView().setLightStatusBar()
 
-    private var count = 0
-
-    init {
-
-        for (i in 0 until size * size) {
-            addView(CardStack(context))
-        }
+//        binding.zoomView.setOnTouchListener { v, event ->
+//            scaleGestureDetector.onTouchEvent(event)
+//            translationHandler.onTouch(v, event)
+//            binding.frgGameBoard.dispatchTouchEvent(event)
+//            true
+//        }
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        var curWidth: Int
-        var curHeight: Int
-        var curLeft: Int
-        var curTop: Int
-
-        //get the available size of child view
-
-        val childLeft = paddingLeft
-        val childTop = paddingTop
-        val childRight = measuredWidth - paddingRight
-        val childBottom = measuredHeight - paddingBottom
-        val childWidth = childRight - childLeft
-        val childHeight = childBottom - childTop
-
-        var maxHeight = 0
-
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            val h = i / size
-            val w = i % size
-
-            curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
-            curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt()
-
-            child.measure(
-                MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-            )
-            curWidth = child.measuredWidth
-            curLeft -= curWidth / 2
-            curHeight = child.measuredHeight
-            curTop -= curHeight * 5 / 2
-            if (curLeft + curWidth >= childRight) {
-                curLeft = childLeft
-                curTop += maxHeight
-                maxHeight = 0
-            }
-
-            child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
-
-//            child.setOnTouchListener { v, event ->
-//                //scaleGestureDetector.onTouchEvent(event)
-//                translationHandler.onTouch(v, event)
-//                false
-//            }
-//
-            if (i == 1) {
-            child.setDebounceClickListener {
-                Log.d("qwerty", "click")
-                (child as CardStack).count--
-                child.invalidate()
-                false
-            }
-
-            }
-
-        }
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return super.dispatchTouchEvent(ev)
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-//        scaleGestureDetector.onTouchEvent(event)
-//        translationHandler.onTouch(this, event)
-        return true
+    override fun inject() {
+        FeatureUtils.getFeature<FeatureComponent>(this, FeatureApi::class.java)
+            .gameComponentFactory()
+            .create(this)
+            .inject(this)
     }
 
     private val originContentRect by lazy {
-        run {
+        binding.frgGameBoard.run {
             val array = IntArray(2)
             getLocationOnScreen(array)
             Rect(array[0], array[1], array[0] + width, array[1] + height)
@@ -121,7 +58,7 @@ class Board @JvmOverloads constructor(
             private var prevY = 0f
             private var moveStarted = false
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (event == null || (scaleX ?: 1f) == 1f) return false
+                if (event == null || (binding.frgGameBoard.scaleX ?: 1f) == 1f) return false
 
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
@@ -147,8 +84,8 @@ class Board @JvmOverloads constructor(
                         }
                         moveStarted = true
                         run {
-                            translationX += (event.x - prevX)
-                            translationY += (event.y - prevY)
+                            binding.frgGameBoard.translationX += (event.x - prevX)
+                            binding.frgGameBoard.translationY += (event.y - prevY)
                         }
                         prevX = event.x
                         prevY = event.y
@@ -178,7 +115,7 @@ class Board @JvmOverloads constructor(
                 var totalScale = 1f
 
                 override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                    run {
+                    binding.frgGameBoard.run {
                         val actualPivot = PointF(
                             (detector.focusX - translationX + pivotX * (totalScale - 1)) / totalScale,
                             (detector.focusY - translationY + pivotY * (totalScale - 1)) / totalScale,
@@ -194,9 +131,9 @@ class Board @JvmOverloads constructor(
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
                     val prev = totalScale
                     totalScale *= detector.scaleFactor
-                    totalScale = totalScale.coerceIn(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR)
+                    totalScale = totalScale.coerceIn(Board.MIN_SCALE_FACTOR, Board.MAX_SCALE_FACTOR)
                     //Log.d("qwerty", "onScale")
-                    run {
+                    binding.frgGameBoard.run {
                         val scaleAnimation = ScaleAnimation(prev, totalScale, prev, totalScale, detector.focusX, detector.focusY)
                         scaleAnimation.duration = 0
                         scaleAnimation.fillAfter = true
@@ -216,7 +153,7 @@ class Board @JvmOverloads constructor(
     }
 
     private fun getContentViewTranslation(): PointF {
-        return run {
+        return binding.frgGameBoard.run {
             originContentRect.let { rect ->
                 val array = IntArray(2)
                 getLocationOnScreen(array)
@@ -234,11 +171,5 @@ class Board @JvmOverloads constructor(
                 )
             }
         }
-    }
-
-    companion object {
-        const val MAX_SCALE_FACTOR = 5f
-        const val MIN_SCALE_FACTOR = 1f
-        private const val CORRECT_LOCATION_ANIMATION_DURATION = 300L
     }
 }

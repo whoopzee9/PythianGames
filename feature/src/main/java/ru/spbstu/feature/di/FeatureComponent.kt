@@ -7,6 +7,7 @@ import ru.spbstu.common.di.scope.FeatureScope
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.auth.di.AuthComponent
 import ru.spbstu.feature.character_selection.di.CharacterSelectionComponent
+import ru.spbstu.feature.game.di.GameComponent
 import ru.spbstu.feature.login.di.LoginComponent
 import ru.spbstu.feature.main.di.MainComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
@@ -38,6 +39,7 @@ interface FeatureComponent {
     fun teamSelectionComponentFactory(): TeamSelectionComponent.Factory
     fun characterSelectionComponentFactory(): CharacterSelectionComponent.Factory
     fun teamsDisplayComponentFactory(): TeamsDisplayComponent.Factory
+    fun gameComponentFactory(): GameComponent.Factory
 
     @Component.Factory
     interface Factory {

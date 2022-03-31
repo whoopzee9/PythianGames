@@ -1,13 +1,16 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -16,6 +19,7 @@ import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
@@ -44,15 +48,20 @@ class CardStack @JvmOverloads constructor(
     var count = 5
 
     init {
+        height = context.dpToPx(35f)
+        width = context.dpToPx(58f)
+        spacing = context.dpToPx(2f)
+
         firstLayer = ContextCompat.getDrawable(context, R.drawable.ic_first_layer_36)
         secondLayer = ContextCompat.getDrawable(context, R.drawable.ic_second_layer_36)
         thirdLayer = ContextCompat.getDrawable(context, R.drawable.ic_third_layer_36)
         fourthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fourth_layer_36)
         fifthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fifth_layer_36)
-
-        height = context.dpToPx(35f)
-        width = context.dpToPx(58f)
-        spacing = context.dpToPx(2f)
+        firstLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        secondLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        thirdLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        fourthLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        fifthLayer?.setBounds(0, 0, width.toInt(), height.toInt())
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
