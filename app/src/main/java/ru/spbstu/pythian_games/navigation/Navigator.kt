@@ -47,7 +47,9 @@ class Navigator : FeatureRouter {
     }
 
     override fun openOnboarding() {
-
+        when (navController?.currentDestination?.id) {
+            R.id.authFragment -> navController?.navigate(R.id.action_authFragment_to_onboardingFragment)
+        }
     }
 
     override fun openMainFragment() {

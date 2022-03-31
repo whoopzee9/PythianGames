@@ -5,4 +5,6 @@ interface TokenRepository {
     fun saveToken(token: String)
     fun getRefresh(): RefreshToken?
     fun saveRefresh(refresh: String)
+    fun getOnboardingFlag(): Boolean
+    fun saveOnboardingFlag(flag: Boolean)
 }

@@ -20,6 +20,12 @@ class AuthFragment : BaseFragment<AuthViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+
+        if (viewModel.tokenRepository.getOnboardingFlag()) {
+            viewModel.openOnboarding()
+            viewModel.tokenRepository.saveOnboardingFlag(false)
+        }
+
         binding.frgAuthMbLogin.setDebounceClickListener {
             viewModel.openLogin()
         }

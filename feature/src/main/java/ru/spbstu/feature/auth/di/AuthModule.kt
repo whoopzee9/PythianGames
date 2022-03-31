@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
+import ru.spbstu.common.token.TokenRepository
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.auth.presentation.AuthViewModel
 import ru.spbstu.feature.onboarding.presentation.OnboardingViewModel
@@ -22,8 +23,8 @@ class AuthModule {
     @Provides
     @IntoMap
     @ViewModelKey(AuthViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return AuthViewModel(router)
+    fun provideViewModel(router: FeatureRouter, tokenRepository: TokenRepository): ViewModel {
+        return AuthViewModel(router, tokenRepository)
     }
 
     @Provides

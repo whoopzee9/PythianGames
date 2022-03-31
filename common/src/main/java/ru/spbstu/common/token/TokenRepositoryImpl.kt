@@ -26,8 +26,17 @@ class TokenRepositoryImpl @Inject constructor(
         sharedPreferences.edit().putString(REFRESH_KEY, refresh).apply()
     }
 
+    override fun getOnboardingFlag(): Boolean {
+        return sharedPreferences.getBoolean(ONBOARDING_FLAG_KEY, true)
+    }
+
+    override fun saveOnboardingFlag(flag: Boolean) {
+        sharedPreferences.edit().putBoolean(ONBOARDING_FLAG_KEY, flag).apply()
+    }
+
     private companion object {
         private const val TOKEN_KEY = "ru.spbstu.pythian_games.TokenRepositoryImpl.token"
         private const val REFRESH_KEY = "ru.spbstu.pythian_games.TokenRepositoryImpl.refresh"
+        private const val ONBOARDING_FLAG_KEY = "ru.spbstu.pythian_games.TokenRepositoryImpl.onboarding_flag"
     }
 }

@@ -3,6 +3,7 @@ package ru.spbstu.feature.onboarding.presentation
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.handleBackPressed
 import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
@@ -22,6 +23,7 @@ class OnboardingFragment : BaseFragment<OnboardingViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+        handleBackPressed {  }
         binding.frgOnboardingMbNext.setDebounceClickListener {
             viewModel.nextState()
         }
