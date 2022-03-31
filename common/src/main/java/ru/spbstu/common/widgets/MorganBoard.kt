@@ -1,7 +1,9 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import ru.spbstu.common.R
@@ -20,14 +22,23 @@ class MorganBoard @JvmOverloads constructor(
     private var height = context.dpToPx(35f)
     private var width = context.dpToPx(58f)
     private var spacing = context.dpToPx(8f)
+    private var boardSpacing = context.dpToPx(5.5f)
 
     private var skeletonWidth = 0
     private var skeletonHeight = 0
+    private var skeletonBounds = Rect()
 
     private val dx = context.dpToPx(32f)
     private val dy = context.dpToPx(19f)
 
     init {
+        val attributesArray =
+            context.obtainStyledAttributes(attrs, R.styleable.MorganBoard, defStyleAttr, 0)
+
+        size = attributesArray.getInt(
+            R.styleable.MorganBoard_size,
+            5
+        )
 
         val skeleton = ImageView(context)
         skeleton.setImageResource(R.drawable.ic_skeleton_big)
@@ -47,6 +58,8 @@ class MorganBoard @JvmOverloads constructor(
             square.setImageResource(R.drawable.ic_blank_layer_36)
             addView(square)
         }
+
+        attributesArray.recycle()
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -94,13 +107,13 @@ class MorganBoard @JvmOverloads constructor(
                     child.rotation = angle
                     curLeft = when (i) {
                         1, 3 -> (measuredWidth - child.measuredWidth) / 2
-                        2 -> (measuredWidth - skeletonWidth) / 2 + (width * size + spacing + context.dpToPx(2f)).toInt()
-                        4 -> (measuredWidth - skeletonWidth) / 2 - width.toInt() - spacing.toInt()
+                        2 -> ((r - l) / 2 + width * (size / 2) + spacing + boardSpacing * (size / 2 + 1)).toInt()
+                        4 -> ((measuredWidth - skeletonWidth) / 2 - width - spacing - boardSpacing).toInt()
                         else -> 0
                     }
                     curTop = when (i) {
                         1 -> 0
-                        3 -> (height * size + spacing).toInt() + (measuredHeight - skeletonHeight) / 2
+                        3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4) ).toInt()
                         2, 4 -> (measuredHeight - child.measuredHeight) / 2
                         else -> 0
                     }
@@ -110,7 +123,34 @@ class MorganBoard @JvmOverloads constructor(
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
                 }
                 else -> {
-
+                    val j = i - 5
+                    child.measure(
+                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                    )
+                    curLeft = 0
+                    curTop = 0
+                    curWidth = child.measuredWidth
+                    curHeight = child.measuredHeight
+                    when (j / (size - 2)) {
+                        0 -> {
+                            curLeft = ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2).toInt()
+                        }
+                        1 -> {
+                            curLeft = ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop = ((measuredHeight) / 2 + height / 2 + spacing + dy * (size - 3 - (j % (size - 2)))).toInt()
+                        }
+                        2 -> {
+                            curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop = ((measuredHeight) / 2 + height / 2 + spacing + dy * (size - 3 - (j % (size - 2)))).toInt()
+                        }
+                        3 -> {
+                            curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2).toInt()
+                        }
+                    }
+                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
                 }
             }
         }
@@ -166,7 +206,7 @@ class MorganBoard @JvmOverloads constructor(
     }
 
     override fun getSuggestedMinimumHeight(): Int {
-        return (height * (size + 2)).toInt() + (spacing * (size - 1)).toInt()
+        return (height * (size + 2)).toInt() + (spacing * 2 + boardSpacing * (size - 1)).toInt()
     }
 
     override fun getSuggestedMinimumWidth(): Int {

@@ -29,6 +29,8 @@ class GameFragment : BaseFragment<GameViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
+        binding.morganBoard2.size = 3
+
 //        binding.zoomView.setOnTouchListener { v, event ->
 //            scaleGestureDetector.onTouchEvent(event)
 //            translationHandler.onTouch(v, event)
