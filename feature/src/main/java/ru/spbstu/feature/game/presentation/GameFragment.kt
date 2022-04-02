@@ -1,23 +1,22 @@
 package ru.spbstu.feature.game.presentation
 
 import android.graphics.PointF
+import android.graphics.PorterDuff
 import android.graphics.Rect
+import android.graphics.drawable.VectorDrawable
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
-import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.model.Player
-import ru.spbstu.common.model.PlayerBoard
 import ru.spbstu.common.model.Team
 import ru.spbstu.common.widgets.Board
 import ru.spbstu.feature.R
@@ -36,7 +35,9 @@ class GameFragment : BaseFragment<GameViewModel>(
         requireView().setLightStatusBar()
         //binding.stack.addPlayer(Player())
 
-        binding.morganBoard1.addPlayer(Player(1, R.drawable.character_2, Team.Red, 2, "12", false))
+        val player = Player(1, R.drawable.character_2, Team.Orange, 2, "12", true)
+        binding.morganBoard1.addPlayer(player)
+        binding.morganBoard1.setCurrentPlayer(player.id)
         binding.morganBoard1.addPlayer(Player(2, R.drawable.character_3, Team.Green, 1, "2", false))
         binding.morganBoard1.addPlayer(Player(3, R.drawable.character_4, Team.Red, 2, "qwe", false))
         binding.morganBoard1.addPlayer(Player(4, R.drawable.character_5, Team.Red, 2, "qwавe", false))

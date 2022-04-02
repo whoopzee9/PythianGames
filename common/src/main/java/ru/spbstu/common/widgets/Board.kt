@@ -47,6 +47,8 @@ class Board @JvmOverloads constructor(
 
     private val playersList: MutableList<PlayerBoard> = mutableListOf()
 
+    private var currPlayer: PlayerBoard? = null
+
     init {
         characterBackground = ContextCompat.getDrawable(
             context,
@@ -69,6 +71,40 @@ class Board @JvmOverloads constructor(
             addView(CardStack(context))
         }
 
+        // arrows
+        val arrowUp = BoardArrow(context)
+        arrowUp.setDirection(BoardArrow.Direction.Up)
+        val arrowDown = BoardArrow(context)
+        arrowDown.setDirection(BoardArrow.Direction.Down)
+        val arrowLeft = BoardArrow(context)
+        arrowLeft.setDirection(BoardArrow.Direction.Left)
+        val arrowRight = BoardArrow(context)
+        arrowRight.setDirection(BoardArrow.Direction.Right)
+        arrowUp.setOnClickCallback {
+            arrowDown.resetHighlighted()
+            arrowLeft.resetHighlighted()
+            arrowRight.resetHighlighted()
+        }
+        arrowDown.setOnClickCallback {
+            arrowUp.resetHighlighted()
+            arrowLeft.resetHighlighted()
+            arrowRight.resetHighlighted()
+        }
+        arrowLeft.setOnClickCallback {
+            arrowUp.resetHighlighted()
+            arrowDown.resetHighlighted()
+            arrowRight.resetHighlighted()
+        }
+        arrowRight.setOnClickCallback {
+            arrowUp.resetHighlighted()
+            arrowDown.resetHighlighted()
+            arrowLeft.resetHighlighted()
+        }
+        addView(arrowUp)
+        addView(arrowDown)
+        addView(arrowLeft)
+        addView(arrowRight)
+
         attributesArray.recycle()
     }
 
@@ -90,6 +126,12 @@ class Board @JvmOverloads constructor(
         requestLayout()
     }
 
+    fun setCurrentPlayer(playerId: Long) {
+        currPlayer = playersList.first { it.player.id == playerId }
+    }
+
+    fun getCurrentPlayer() = currPlayer
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var curWidth: Int
         var curHeight: Int
@@ -109,96 +151,232 @@ class Board @JvmOverloads constructor(
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
-            if (child is MorganBoard) {
-                child.measure(
-                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                )
-                curWidth = child.measuredWidth
-                curLeft = 0
-                curHeight = child.measuredHeight
-                curTop = 0
-                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
-            } else if (child is CardStack) {
-                val h = (i - 1) / size
-                val w = (i - 1) % size
-
-                val shift =
-                    if (size == 5) spacing.toInt() else (spacing + cardHeight + boardSpacing / 2).toInt()
-
-                curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
-                curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt() + shift
-
-
-                child.measure(
-                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                )
-                curWidth = child.measuredWidth
-                curLeft -= curWidth / 2
-                curHeight = child.measuredHeight
-                curTop -= curHeight * 5 / 2
-                if (curLeft + curWidth >= childRight) {
-                    curLeft = childLeft
-                    curTop += maxHeight
-                    maxHeight = 0
+            when (child) {
+                is MorganBoard -> {
+                    child.measure(
+                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                    )
+                    curWidth = child.measuredWidth
+                    curLeft = 0
+                    curHeight = child.measuredHeight
+                    curTop = 0
+                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
                 }
+                is CardStack -> {
+                    val h = (i - 1) / size
+                    val w = (i - 1) % size
 
-                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+                    val shift =
+                        if (size == 5) spacing.toInt() else (spacing + cardHeight + boardSpacing / 2).toInt()
 
-//            child.setOnTouchListener { v, event ->
-//                //scaleGestureDetector.onTouchEvent(event)
-//                translationHandler.onTouch(v, event)
-//                false
-//            }
-//
+                    curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
+                    curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt() + shift
 
-//            child.setDebounceClickListener {
-//                Log.d("qwerty", "click")
-//                (child as CardStack).count--
-//                child.invalidate()
-//                false
-//            }
 
-            } else if (child is BoardIcon) {
-                val player = child.getPlayer()
-                val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
-
-                val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
-                    .toInt() - iconWidth.toInt() / 2
-                val baseCurTop = cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
-                    .toInt() - boardSpacing.toInt()
-                when (sameSquareList.size) {
-                    1 -> {
-                        curLeft = baseCurLeft
-                        curTop = baseCurTop
+                    child.measure(
+                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                    )
+                    curWidth = child.measuredWidth
+                    curLeft -= curWidth / 2
+                    curHeight = child.measuredHeight
+                    curTop -= curHeight * 5 / 2
+                    if (curLeft + curWidth >= childRight) {
+                        curLeft = childLeft
+                        curTop += maxHeight
+                        maxHeight = 0
                     }
-                    2 -> {
-                        val index = sameSquareList.indexOf(player)
-                        curLeft = baseCurLeft +  (index * 2 - 1) * iconWidth.toInt() / 3
-                        curTop = baseCurTop
-                    }
-                    else -> { // 3 icons
-                        val index = sameSquareList.indexOf(player)
-                        if (index < 2) {
-                            curLeft = baseCurLeft +  (index * 2 - 1) * iconWidth.toInt() / 3
-                            curTop = baseCurTop
-                        } else {
+
+                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+
+                    //            child.setOnTouchListener { v, event ->
+                    //                //scaleGestureDetector.onTouchEvent(event)
+                    //                translationHandler.onTouch(v, event)
+                    //                false
+                    //            }
+                    //
+
+                    //            child.setDebounceClickListener {
+                    //                Log.d("qwerty", "click")
+                    //                (child as CardStack).count--
+                    //                child.invalidate()
+                    //                false
+                    //            }
+
+                }
+                is BoardIcon -> {
+                    val player = child.getPlayer()
+                    val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
+
+                    val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
+                        .toInt() - iconWidth.toInt() / 2
+                    val baseCurTop =
+                        cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
+                            .toInt() - boardSpacing.toInt()
+                    when (sameSquareList.size) {
+                        1 -> {
                             curLeft = baseCurLeft
-                            curTop = baseCurTop + iconHeight.toInt() / 3
+                            curTop = baseCurTop
+                        }
+                        2 -> {
+                            val index = sameSquareList.indexOf(player)
+                            curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
+                            curTop = baseCurTop
+                        }
+                        else -> { // 3 icons
+                            val index = sameSquareList.indexOf(player)
+                            if (index < 2) {
+                                curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
+                                curTop = baseCurTop
+                            } else {
+                                curLeft = baseCurLeft
+                                curTop = baseCurTop + iconHeight.toInt() / 3
+                            }
+                        }
+                    }
+
+                    child.measure(
+                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                    )
+
+                    curWidth = iconWidth.toInt()
+                    curHeight = iconHeight.toInt()
+
+                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+                }
+                is BoardArrow -> { //arrows
+                    val player = currPlayer
+                    if (player != null && player.player.isActiveTurn) {
+                        //todo get info about layers from cardStack's to decide where we can go
+                        when (child.getDirection()) {
+                            BoardArrow.Direction.Up -> {
+                                if (player.y > 0) {
+                                    val arrowShift = 0.2f
+                                    curLeft =
+                                        width / 2 + context.dpToPx(-(player.y - arrowShift) * dx + player.x * dx)
+                                            .toInt()
+                                    curTop =
+                                        cardHeight.toInt() + context.dpToPx((player.y - arrowShift) * dy + player.x * dy)
+                                            .toInt()
+                                    child.measure(
+                                        MeasureSpec.makeMeasureSpec(
+                                            childWidth,
+                                            MeasureSpec.AT_MOST
+                                        ),
+                                        MeasureSpec.makeMeasureSpec(
+                                            childHeight,
+                                            MeasureSpec.AT_MOST
+                                        )
+                                    )
+
+                                    curWidth = child.measuredWidth
+                                    curHeight = child.measuredHeight
+
+                                    child.layout(
+                                        curLeft,
+                                        curTop,
+                                        curLeft + curWidth,
+                                        curTop + curHeight
+                                    )
+                                }
+                            }
+                            BoardArrow.Direction.Down -> {
+                                if (player.y < size - 1) {
+                                    val arrowShift = 1.4f
+                                    curLeft =
+                                        width / 2 + context.dpToPx(-(player.y + arrowShift) * dx + player.x * dx)
+                                            .toInt()
+                                    curTop =
+                                        cardHeight.toInt() + context.dpToPx((player.y + arrowShift) * dy + player.x * dy)
+                                            .toInt()
+                                    child.measure(
+                                        MeasureSpec.makeMeasureSpec(
+                                            childWidth,
+                                            MeasureSpec.AT_MOST
+                                        ),
+                                        MeasureSpec.makeMeasureSpec(
+                                            childHeight,
+                                            MeasureSpec.AT_MOST
+                                        )
+                                    )
+
+                                    curWidth = child.measuredWidth
+                                    curHeight = child.measuredHeight
+
+                                    child.layout(
+                                        curLeft,
+                                        curTop,
+                                        curLeft + curWidth,
+                                        curTop + curHeight
+                                    )
+                                }
+                            }
+                            BoardArrow.Direction.Left -> {
+                                if (player.x > 0) {
+                                    val arrowShift = 1.4f
+                                    curLeft =
+                                        width / 2 + context.dpToPx(-player.y * dx + (player.x - arrowShift) * dx)
+                                            .toInt()
+                                    curTop =
+                                        cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x - 0.2f) * dy)
+                                            .toInt()
+                                    child.measure(
+                                        MeasureSpec.makeMeasureSpec(
+                                            childWidth,
+                                            MeasureSpec.AT_MOST
+                                        ),
+                                        MeasureSpec.makeMeasureSpec(
+                                            childHeight,
+                                            MeasureSpec.AT_MOST
+                                        )
+                                    )
+
+                                    curWidth = child.measuredWidth
+                                    curHeight = child.measuredHeight
+
+                                    child.layout(
+                                        curLeft,
+                                        curTop,
+                                        curLeft + curWidth,
+                                        curTop + curHeight
+                                    )
+                                }
+                            }
+                            BoardArrow.Direction.Right -> {
+                                if (player.x < size - 1) {
+                                    curLeft =
+                                        width / 2 + context.dpToPx(-player.y * dx + (player.x + 0.2f) * dx)
+                                            .toInt()
+                                    curTop =
+                                        cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x + 1.3f) * dy)
+                                            .toInt()
+                                    child.measure(
+                                        MeasureSpec.makeMeasureSpec(
+                                            childWidth,
+                                            MeasureSpec.AT_MOST
+                                        ),
+                                        MeasureSpec.makeMeasureSpec(
+                                            childHeight,
+                                            MeasureSpec.AT_MOST
+                                        )
+                                    )
+
+                                    curWidth = child.measuredWidth
+                                    curHeight = child.measuredHeight
+
+                                    child.layout(
+                                        curLeft,
+                                        curTop,
+                                        curLeft + curWidth,
+                                        curTop + curHeight
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-
-                child.measure(
-                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                )
-
-                curWidth = iconWidth.toInt()
-                curHeight = iconHeight.toInt()
-
-                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
             }
 
         }

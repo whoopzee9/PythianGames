@@ -12,6 +12,7 @@
     <color name="button_orange">#FFA200</color>
     <color name="button_blue">#0B4FFF</color>
     <color name="button_green">#2DAD69</color>
+    <color name="arrow_highlighted_color">#2DAD69</color>
 
     <color name="text_color_primary">#000000</color>
     <color name="text_color_secondary">#FFFFFF</color>
@@ -30,6 +31,6 @@
 
     <color name="image_disabled_tint">#80A3A2A7</color>
     <color name="stack_shade">#4D000000</color>
-    <color name="color_active_turn">#000000</color>
+    <color name="color_active_turn">#FFFFFF</color>
 
 </resources>
