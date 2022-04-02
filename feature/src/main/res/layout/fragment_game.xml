@@ -24,31 +24,35 @@
 
     <ru.spbstu.common.widgets.Board
         android:id="@+id/frg_game__board"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
+        app:board_size="3"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/view2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view1" />
 
-    <ru.spbstu.common.widgets.MorganBoard
+    <ru.spbstu.common.widgets.Board
         android:id="@+id/morgan_board_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         app:layout_constraintVertical_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <ru.spbstu.common.widgets.MorganBoard
+    <ru.spbstu.common.widgets.Board
         android:id="@+id/morgan_board_2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:board_size="3"
         app:size="3"
+        android:visibility="visible"
         app:layout_constraintVertical_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

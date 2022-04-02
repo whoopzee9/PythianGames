@@ -5,14 +5,20 @@ import android.graphics.Rect
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
+import androidx.constraintlayout.widget.ConstraintLayout
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.viewBinding
+import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.PlayerBoard
+import ru.spbstu.common.model.Team
 import ru.spbstu.common.widgets.Board
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentGameBinding
@@ -28,8 +34,13 @@ class GameFragment : BaseFragment<GameViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+        //binding.stack.addPlayer(Player())
 
-        binding.morganBoard2.size = 3
+        binding.morganBoard1.addPlayer(Player(1, R.drawable.character_2, Team.Red, 2, "12", false))
+        binding.morganBoard1.addPlayer(Player(2, R.drawable.character_3, Team.Green, 1, "2", false))
+        binding.morganBoard1.addPlayer(Player(3, R.drawable.character_4, Team.Red, 2, "qwe", false))
+        binding.morganBoard1.addPlayer(Player(4, R.drawable.character_5, Team.Red, 2, "qwавe", false))
+        binding.morganBoard2.addPlayer(Player(1, R.drawable.character_2, Team.Green, 2, "", false))
 
 //        binding.zoomView.setOnTouchListener { v, event ->
 //            scaleGestureDetector.onTouchEvent(event)

@@ -2,30 +2,19 @@ package ru.spbstu.common.widgets
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
-import android.graphics.PorterDuff
-import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
-import ru.spbstu.common.extenstions.scale
-import ru.spbstu.common.extenstions.setPivot
-import ru.spbstu.common.extenstions.toBitmap
-import kotlin.math.max
+import ru.spbstu.common.model.Player
 import kotlin.math.min
 
 
@@ -44,6 +33,7 @@ class CardStack @JvmOverloads constructor(
     private var height: Float
     private var width: Float
     private var spacing: Float
+
 
     var count = 5
 
@@ -174,37 +164,7 @@ class CardStack @JvmOverloads constructor(
                 }
             }
             else -> {
-
             }
         }
     }
-
-    private var moveStarted = false
-
-
-//    override fun onTouchEvent(event: MotionEvent): Boolean {
-//        super.onTouchEvent(event)
-//        when (event.actionMasked) {
-//            MotionEvent.ACTION_MOVE -> {
-//                Log.d("qwerty", "move")
-//                moveStarted = true
-//            }
-//            MotionEvent.ACTION_DOWN -> {
-//                Log.d("qwerty", "down")
-//                return false
-//            }
-//            MotionEvent.ACTION_UP -> {
-//                Log.d("qwerty", "up")
-//                Log.d("qwerty", "moveStarted: $moveStarted")
-//                if (!moveStarted) {
-//                    Log.d("qwerty", "before perform click")
-//                    performClick()
-//                    return false
-//                }
-//                moveStarted = false
-//            }
-//        }
-//        //Log.d("qwerty", "onTouchEvent super val: ${super.onTouchEvent(event)}")
-//        return false
-//    }
 }

@@ -26,17 +26,26 @@ class MorganBoard @JvmOverloads constructor(
 
     private var skeletonWidth = 0
     private var skeletonHeight = 0
-    private var skeletonBounds = Rect()
 
-    private val dx = context.dpToPx(32f)
-    private val dy = context.dpToPx(19f)
+    private val dx = context.dpToPx(33f)
+    private val dy = context.dpToPx(20f)
 
     init {
-        val attributesArray =
+        var attributesArray =
             context.obtainStyledAttributes(attrs, R.styleable.MorganBoard, defStyleAttr, 0)
 
         size = attributesArray.getInt(
             R.styleable.MorganBoard_size,
+            5
+        )
+        attributesArray.recycle()
+
+        //needed to change MorganBoard size according to main Board size
+        attributesArray =
+            context.obtainStyledAttributes(attrs, R.styleable.Board, defStyleAttr, 0)
+
+        size = attributesArray.getInt(
+            R.styleable.Board_board_size,
             5
         )
 
@@ -113,7 +122,7 @@ class MorganBoard @JvmOverloads constructor(
                     }
                     curTop = when (i) {
                         1 -> 0
-                        3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4) ).toInt()
+                        3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4 + (size - 3) / 2) ).toInt()
                         2, 4 -> (measuredHeight - child.measuredHeight) / 2
                         else -> 0
                     }
@@ -135,19 +144,19 @@ class MorganBoard @JvmOverloads constructor(
                     when (j / (size - 2)) {
                         0 -> {
                             curLeft = ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2).toInt()
+                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
                         }
                         1 -> {
-                            curLeft = ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = ((measuredHeight) / 2 + height / 2 + spacing + dy * (size - 3 - (j % (size - 2)))).toInt()
+                            curLeft = ((r - l) / 2 + boardSpacing * 3 / 2 + (dx - context.dpToPx(1f)) * ((j % (size - 2)) + 1)).toInt()
+                            curTop = ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
                         }
                         2 -> {
                             curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = ((measuredHeight) / 2 + height / 2 + spacing + dy * (size - 3 - (j % (size - 2)))).toInt()
+                            curTop = ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
                         }
                         3 -> {
                             curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2).toInt()
+                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
                         }
                     }
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
@@ -164,8 +173,8 @@ class MorganBoard @JvmOverloads constructor(
                 LayoutParams.WRAP_CONTENT
             )
 
-        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec, true)
-        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec, false)
+        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec)
+        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec)
 
         width += paddingLeft + paddingRight
         height += paddingTop + paddingBottom
@@ -176,8 +185,7 @@ class MorganBoard @JvmOverloads constructor(
     private fun calculateSize(
         suggestedSize: Int,
         paramSize: Int,
-        measureSpec: Int,
-        isWidth: Boolean
+        measureSpec: Int
     ): Int {
         var result = 0
         val size = MeasureSpec.getSize(measureSpec)
@@ -206,10 +214,10 @@ class MorganBoard @JvmOverloads constructor(
     }
 
     override fun getSuggestedMinimumHeight(): Int {
-        return (height * (size + 2)).toInt() + (spacing * 2 + boardSpacing * (size - 1)).toInt()
+        return (height * (size + 2)).toInt() + (spacing * 2 + boardSpacing * (size)).toInt()
     }
 
     override fun getSuggestedMinimumWidth(): Int {
-        return (width * (size + 2)).toInt()
+        return (width * (size + 2)).toInt() + (spacing * 3 + boardSpacing * (size + 2)).toInt()
     }
 }

@@ -15,6 +15,7 @@ import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
 import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.Team
 import kotlin.math.min
 
 class FlatBoard @JvmOverloads constructor(
@@ -289,7 +290,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_orange
+                                            R.color.button_red
                                         )
                                     )
                                     child.background = background
@@ -298,7 +299,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_red
+                                            R.color.button_orange
                                         )
                                     )
                                     child.background = background
@@ -376,22 +377,23 @@ class FlatBoard @JvmOverloads constructor(
     private fun calculatePlayerOffset(player: Player) {
         when (numOfPlayers) {
             2 -> {
-                when (player.teamNum) {
-                    1 -> {
+                when (player.team) {
+                    Team.Green -> {
                         leftPlayerOffset = 0
                         topPlayerOffset = 0
                     }
-                    2 -> {
+                    Team.Blue -> {
                         leftPlayerOffset = (squareWidth + padding) * (size - 1)
                         topPlayerOffset = (squareHeight + padding) * (size - 1)
                     }
+                    else -> {}
                 }
             }
             4 -> {
                 when (numOfTeams) {
                     2 -> {
-                        when (player.teamNum) {
-                            1 -> {
+                        when (player.team) {
+                            Team.Green -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = 0
@@ -403,7 +405,7 @@ class FlatBoard @JvmOverloads constructor(
                                     }
                                 }
                             }
-                            2 -> {
+                            Team.Blue -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = (squareWidth + padding) * (size - 1)
@@ -418,20 +420,20 @@ class FlatBoard @JvmOverloads constructor(
                         }
                     }
                     4 -> {
-                        when (player.teamNum) {
-                            1 -> {
+                        when (player.team) {
+                            Team.Green -> {
                                 leftPlayerOffset = 0
                                 topPlayerOffset = 0
                             }
-                            2 -> {
+                            Team.Blue -> {
                                 leftPlayerOffset = (squareWidth + padding) * (size - 1)
                                 topPlayerOffset = (squareHeight + padding) * (size - 1)
                             }
-                            3 -> {
+                            Team.Orange -> {
                                 leftPlayerOffset = (squareWidth + padding) * (size - 1)
                                 topPlayerOffset = 0
                             }
-                            4 -> {
+                            Team.Red -> {
                                 leftPlayerOffset = 0
                                 topPlayerOffset = (squareHeight + padding) * (size - 1)
                             }
@@ -440,8 +442,8 @@ class FlatBoard @JvmOverloads constructor(
                 }
             }
             6 -> {
-                when (player.teamNum) {
-                    1 -> {
+                when (player.team) {
+                    Team.Green -> {
                         when (player.playerNum) {
                             1 -> {
                                 leftPlayerOffset = 0
@@ -453,7 +455,7 @@ class FlatBoard @JvmOverloads constructor(
                             }
                         }
                     }
-                    2 -> {
+                    Team.Blue -> {
                         when (player.playerNum) {
                             1 -> {
                                 leftPlayerOffset = (squareWidth + padding) * (size - 1)
@@ -465,7 +467,7 @@ class FlatBoard @JvmOverloads constructor(
                             }
                         }
                     }
-                    3 -> {
+                    Team.Red -> {
                         when (player.playerNum) {
                             1 -> {
                                 leftPlayerOffset = 0
@@ -482,8 +484,8 @@ class FlatBoard @JvmOverloads constructor(
             8 -> {
                 when (numOfTeams) {
                     2 -> {
-                        when (player.teamNum) {
-                            1 -> {
+                        when (player.team) {
+                            Team.Green -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = 0
@@ -503,7 +505,7 @@ class FlatBoard @JvmOverloads constructor(
                                     }
                                 }
                             }
-                            2 -> {
+                            Team.Blue -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = (squareWidth + padding) * (size / 2)
@@ -526,8 +528,8 @@ class FlatBoard @JvmOverloads constructor(
                         }
                     }
                     4 -> {
-                        when (player.teamNum) {
-                            1 -> {
+                        when (player.team) {
+                            Team.Green -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = 0
@@ -539,7 +541,7 @@ class FlatBoard @JvmOverloads constructor(
                                     }
                                 }
                             }
-                            2 -> {
+                            Team.Blue -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = (squareWidth + padding) * (size - 1)
@@ -551,7 +553,7 @@ class FlatBoard @JvmOverloads constructor(
                                     }
                                 }
                             }
-                            3 -> {
+                            Team.Orange -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = (squareWidth + padding) * (size / 2)
@@ -563,7 +565,7 @@ class FlatBoard @JvmOverloads constructor(
                                     }
                                 }
                             }
-                            4 -> {
+                            Team.Red -> {
                                 when (player.playerNum) {
                                     1 -> {
                                         leftPlayerOffset = 0

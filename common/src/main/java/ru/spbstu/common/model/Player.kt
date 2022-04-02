@@ -1,10 +1,21 @@
 package ru.spbstu.common.model
 
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import ru.spbstu.common.R
 
 data class Player(
-    @DrawableRes val iconRes: Int,
-    val teamNum: Int,
-    val playerNum: Int,
-    val name: String
+    val id: Long = 0,
+    @DrawableRes val iconRes: Int = R.drawable.character_1,
+    val team: Team = Team.Red,
+    val playerNum: Int = 1,
+    val name: String = "",
+    val isActiveTurn: Boolean = false
 )
+
+sealed class Team(@ColorRes val colorRes: Int) {
+    object Red: Team(R.color.button_red)
+    object Orange: Team(R.color.button_orange)
+    object Blue: Team(R.color.button_blue)
+    object Green: Team(R.color.button_green)
+}

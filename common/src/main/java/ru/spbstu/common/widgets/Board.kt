@@ -3,19 +3,23 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
-import android.widget.Toast
+import androidx.core.content.ContextCompat
+import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
-import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setPivot
+import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.PlayerBoard
+import ru.spbstu.common.model.Team
+import kotlin.math.min
 
 class Board @JvmOverloads constructor(
     context: Context,
@@ -24,16 +28,66 @@ class Board @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     private var size = 5
+    private var totalPlayers = 8
+    private var totalTeams = 4
+
     private val dx = 32f
     private val dy = 19f
 
-    private var count = 0
+    private var cardHeight = context.dpToPx(35f)
+    private var cardWidth = context.dpToPx(58f)
+    private var spacing = context.dpToPx(8f)
+    private var boardSpacing = context.dpToPx(5.5f)
+
+    private var iconHeight = context.dpToPx(32f)
+    private var iconWidth = context.dpToPx(32f)
+    private var strokeWidth = context.dpToPx(3f)
+    private var activeTurnStrokeWidth = context.dpToPx(1f)
+    private var characterBackground: GradientDrawable
+
+    private val playersList: MutableList<PlayerBoard> = mutableListOf()
 
     init {
+        characterBackground = ContextCompat.getDrawable(
+            context,
+            R.drawable.background_character_board
+        ) as GradientDrawable
+
+        val attributesArray =
+            context.obtainStyledAttributes(attrs, R.styleable.Board, defStyleAttr, 0)
+
+        size = attributesArray.getInt(
+            R.styleable.Board_board_size,
+            5
+        )
+
+        val board = MorganBoard(context, attrs, defStyleAttr)
+        board.size = size
+        addView(board)
 
         for (i in 0 until size * size) {
             addView(CardStack(context))
         }
+
+        attributesArray.recycle()
+    }
+
+    fun setTotalPlayers(players: Int) {
+        totalPlayers = players
+    }
+
+    fun setTotalTeams(teams: Int) {
+        totalTeams = teams
+    }
+
+    fun addPlayer(player: Player) {
+        val playerBoard = PlayerBoard(player, 1, 1)
+        determineStartPositions(playerBoard)
+        playersList.add(playerBoard)
+        val icon = BoardIcon(context)
+        icon.setPlayer(playerBoard)
+        addView(icon)
+        requestLayout()
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -55,27 +109,42 @@ class Board @JvmOverloads constructor(
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
-            val h = i / size
-            val w = i % size
+            if (child is MorganBoard) {
+                child.measure(
+                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                )
+                curWidth = child.measuredWidth
+                curLeft = 0
+                curHeight = child.measuredHeight
+                curTop = 0
+                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+            } else if (child is CardStack) {
+                val h = (i - 1) / size
+                val w = (i - 1) % size
 
-            curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
-            curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt()
+                val shift =
+                    if (size == 5) spacing.toInt() else (spacing + cardHeight + boardSpacing / 2).toInt()
 
-            child.measure(
-                MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-            )
-            curWidth = child.measuredWidth
-            curLeft -= curWidth / 2
-            curHeight = child.measuredHeight
-            curTop -= curHeight * 5 / 2
-            if (curLeft + curWidth >= childRight) {
-                curLeft = childLeft
-                curTop += maxHeight
-                maxHeight = 0
-            }
+                curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
+                curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt() + shift
 
-            child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+
+                child.measure(
+                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                )
+                curWidth = child.measuredWidth
+                curLeft -= curWidth / 2
+                curHeight = child.measuredHeight
+                curTop -= curHeight * 5 / 2
+                if (curLeft + curWidth >= childRight) {
+                    curLeft = childLeft
+                    curTop += maxHeight
+                    maxHeight = 0
+                }
+
+                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
 
 //            child.setOnTouchListener { v, event ->
 //                //scaleGestureDetector.onTouchEvent(event)
@@ -83,17 +152,112 @@ class Board @JvmOverloads constructor(
 //                false
 //            }
 //
-            if (i == 1) {
-            child.setDebounceClickListener {
-                Log.d("qwerty", "click")
-                (child as CardStack).count--
-                child.invalidate()
-                false
-            }
 
+//            child.setDebounceClickListener {
+//                Log.d("qwerty", "click")
+//                (child as CardStack).count--
+//                child.invalidate()
+//                false
+//            }
+
+            } else if (child is BoardIcon) {
+                val player = child.getPlayer()
+                val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
+                
+                val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
+                    .toInt() - iconWidth.toInt() / 2
+                val baseCurTop = cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
+                    .toInt() - boardSpacing.toInt()
+                when (sameSquareList.size) {
+                    1 -> {
+                        curLeft = baseCurLeft
+                        curTop = baseCurTop
+                    }
+                    2 -> {
+                        val index = sameSquareList.indexOf(player)
+                        curLeft = baseCurLeft +  (index * 2 - 1) * iconWidth.toInt() / 3
+                        curTop = baseCurTop
+                    }
+                    else -> { // 3 icons
+                        val index = sameSquareList.indexOf(player)
+                        if (index < 2) {
+                            curLeft = baseCurLeft +  (index * 2 - 1) * iconWidth.toInt() / 3
+                            curTop = baseCurTop
+                        } else {
+                            curLeft = baseCurLeft
+                            curTop = baseCurTop + iconHeight.toInt() / 3
+                        }
+                    }
+                }
+
+                child.measure(
+                    MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                )
+
+                curWidth = iconWidth.toInt()
+                curHeight = iconHeight.toInt()
+
+                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
             }
 
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        var lp: LayoutParams? = layoutParams
+        if (lp == null)
+            lp = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+
+        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec)
+        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec)
+
+        width += paddingLeft + paddingRight
+        height += paddingTop + paddingBottom
+
+        setMeasuredDimension(width, height)
+    }
+
+    private fun calculateSize(
+        suggestedSize: Int,
+        paramSize: Int,
+        measureSpec: Int
+    ): Int {
+        var result = 0
+        val size = MeasureSpec.getSize(measureSpec)
+        val mode = MeasureSpec.getMode(measureSpec)
+
+        when (mode) {
+            MeasureSpec.AT_MOST ->
+                result = when (paramSize) {
+                    LayoutParams.WRAP_CONTENT -> min(suggestedSize, size)
+                    LayoutParams.MATCH_PARENT -> size
+                    else -> min(paramSize, size)
+                }
+            MeasureSpec.EXACTLY -> result = size
+            MeasureSpec.UNSPECIFIED ->
+                result =
+                    if (paramSize == LayoutParams.WRAP_CONTENT ||
+                        paramSize == LayoutParams.MATCH_PARENT
+                    )
+                        suggestedSize
+                    else {
+                        paramSize
+                    }
+        }
+
+        return result
+    }
+
+    override fun getSuggestedMinimumHeight(): Int {
+        return (cardHeight * (size + 2)).toInt() + (spacing * 2 + boardSpacing * (size)).toInt()
+    }
+
+    override fun getSuggestedMinimumWidth(): Int {
+        return (cardWidth * (size + 2)).toInt() + (spacing * 3 + boardSpacing * (size + 2)).toInt()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -102,9 +266,219 @@ class Board @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-//        scaleGestureDetector.onTouchEvent(event)
-//        translationHandler.onTouch(this, event)
+        scaleGestureDetector.onTouchEvent(event)
+        translationHandler.onTouch(this, event)
         return true
+    }
+
+    private fun determineStartPositions(playerBoard: PlayerBoard) {
+        when (totalPlayers) {
+            2 -> {
+                when (playerBoard.player.team) {
+                    Team.Green -> {
+                        playerBoard.x = 0
+                        playerBoard.y = 0
+                    }
+                    Team.Blue -> {
+                        playerBoard.x = size - 1
+                        playerBoard.y = size - 1
+                    }
+                    else -> {}
+                }
+            }
+            4 -> {
+                when (totalTeams) {
+                    2 -> {
+                        when (playerBoard.player.team) {
+                            Team.Green -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                            Team.Blue -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    4 -> {
+                        when (playerBoard.player.team) {
+                            Team.Green -> {
+                                playerBoard.x = 0
+                                playerBoard.y = 0
+                            }
+                            Team.Blue -> {
+                                playerBoard.x = size - 1
+                                playerBoard.y = size - 1
+                            }
+                            Team.Orange -> {
+                                playerBoard.x = size - 1
+                                playerBoard.y = 0
+                            }
+                            Team.Red -> {
+                                playerBoard.x = 0
+                                playerBoard.y = size - 1
+                            }
+                        }
+                    }
+                }
+            }
+            6 -> {
+                when (playerBoard.player.team) {
+                    Team.Green -> {
+                        when (playerBoard.player.playerNum) {
+                            1 -> {
+                                playerBoard.x = 0
+                                playerBoard.y = 0
+                            }
+                            2 -> {
+                                playerBoard.x = size - 1
+                                playerBoard.y = size - 1
+                            }
+                        }
+                    }
+                    Team.Blue -> {
+                        when (playerBoard.player.playerNum) {
+                            1 -> {
+                                playerBoard.x = size - 1
+                                playerBoard.y = 0
+                            }
+                            2 -> {
+                                playerBoard.x = 0
+                                playerBoard.y = size - 1
+                            }
+                        }
+                    }
+                    Team.Red -> {
+                        when (playerBoard.player.playerNum) {
+                            1 -> {
+                                playerBoard.x = 0
+                                playerBoard.y = size / 2
+                            }
+                            2 -> {
+                                playerBoard.x = size - 1
+                                playerBoard.y = size / 2
+                            }
+                        }
+                    }
+                }
+            }
+            8 -> {
+                when (totalTeams) {
+                    2 -> {
+                        when (playerBoard.player.team) {
+                            Team.Green -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = size - 1
+                                    }
+                                    3 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = 0
+                                    }
+                                    4 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                            Team.Blue -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = size / 2
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size / 2
+                                        playerBoard.y = size - 1
+                                    }
+                                    3 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = size / 2
+                                    }
+                                    4 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = size / 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    4 -> {
+                        when (playerBoard.player.team) {
+                            Team.Green -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                            Team.Blue -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                            Team.Orange -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = size / 2
+                                        playerBoard.y = 0
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size / 2
+                                        playerBoard.y = size - 1
+                                    }
+                                }
+                            }
+                            Team.Red -> {
+                                when (playerBoard.player.playerNum) {
+                                    1 -> {
+                                        playerBoard.x = 0
+                                        playerBoard.y = size / 2
+                                    }
+                                    2 -> {
+                                        playerBoard.x = size - 1
+                                        playerBoard.y = size / 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private val originContentRect by lazy {
@@ -149,6 +523,7 @@ class Board @JvmOverloads constructor(
                         run {
                             translationX += (event.x - prevX)
                             translationY += (event.y - prevY)
+                            checkTranslation()
                         }
                         prevX = event.x
                         prevY = event.y
@@ -171,6 +546,21 @@ class Board @JvmOverloads constructor(
         }
     }
 
+    private fun checkTranslation() {
+        if (translationX > MAX_TRANSLATION_X) {
+            translationX = MAX_TRANSLATION_X
+        }
+        if (translationX < MIN_TRANSLATION_X) {
+            translationX = MIN_TRANSLATION_X
+        }
+        if (translationY > MAX_TRANSLATION_Y) {
+            translationY = MAX_TRANSLATION_Y
+        }
+        if (translationY < MIN_TRANSLATION_Y) {
+            translationY = MIN_TRANSLATION_Y
+        }
+    }
+
     private val scaleGestureDetector by lazy {
         ScaleGestureDetector(
             context,
@@ -186,6 +576,7 @@ class Board @JvmOverloads constructor(
 
                         translationX -= (pivotX - actualPivot.x) * (totalScale - 1)
                         translationY -= (pivotY - actualPivot.y) * (totalScale - 1)
+                        checkTranslation()
                         setPivot(actualPivot)
                     }
                     return true
@@ -197,7 +588,14 @@ class Board @JvmOverloads constructor(
                     totalScale = totalScale.coerceIn(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR)
                     //Log.d("qwerty", "onScale")
                     run {
-                        val scaleAnimation = ScaleAnimation(prev, totalScale, prev, totalScale, detector.focusX, detector.focusY)
+                        val scaleAnimation = ScaleAnimation(
+                            prev,
+                            totalScale,
+                            prev,
+                            totalScale,
+                            detector.focusX,
+                            detector.focusY
+                        )
                         scaleAnimation.duration = 0
                         scaleAnimation.fillAfter = true
                         startAnimation(scaleAnimation)
@@ -206,6 +604,7 @@ class Board @JvmOverloads constructor(
                         getContentViewTranslation().run {
                             translationX += x
                             translationY += y
+                            checkTranslation()
                         }
                     }
                     return true
@@ -237,8 +636,12 @@ class Board @JvmOverloads constructor(
     }
 
     companion object {
-        const val MAX_SCALE_FACTOR = 5f
+        const val MAX_SCALE_FACTOR = 1.2f
         const val MIN_SCALE_FACTOR = 1f
+        const val MAX_TRANSLATION_X = 300f
+        const val MIN_TRANSLATION_X = -300f
+        const val MAX_TRANSLATION_Y = 100f
+        const val MIN_TRANSLATION_Y = -100f
         private const val CORRECT_LOCATION_ANIMATION_DURATION = 300L
     }
 }
