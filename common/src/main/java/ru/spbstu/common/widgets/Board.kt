@@ -163,7 +163,7 @@ class Board @JvmOverloads constructor(
             } else if (child is BoardIcon) {
                 val player = child.getPlayer()
                 val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
-                
+
                 val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
                     .toInt() - iconWidth.toInt() / 2
                 val baseCurTop = cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
