@@ -33,4 +33,7 @@
     <color name="stack_shade">#4D000000</color>
     <color name="color_active_turn">#FFFFFF</color>
 
+    <color name="color_morgan_place">#7F7A00</color>
+    <color name="color_morgan_outline">#9A1AFF</color>
+
 </resources>

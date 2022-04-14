@@ -64,7 +64,6 @@ class Board @JvmOverloads constructor(
         )
 
         val board = MorganBoard(context, attrs, defStyleAttr)
-        board.size = size
         addView(board)
 
         for (i in 0 until size * size) {

@@ -1,14 +1,15 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
-import android.graphics.Rect
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
-import ru.spbstu.common.extenstions.scale
 import kotlin.math.min
 
 class MorganBoard @JvmOverloads constructor(
@@ -17,7 +18,13 @@ class MorganBoard @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
-    var size = 5
+    private var size = 5
+
+    private var totalPositions = (size - 1) * 4
+    private var currentMorganPosition = 7
+    
+    private var selectedSide = 4 // 1, 2, 3, 4
+    private var isChoosingPosition = false
 
     private var height = context.dpToPx(35f)
     private var width = context.dpToPx(58f)
@@ -29,6 +36,16 @@ class MorganBoard @JvmOverloads constructor(
 
     private val dx = context.dpToPx(33f)
     private val dy = context.dpToPx(20f)
+    private var activeTurnStrokeWidth = context.dpToPx(1f)
+
+    private var morganBackground = ContextCompat.getDrawable(
+        context,
+        R.drawable.background_character_board
+    ) as GradientDrawable
+
+    var isMorganTurn = false
+    private var morganHeight = context.dpToPx(32f)
+    private var morganWidth = context.dpToPx(32f)
 
     init {
         var attributesArray =
@@ -49,6 +66,29 @@ class MorganBoard @JvmOverloads constructor(
             5
         )
 
+        totalPositions = (size - 1) * 4
+
+        morganBackground.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                context,
+                R.color.color_morgan_outline
+            )
+        )
+        val padding = resources.getDimension(R.dimen.dp_1).toInt()
+        (morganBackground.mutate() as GradientDrawable).setPadding(
+            padding,
+            padding,
+            padding,
+            padding
+        )
+        morganBackground.setStroke(
+            activeTurnStrokeWidth.toInt(),
+            ContextCompat.getColor(
+                context,
+                if (isMorganTurn) R.color.color_active_turn else R.color.color_morgan_outline
+            )
+        )
+
         val skeleton = ImageView(context)
         skeleton.setImageResource(R.drawable.ic_skeleton_big)
         if (size == 3) {
@@ -67,6 +107,11 @@ class MorganBoard @JvmOverloads constructor(
             square.setImageResource(R.drawable.ic_blank_layer_36)
             addView(square)
         }
+
+        val morgan = ImageView(context)
+        morgan.setImageResource(R.drawable.morgan)
+        morgan.background = morganBackground
+        addView(morgan)
 
         attributesArray.recycle()
     }
@@ -104,6 +149,20 @@ class MorganBoard @JvmOverloads constructor(
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
                 }
                 1, 2, 3, 4 -> {
+                    if ((i - 1) * (size - 1) == currentMorganPosition ||
+                        (isChoosingPosition && (i == selectedSide || i == selectedSide + 1)) ||
+                        (isChoosingPosition && (selectedSide == 4 && i == 1))
+                    ) {
+                        child.drawable.setTintMode(PorterDuff.Mode.SRC_ATOP)
+                        child.drawable.setTint(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.color_morgan_place
+                            )
+                        )
+                    } else {
+                        child.drawable.setTintMode(PorterDuff.Mode.DST)
+                    }
                     child.measure(
                         MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
                         MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
@@ -122,7 +181,7 @@ class MorganBoard @JvmOverloads constructor(
                     }
                     curTop = when (i) {
                         1 -> 0
-                        3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4 + (size - 3) / 2) ).toInt()
+                        3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4 + (size - 3) / 2)).toInt()
                         2, 4 -> (measuredHeight - child.measuredHeight) / 2
                         else -> 0
                     }
@@ -131,8 +190,87 @@ class MorganBoard @JvmOverloads constructor(
                     curHeight = child.measuredHeight
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
                 }
+                childCount - 1 -> { //morgan
+                    child.measure(
+                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+                    )
+                    curLeft = 0
+                    curTop = 0
+                    when (currentMorganPosition) {
+                        0 -> {
+                            curLeft = (measuredWidth - morganWidth.toInt()) / 2
+                            curTop = 0
+                        }
+                        size - 1 -> {
+                            curLeft =
+                                ((r - l) / 2 + width * (size / 2) + spacing + boardSpacing * (size / 2 + 1)).toInt() + morganWidth.toInt() / 2
+                            curTop =
+                                (measuredHeight - morganHeight - height - spacing - boardSpacing).toInt() / 2
+                        }
+                        (size - 1) * 2 -> {
+                            curLeft = (measuredWidth - morganWidth.toInt()) / 2
+                            curTop =
+                                (height * size + spacing * 2 + boardSpacing * (size / 2 + 4 + (size - 3) / 2) + morganHeight / 2).toInt()
+                        }
+                        (size - 1) * 3 -> {
+                            curLeft =
+                                ((measuredWidth - skeletonWidth - morganWidth) / 2 - spacing - boardSpacing).toInt()
+                            curTop =
+                                (measuredHeight - morganHeight - height - spacing - boardSpacing).toInt() / 2
+                        }
+                        else -> {
+                            when (currentMorganPosition / (size - 1)) {
+                                0 -> {
+                                    curLeft =
+                                        ((r - l) / 2 + boardSpacing / 2 + dx * (currentMorganPosition % (size - 1)) + morganWidth / 2).toInt()
+                                    curTop =
+                                        (dy * ((currentMorganPosition % (size - 1)) + 1) - spacing).toInt()
+                                }
+                                1 -> {
+                                    curLeft =
+                                        ((r - l) / 2 - morganWidth / 2 + (dx + 1) * (size - (currentMorganPosition % (size - 1)))).toInt()
+                                    curTop =
+                                        ((measuredHeight) / 2 + dy * (currentMorganPosition % (size - 1))).toInt()
+                                }
+                                2 -> {
+                                    curLeft =
+                                        ((r - l) / 2 - morganWidth * 1.5 - boardSpacing - dx * (currentMorganPosition % (size - 1))).toInt()
+                                    curTop =
+                                        ((measuredHeight) / 2 + height / 2 - boardSpacing / 2 + dy * (size - 2 - (currentMorganPosition % (size - 1)))).toInt()
+                                }
+                                3 -> {
+                                    curLeft =
+                                        ((r - l) / 2 - morganWidth * 1.5 - boardSpacing / 2 - dx * (size - 1 - (currentMorganPosition % (size - 1)))).toInt()
+                                    curTop =
+                                        (dy * (size - 1 - (currentMorganPosition % (size - 1))) + morganHeight / 2).toInt()
+                                }
+                            }
+                        }
+                    }
+                    child.layout(
+                        curLeft,
+                        curTop,
+                        curLeft + morganWidth.toInt(),
+                        curTop + morganHeight.toInt()
+                    )
+                }
                 else -> {
                     val j = i - 5
+
+                    val adding = j / (size - 2)
+                    if (j + adding + 1 == currentMorganPosition || (isChoosingPosition && j / (size - 2) == selectedSide - 1)) {
+                        child.drawable.setTintMode(PorterDuff.Mode.SRC_ATOP)
+                        child.drawable.setTint(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.color_morgan_place
+                            )
+                        )
+                    } else {
+                        child.drawable.setTintMode(PorterDuff.Mode.DST)
+                    }
+
                     child.measure(
                         MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
                         MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
@@ -143,20 +281,30 @@ class MorganBoard @JvmOverloads constructor(
                     curHeight = child.measuredHeight
                     when (j / (size - 2)) {
                         0 -> {
-                            curLeft = ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
+                            curLeft =
+                                ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop =
+                                (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
                         }
                         1 -> {
-                            curLeft = ((r - l) / 2 + boardSpacing * 3 / 2 + (dx - context.dpToPx(1f)) * ((j % (size - 2)) + 1)).toInt()
-                            curTop = ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
+                            curLeft =
+                                ((r - l) / 2 + boardSpacing * 3 / 2 + (dx - context.dpToPx(1f)) * (size - 2 - (j % (size - 2)))).toInt()
+                            curTop =
+                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * ((j % (size - 2)))).toInt()
                         }
                         2 -> {
-                            curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
+                            curLeft =
+                                ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
+                            curTop =
+                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
                         }
                         3 -> {
-                            curLeft = ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
-                            curTop = (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
+                            curLeft =
+                                ((r - l) / 2 - curWidth - boardSpacing - dx * (size - 2 - (j % (size - 2)))).toInt()
+                            curTop =
+                                (dy * (size - 1 - (j % (size - 2))) + boardSpacing / 2 - context.dpToPx(
+                                    1f
+                                )).toInt()
                         }
                     }
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
