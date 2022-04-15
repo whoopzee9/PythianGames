@@ -6,19 +6,19 @@ import ru.spbstu.common.base.BaseViewHolder
 import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.feature.databinding.ItemTestBinding
-import ru.spbstu.feature.domain.model.TestModel
+import ru.spbstu.feature.domain.model.InventoryModel
 
 
 class TestAdapter(val onItemClick: (Long) -> Unit) :
-    BaseAdapter<TestModel, TestAdapter.TestViewHolder>() {
+    BaseAdapter<InventoryModel, TestAdapter.TestViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder =
         TestViewHolder(parent)
 
     inner class TestViewHolder(parent: ViewGroup) :
-        BaseViewHolder<TestModel, ItemTestBinding>(parent.viewBinding(ItemTestBinding::inflate)) {
+        BaseViewHolder<InventoryModel, ItemTestBinding>(parent.viewBinding(ItemTestBinding::inflate)) {
 
-        private lateinit var item: TestModel
+        private lateinit var item: InventoryModel
 
         init {
             binding.root.setDebounceClickListener {
@@ -26,9 +26,9 @@ class TestAdapter(val onItemClick: (Long) -> Unit) :
             }
         }
 
-        override fun bind(item: TestModel) {
+        override fun bind(item: InventoryModel) {
             this.item = item
-            binding.itemTestTvText.text = item.value
+
         }
     }
 }

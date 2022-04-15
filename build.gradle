@@ -22,7 +22,7 @@ buildscript {
         architectureComponentVersion = '2.3.1'
         coroutinesVersion = '1.5.1'
         timberVersion = '4.7.1'
-
+        materialVersion = '1.5.0-alpha02'
 
         retrofitVersion = '2.9.0'
         okhttpVersion = '5.0.0-alpha.2'
@@ -52,7 +52,7 @@ buildscript {
         cardViewDep = "androidx.cardview:cardview:$cardViewVersion"
         recyclerViewDep = "androidx.recyclerview:recyclerview:$recyclerVersion"
         constraintDep = "androidx.constraintlayout:constraintlayout:$constraintVersion"
-        materialDep = "com.google.android.material:material:$supportVersion"
+        materialDep = "com.google.android.material:material:$materialVersion"
         timberDep = "com.jakewharton.timber:timber:$timberVersion"
 
         daggerDep = "com.google.dagger:dagger:$daggerVersion"

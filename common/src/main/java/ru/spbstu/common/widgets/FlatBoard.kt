@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -139,7 +138,7 @@ class FlatBoard @JvmOverloads constructor(
                             background.color = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     context,
-                                    R.color.button_green
+                                    R.color.color_team_green
                                 )
                             )
                             child.background = background
@@ -148,7 +147,7 @@ class FlatBoard @JvmOverloads constructor(
                             background.color = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     context,
-                                    R.color.button_blue
+                                    R.color.color_team_blue
                                 )
                             )
                             child.background = background
@@ -161,7 +160,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_green
+                                            R.color.color_team_green
                                         )
                                     )
                                     child.background = background
@@ -170,7 +169,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_blue
+                                            R.color.color_team_blue
                                         )
                                     )
                                     child.background = background
@@ -181,7 +180,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_green
+                                            R.color.color_team_green
                                         )
                                     )
                                     child.background = background
@@ -190,7 +189,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_blue
+                                            R.color.color_team_blue
                                         )
                                     )
                                     child.background = background
@@ -199,7 +198,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_orange
+                                            R.color.color_team_orange
                                         )
                                     )
                                     child.background = background
@@ -208,7 +207,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_red
+                                            R.color.color_team_red
                                         )
                                     )
                                     child.background = background
@@ -221,7 +220,7 @@ class FlatBoard @JvmOverloads constructor(
                             background.color = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     context,
-                                    R.color.button_green
+                                    R.color.color_team_green
                                 )
                             )
                             child.background = background
@@ -230,7 +229,7 @@ class FlatBoard @JvmOverloads constructor(
                             background.color = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     context,
-                                    R.color.button_blue
+                                    R.color.color_team_blue
                                 )
                             )
                             child.background = background
@@ -239,7 +238,7 @@ class FlatBoard @JvmOverloads constructor(
                             background.color = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     context,
-                                    R.color.button_red
+                                    R.color.color_team_red
                                 )
                             )
                             child.background = background
@@ -252,7 +251,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_green
+                                            R.color.color_team_green
                                         )
                                     )
                                     child.background = background
@@ -261,7 +260,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_blue
+                                            R.color.color_team_blue
                                         )
                                     )
                                     child.background = background
@@ -272,7 +271,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_green
+                                            R.color.color_team_green
                                         )
                                     )
                                     child.background = background
@@ -281,7 +280,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_blue
+                                            R.color.color_team_blue
                                         )
                                     )
                                     child.background = background
@@ -290,7 +289,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_red
+                                            R.color.color_team_red
                                         )
                                     )
                                     child.background = background
@@ -299,7 +298,7 @@ class FlatBoard @JvmOverloads constructor(
                                     background.color = ColorStateList.valueOf(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.button_orange
+                                            R.color.color_team_orange
                                         )
                                     )
                                     child.background = background

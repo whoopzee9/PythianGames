@@ -189,20 +189,6 @@ class Board @JvmOverloads constructor(
 
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
 
-                    //            child.setOnTouchListener { v, event ->
-                    //                //scaleGestureDetector.onTouchEvent(event)
-                    //                translationHandler.onTouch(v, event)
-                    //                false
-                    //            }
-                    //
-
-                    //            child.setDebounceClickListener {
-                    //                Log.d("qwerty", "click")
-                    //                (child as CardStack).count--
-                    //                child.invalidate()
-                    //                false
-                    //            }
-
                 }
                 is BoardIcon -> {
                     val player = child.getPlayer()
@@ -667,12 +653,12 @@ class Board @JvmOverloads constructor(
     }
 
     private val translationHandler by lazy {
-        object : View.OnTouchListener {
+        object : OnTouchListener {
             private var prevX = 0f
             private var prevY = 0f
             private var moveStarted = false
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (event == null || (scaleX ?: 1f) == 1f) return false
+                if (event == null || scaleX == 1f) return false
 
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
@@ -815,10 +801,9 @@ class Board @JvmOverloads constructor(
     companion object {
         const val MAX_SCALE_FACTOR = 1.2f
         const val MIN_SCALE_FACTOR = 1f
-        const val MAX_TRANSLATION_X = 300f
-        const val MIN_TRANSLATION_X = -300f
-        const val MAX_TRANSLATION_Y = 100f
-        const val MIN_TRANSLATION_Y = -100f
-        private const val CORRECT_LOCATION_ANIMATION_DURATION = 300L
+        const val MAX_TRANSLATION_X = 190f
+        const val MIN_TRANSLATION_X = -190f
+        const val MAX_TRANSLATION_Y = 50f
+        const val MIN_TRANSLATION_Y = -50f
     }
 }

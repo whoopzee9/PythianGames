@@ -22,7 +22,7 @@ class MorganBoard @JvmOverloads constructor(
 
     private var totalPositions = (size - 1) * 4
     private var currentMorganPosition = 7
-    
+
     private var selectedSide = 4 // 1, 2, 3, 4
     private var isChoosingPosition = false
 
@@ -40,7 +40,7 @@ class MorganBoard @JvmOverloads constructor(
 
     private var morganBackground = ContextCompat.getDrawable(
         context,
-        R.drawable.background_character_board
+        R.drawable.background_morgan_icon
     ) as GradientDrawable
 
     var isMorganTurn = false
@@ -73,13 +73,6 @@ class MorganBoard @JvmOverloads constructor(
                 context,
                 R.color.color_morgan_outline
             )
-        )
-        val padding = resources.getDimension(R.dimen.dp_1).toInt()
-        (morganBackground.mutate() as GradientDrawable).setPadding(
-            padding,
-            padding,
-            padding,
-            padding
         )
         morganBackground.setStroke(
             activeTurnStrokeWidth.toInt(),

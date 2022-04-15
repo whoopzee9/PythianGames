@@ -8,10 +8,10 @@
     <color name="button_tint_secondary">#FFF500</color>
     <color name="button_tint_third">#FFFFFF</color>
     <color name="button_disabled_tint">#A3A2A7</color>
-    <color name="button_red">#EF1000</color>
-    <color name="button_orange">#FFA200</color>
-    <color name="button_blue">#0B4FFF</color>
-    <color name="button_green">#2DAD69</color>
+    <color name="color_team_red">#EF1000</color>
+    <color name="color_team_orange">#FFA200</color>
+    <color name="color_team_blue">#0B4FFF</color>
+    <color name="color_team_green">#2DAD69</color>
     <color name="arrow_highlighted_color">#2DAD69</color>
 
     <color name="text_color_primary">#000000</color>
@@ -26,6 +26,7 @@
 
     <color name="stroke_color_primary">#FFF500</color>
     <color name="stroke_color_secondary">#000000</color>
+    <color name="stroke_color_third">#A3A2A7</color>
 
     <color name="ripple_color_primary">#A3A3A3</color>
 
@@ -35,5 +36,13 @@
 
     <color name="color_morgan_place">#7F7A00</color>
     <color name="color_morgan_outline">#9A1AFF</color>
+
+    <color name="color_layer_yellow">#FFF500</color>
+    <color name="color_layer_orange">#FF881A</color>
+    <color name="color_layer_red">#EF1000</color>
+    <color name="color_layer_blue">#0B4FFF</color>
+    <color name="color_layer_purple">#9A1AFF</color>
+
+    <color name="color_transparent_background">#CCFFFFFF</color>
 
 </resources>

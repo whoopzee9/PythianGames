@@ -4,17 +4,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.feature.FeatureRouter
-import ru.spbstu.feature.domain.model.TestModel
+import ru.spbstu.feature.domain.model.InventoryModel
 import kotlin.random.Random
 
 class TestViewModel(router: FeatureRouter) : BackViewModel(router) {
 
-    private val _testData: MutableStateFlow<List<TestModel>> = MutableStateFlow(listOf())
-    val testData get() :StateFlow<List<TestModel>> = _testData
+    private val _testData: MutableStateFlow<List<InventoryModel>> = MutableStateFlow(listOf())
+    val testData get() :StateFlow<List<InventoryModel>> = _testData
 
     init {
         _testData.value = Random.nextBytes(TEST_RANDOM_SIZE).mapIndexed { index, byte ->
-            TestModel(index.toLong(), "$TEST_PREFIX$byte")
+            InventoryModel(index.toLong(), "$TEST_PREFIX$byte")
         }
     }
 

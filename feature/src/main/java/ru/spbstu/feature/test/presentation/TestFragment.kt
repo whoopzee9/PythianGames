@@ -36,6 +36,7 @@ class TestFragment : ToolbarFragment<TestViewModel>(
     override fun getToolbarLayout(): ViewGroup = binding.frgTestLayoutToolbar.root
 
 
+
 //    private val gestureDetector by lazy {
 //        GestureDetector(requireContext(), GestureListener())
 //    }

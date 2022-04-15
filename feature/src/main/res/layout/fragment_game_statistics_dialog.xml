@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/dp_12"
+    app:cardCornerRadius="@dimen/dp_14"
+    android:background="@color/color_transparent_background"
+    app:strokeColor="@color/color_team_green"
+    app:strokeWidth="@dimen/dp_1">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_title"
+            style="@style/TextView.H1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_5"
+            android:text="@string/game_stats"
+            android:textAlignment="center"
+            android:layout_marginHorizontal="@dimen/dp_2"
+            android:layout_marginTop="@dimen/dp_2"
+            android:background="@drawable/background_top_statistics"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/frg_game_statistics_dialog__team_1"
+            layout="@layout/include_team_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_title" />
+
+        <include
+            android:id="@+id/frg_game_statistics_dialog__team_2"
+            layout="@layout/include_team_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_1" />
+
+        <include
+            android:id="@+id/frg_game_statistics_dialog__team_3"
+            layout="@layout/include_team_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_2" />
+
+        <include
+            android:id="@+id/frg_game_statistics_dialog__team_4"
+            layout="@layout/include_team_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_3" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_coins"
+            style="@style/TextView.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_12"
+            android:text="@string/coins"
+            app:layout_constraintEnd_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_4" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_questions"
+            style="@style/TextView.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_12"
+            android:text="@string/questions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_4" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_yellow_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:tint="@color/color_layer_yellow" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_orange_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_yellow_coin"
+            app:tint="@color/color_layer_orange" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_red_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_orange_coin"
+            app:tint="@color/color_layer_red" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_blue_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_red_coin"
+            app:tint="@color/color_layer_blue" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_purple_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_blue_coin"
+            app:tint="@color/color_layer_purple" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_yellow_coins_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_yellow_coin"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_yellow_coin"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_orange_coins_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_orange_coin"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_orange_coin"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_red_coins_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_red_coin"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_red_coin"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_blue_coins_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_blue_coin"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_blue_coin"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_purple_coins_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_purple_coin"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_purple_coin"
+            tools:text="0" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_yellow_question"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_first_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_questions" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_orange_question"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_second_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_yellow_question" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_red_question"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_third_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_orange_question" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_blue_question"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_fourth_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_red_question" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_purple_question"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_fifth_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_blue_question" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_yellow_questions_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_yellow_question"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_yellow_question"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_orange_questions_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_orange_question"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_orange_question"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_red_questions_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_red_question"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_red_question"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_blue_questions_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_blue_question"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_blue_question"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_purple_questions_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_purple_question"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_purple_question"
+            tools:text="0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

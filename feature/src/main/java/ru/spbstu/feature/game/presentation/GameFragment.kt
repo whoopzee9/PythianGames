@@ -1,17 +1,22 @@
 package ru.spbstu.feature.game.presentation
 
+import android.content.res.ColorStateList
 import android.graphics.PointF
-import android.graphics.PorterDuff
 import android.graphics.Rect
-import android.graphics.drawable.VectorDrawable
+import android.graphics.drawable.GradientDrawable
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.ScaleAnimation
+import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
+import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.setStatusBarColor
@@ -21,12 +26,22 @@ import ru.spbstu.common.model.Team
 import ru.spbstu.common.widgets.Board
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentGameBinding
+import ru.spbstu.feature.databinding.FragmentGameStatisticsDialogBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.domain.model.InventoryModel
+import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
+import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
 
 class GameFragment : BaseFragment<GameViewModel>(
     R.layout.fragment_game,
 ) {
+
+    private lateinit var adapter: InventoryAdapter
+
+    private lateinit var statisticsPopup: PopupWindow
+    private val statisticsBinding by viewBinding(FragmentGameStatisticsDialogBinding::inflate)
+
     override val binding by viewBinding(FragmentGameBinding::bind)
 
     override fun setupViews() {
@@ -36,12 +51,21 @@ class GameFragment : BaseFragment<GameViewModel>(
         //binding.stack.addPlayer(Player())
 
         val player = Player(1, R.drawable.character_2, Team.Orange, 2, "12", true)
-        binding.morganBoard1.addPlayer(player)
-        binding.morganBoard1.setCurrentPlayer(player.id)
-        binding.morganBoard1.addPlayer(Player(2, R.drawable.character_3, Team.Green, 1, "2", false))
-        binding.morganBoard1.addPlayer(Player(3, R.drawable.character_4, Team.Red, 2, "qwe", false))
-        binding.morganBoard1.addPlayer(Player(4, R.drawable.character_5, Team.Red, 2, "qwавe", false))
-        binding.morganBoard2.addPlayer(Player(1, R.drawable.character_2, Team.Green, 2, "", false))
+        binding.frgGameBoard.addPlayer(player)
+        binding.frgGameBoard.setCurrentPlayer(player.id)
+        binding.frgGameBoard.addPlayer(Player(2, R.drawable.character_3, Team.Green, 1, "2", false))
+        binding.frgGameBoard.addPlayer(Player(3, R.drawable.character_4, Team.Red, 2, "qwe", false))
+        binding.frgGameBoard.addPlayer(
+            Player(
+                4,
+                R.drawable.character_5,
+                Team.Red,
+                2,
+                "qwавe",
+                false
+            )
+        )
+        binding.frgGameBoard.addPlayer(Player(1, R.drawable.character_2, Team.Green, 2, "", false))
 
 //        binding.zoomView.setOnTouchListener { v, event ->
 //            scaleGestureDetector.onTouchEvent(event)
@@ -49,6 +73,52 @@ class GameFragment : BaseFragment<GameViewModel>(
 //            binding.frgGameBoard.dispatchTouchEvent(event)
 //            true
 //        }
+        setupAdapter()
+        setupStatisticsPopup()
+
+        binding.frgGameTeamStatsWrapper.setDebounceClickListener {
+            //todo change teams stats and amount of teams
+            statisticsPopup.showAsDropDown(it, 0, -it.height)
+        }
+    }
+
+    private fun setupStatisticsPopup() {
+        val background = GradientDrawable()
+        background.setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(requireContext(), R.color.color_team_green)
+        )
+        background.color = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_transparent_background))
+        background.cornerRadius = resources.getDimension(R.dimen.dp_14)
+        statisticsBinding.root.background = background
+        statisticsPopup = PopupWindow(
+            statisticsBinding.root,
+            resources.displayMetrics.widthPixels - resources.getDimension(R.dimen.dp_24)
+                .toInt(),
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        statisticsPopup.animationStyle = R.style.TopMenuAnimation
+    }
+
+    private fun setupAdapter() {
+        adapter = InventoryAdapter()
+        adapter.bindData(
+            listOf(
+                InventoryModel(1, "", R.drawable.ic_brush_78),
+                InventoryModel(2, "", R.drawable.ic_rope_78),
+                InventoryModel(3, "", R.drawable.ic_rope_78),
+                InventoryModel(4, "", R.drawable.ic_sieve_78),
+                InventoryModel(5, "", R.drawable.ic_sieve_78),
+                InventoryModel(6, "", R.drawable.ic_brush_78),
+                InventoryModel(7, "", R.drawable.ic_sieve_78),
+                InventoryModel(8, "", R.drawable.ic_brush_78),
+                InventoryModel(9, "", R.drawable.ic_brush_78),
+            )
+        )
+
+        binding.frgGameRvInventory.addItemDecoration(InventoryItemDecoration())
+        binding.frgGameRvInventory.adapter = adapter
     }
 
     override fun inject() {
@@ -148,7 +218,14 @@ class GameFragment : BaseFragment<GameViewModel>(
                     totalScale = totalScale.coerceIn(Board.MIN_SCALE_FACTOR, Board.MAX_SCALE_FACTOR)
                     //Log.d("qwerty", "onScale")
                     binding.frgGameBoard.run {
-                        val scaleAnimation = ScaleAnimation(prev, totalScale, prev, totalScale, detector.focusX, detector.focusY)
+                        val scaleAnimation = ScaleAnimation(
+                            prev,
+                            totalScale,
+                            prev,
+                            totalScale,
+                            detector.focusX,
+                            detector.focusY
+                        )
                         scaleAnimation.duration = 0
                         scaleAnimation.fillAfter = true
                         startAnimation(scaleAnimation)

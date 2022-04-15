@@ -48,6 +48,10 @@
     <string name="eight_players_4_teams">8 игроков (поле 5х5, 4 команды)</string>
     <string name="teams_placement">Расположение команд</string>
     <string name="waiting_for_players">Ожидание игроков: %d / %d</string>
+    <string name="coins">Монеты</string>
+    <string name="questions">Вопросы</string>
+    <string name="inventory">Инвентарь</string>
+    <string name="game_stats">Игровая статистика</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

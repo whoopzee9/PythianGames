@@ -45,6 +45,11 @@ inline fun <T : ViewBinding> DialogFragment.viewBinding(crossinline factory: (La
         factory(layoutInflater)
     }
 
+inline fun <T : ViewBinding> Fragment.viewBinding(crossinline factory: (LayoutInflater) -> T) =
+    lazy(LazyThreadSafetyMode.NONE) {
+        factory(layoutInflater)
+    }
+
 /** Not really a delegate, just a small helper for RecyclerView.ViewHolders */
 inline fun <T : ViewBinding> ViewGroup.viewBinding(factory: (LayoutInflater, ViewGroup, Boolean) -> T) =
     factory(LayoutInflater.from(context), this, false)

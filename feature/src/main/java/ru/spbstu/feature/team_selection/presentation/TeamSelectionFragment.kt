@@ -22,38 +22,38 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
-        binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.button_red)
-        binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.button_orange)
-        binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.button_blue)
-        binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.button_green)
+        binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.color_team_red)
+        binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.color_team_orange)
+        binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.color_team_blue)
+        binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.color_team_green)
         binding.frgTeamSelectionMbNext.isEnabled = false
 
         binding.frgTeamSelectionMbFirstTeam.setDebounceClickListener {
-            binding.frgTeamSelectionMbFirstTeam.changeToActiveStyle(R.color.button_red)
-            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.button_orange)
-            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.button_blue)
-            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.button_green)
+            binding.frgTeamSelectionMbFirstTeam.changeToActiveStyle(R.color.color_team_red)
+            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.color_team_orange)
+            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.color_team_blue)
+            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.color_team_green)
             binding.frgTeamSelectionMbNext.isEnabled = true
         }
         binding.frgTeamSelectionMbSecondTeam.setDebounceClickListener {
-            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.button_red)
-            binding.frgTeamSelectionMbSecondTeam.changeToActiveStyle(R.color.button_orange)
-            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.button_blue)
-            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.button_green)
+            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.color_team_red)
+            binding.frgTeamSelectionMbSecondTeam.changeToActiveStyle(R.color.color_team_orange)
+            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.color_team_blue)
+            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.color_team_green)
             binding.frgTeamSelectionMbNext.isEnabled = true
         }
         binding.frgTeamSelectionMbThirdTeam.setDebounceClickListener {
-            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.button_red)
-            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.button_orange)
-            binding.frgTeamSelectionMbThirdTeam.changeToActiveStyle(R.color.button_blue)
-            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.button_green)
+            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.color_team_red)
+            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.color_team_orange)
+            binding.frgTeamSelectionMbThirdTeam.changeToActiveStyle(R.color.color_team_blue)
+            binding.frgTeamSelectionMbFourthTeam.changeToInactiveStyle(R.color.color_team_green)
             binding.frgTeamSelectionMbNext.isEnabled = true
         }
         binding.frgTeamSelectionMbFourthTeam.setDebounceClickListener {
-            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.button_red)
-            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.button_orange)
-            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.button_blue)
-            binding.frgTeamSelectionMbFourthTeam.changeToActiveStyle(R.color.button_green)
+            binding.frgTeamSelectionMbFirstTeam.changeToInactiveStyle(R.color.color_team_red)
+            binding.frgTeamSelectionMbSecondTeam.changeToInactiveStyle(R.color.color_team_orange)
+            binding.frgTeamSelectionMbThirdTeam.changeToInactiveStyle(R.color.color_team_blue)
+            binding.frgTeamSelectionMbFourthTeam.changeToActiveStyle(R.color.color_team_green)
             binding.frgTeamSelectionMbNext.isEnabled = true
         }
         binding.frgTeamSelectionMbNext.setDebounceClickListener {
