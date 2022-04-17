@@ -52,6 +52,8 @@
     <string name="questions">Вопросы</string>
     <string name="inventory">Инвентарь</string>
     <string name="game_stats">Игровая статистика</string>
+    <string name="question_number">Вопрос %d</string>
+    <string name="dig">Копать</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

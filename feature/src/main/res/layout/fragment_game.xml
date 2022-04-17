@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/frg_game__team_stats_wrapper"
@@ -163,6 +163,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frg_game__mb_action_1"
+        style="@style/MaterialButton.Default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:text="@string/dig"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board" />
+
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/frg_game__inventory_wrapper"
         android:layout_width="match_parent"
@@ -190,11 +204,11 @@
                 android:layout_marginTop="@dimen/dp_5"
                 android:orientation="horizontal"
                 android:overScrollMode="never"
-                tools:listitem="@layout/item_inventory"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/item_inventory" />
 
             <TextView
                 android:id="@+id/frg_game__tv_inventory"
@@ -216,11 +230,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_5"
                 android:layout_marginEnd="@dimen/dp_16"
-                android:text="0"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="@id/frg_game__tv_inventory"
                 app:layout_constraintStart_toEndOf="@id/frg_game__tv_inventory"
-                app:layout_constraintTop_toTopOf="@id/frg_game__tv_inventory" />
+                app:layout_constraintTop_toTopOf="@id/frg_game__tv_inventory"
+                tools:text="0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <include
+        android:id="@+id/frg_game__question_layout"
+        layout="@layout/include_question_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_16"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
 </androidx.constraintlayout.widget.ConstraintLayout>

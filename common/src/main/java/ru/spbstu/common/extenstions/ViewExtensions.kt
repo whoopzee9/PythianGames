@@ -2,17 +2,27 @@ package ru.spbstu.common.extenstions
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PointF
+import android.graphics.PorterDuff
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.renderscript.Allocation
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewPropertyAnimator
 import android.view.WindowInsetsController
 import android.widget.TextView
 import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import ru.spbstu.common.R
 import ru.spbstu.common.utils.DebounceClickListener
 import ru.spbstu.common.utils.DebouncePostHandler
+
 
 @Suppress("DEPRECATION")
 fun View.setLightStatusBar() {
@@ -93,4 +103,44 @@ fun View.scale(scale: Float) {
 fun View.setPivot(point: PointF) {
     pivotX = point.x
     pivotY = point.y
+}
+
+fun View.getBitmapFromView(): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val c = Canvas(bitmap)
+    layout(left, top, right, bottom)
+    draw(c)
+    return bitmap
+}
+
+fun View.setBlurBackground(background: Bitmap) {
+    val radius = 10f
+
+    val overlay = Bitmap.createBitmap(
+        measuredWidth,
+        measuredHeight, Bitmap.Config.ARGB_8888
+    )
+
+    val canvas = Canvas(overlay)
+
+    canvas.translate((-left).toFloat(), (-top).toFloat())
+    canvas.drawBitmap(background, 0f, 0f, null)
+
+    val rs = RenderScript.create(context)
+    val overlayAlloc = Allocation.createFromBitmap(
+        rs, overlay
+    )
+    val blur = ScriptIntrinsicBlur.create(
+        rs, overlayAlloc.element
+    )
+    blur.setInput(overlayAlloc)
+    blur.setRadius(radius)
+    blur.forEach(overlayAlloc)
+    overlayAlloc.copyTo(overlay)
+    rs.destroy()
+
+
+    setBackground(BitmapDrawable(resources, overlay))
+    backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_transparent_background))
+    backgroundTintMode = PorterDuff.Mode.SRC_ATOP
 }

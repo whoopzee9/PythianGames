@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -14,12 +13,14 @@ import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
-import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.extenstions.scale
 import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.setStatusBarColor
+import ru.spbstu.common.extenstions.setToDisabledStyle
+import ru.spbstu.common.extenstions.setToSelectedStyle
+import ru.spbstu.common.extenstions.setToUnselectedStyle
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.Team
@@ -32,6 +33,7 @@ import ru.spbstu.feature.di.FeatureComponent
 import ru.spbstu.feature.domain.model.InventoryModel
 import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
 import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
+import java.util.*
 
 class GameFragment : BaseFragment<GameViewModel>(
     R.layout.fragment_game,
@@ -43,6 +45,8 @@ class GameFragment : BaseFragment<GameViewModel>(
     private val statisticsBinding by viewBinding(FragmentGameStatisticsDialogBinding::inflate)
 
     override val binding by viewBinding(FragmentGameBinding::bind)
+
+    private val timer = Timer()
 
     override fun setupViews() {
         super.setupViews()
@@ -67,18 +71,73 @@ class GameFragment : BaseFragment<GameViewModel>(
         )
         binding.frgGameBoard.addPlayer(Player(1, R.drawable.character_2, Team.Green, 2, "", false))
 
-//        binding.zoomView.setOnTouchListener { v, event ->
-//            scaleGestureDetector.onTouchEvent(event)
-//            translationHandler.onTouch(v, event)
-//            binding.frgGameBoard.dispatchTouchEvent(event)
-//            true
-//        }
         setupAdapter()
         setupStatisticsPopup()
+
+        val questionBackground = GradientDrawable()
+        questionBackground.setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(requireContext(), R.color.color_team_green)
+        )
+        questionBackground.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_transparent_background
+            )
+        )
+        questionBackground.cornerRadius = resources.getDimension(R.dimen.dp_14)
+        binding.frgGameQuestionLayout.root.background = questionBackground
 
         binding.frgGameTeamStatsWrapper.setDebounceClickListener {
             //todo change teams stats and amount of teams
             statisticsPopup.showAsDropDown(it, 0, -it.height)
+//            timer.schedule(object: TimerTask() {
+//                override fun run() {
+//                    lifecycleScope.launch(Dispatchers.Main) {
+//                        statisticsPopup.dismiss()
+//                    }
+//                }
+//
+//            }, 2000)
+        }
+        binding.frgGameMbAction1.setDebounceClickListener {
+            //todo fill question info
+//            val bkg = binding.root.getBitmapFromView()
+//            binding.frgGameQuestionLayout.root.post {
+//                binding.frgGameQuestionLayout.root.setBlurBackground(bkg)
+//            }
+            with(binding.frgGameQuestionLayout) {
+                val list = listOf(
+                    includeQuestionDialogCvAnswer1Wrapper,
+                    includeQuestionDialogCvAnswer2Wrapper,
+                    includeQuestionDialogCvAnswer3Wrapper,
+                    includeQuestionDialogCvAnswer4Wrapper
+                )
+                list.forEachIndexed { index, card ->
+                    card.setToUnselectedStyle()
+                    card.setDebounceClickListener {
+                        //todo save index of clicked
+                        list.forEach { it.setToUnselectedStyle() }
+                        card.setToSelectedStyle()
+                    }
+                }
+                includeQuestionDialogTvQuestionNumber.text = getString(R.string.question_number, 4)
+                includeQuestionDialogTvQuestion.text =
+                    "sdfsdgfwdfwefwdf wdfsdcvrgedfgvef vedvdecvefde fdd sdfsdfsdf sdfsdfsdf sdfsdfsdf sdfsdfsdfs sdfsdfsdfsd sdfsd fsd fsd f"
+                includeQuestionDialogTvAnswer1.text =
+                    "sdfsdfsdfs sdfgdfgdfg d dgdfgdfgdfg dfgdfgdfgdf gdfgdfgdf dfgdfgdfg dfgfd d"
+                includeQuestionDialogTvAnswer2.text =
+                    "dsffffffffffffffffffffffffffffffffffffffffff sdfsdfsdfsdf sdfsdfsdf sdfsdf"
+                includeQuestionDialogTvAnswer3.text =
+                    "qweq32ef24rfw34r 2rfd24eredf 2erf sfsdfsdfsd fsdfsdf sdf sdfwd3r"
+                includeQuestionDialogTvAnswer4.text =
+                    "wqer2erfsd erwf fwef wefwef wef wef sdf sdfsd fsdfsdfsd wef w"
+
+            }
+
+            binding.frgGameQuestionLayout.root.visibility = View.VISIBLE
+            binding.frgGameTvAction.visibility = View.GONE
+            //todo change titles of buttons
         }
     }
 
@@ -88,9 +147,14 @@ class GameFragment : BaseFragment<GameViewModel>(
             resources.getDimension(R.dimen.dp_1).toInt(),
             ContextCompat.getColor(requireContext(), R.color.color_team_green)
         )
-        background.color = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_transparent_background))
+        background.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_transparent_background
+            )
+        )
         background.cornerRadius = resources.getDimension(R.dimen.dp_14)
-        statisticsBinding.root.background = background
+        //statisticsBinding.root.background = background
         statisticsPopup = PopupWindow(
             statisticsBinding.root,
             resources.displayMetrics.widthPixels - resources.getDimension(R.dimen.dp_24)
