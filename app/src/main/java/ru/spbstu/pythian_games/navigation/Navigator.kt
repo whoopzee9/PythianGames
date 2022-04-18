@@ -80,6 +80,18 @@ class Navigator : FeatureRouter {
         }
     }
 
+    override fun openTeamDisplayFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.characterSelectionFragment -> navController?.navigate(R.id.action_characterSelectionFragment_to_teamsDisplayFragment)
+        }
+    }
+
+    override fun openGameFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.teamsDisplayFragment -> navController?.navigate(R.id.action_teamsDisplayFragment_to_gameFragment)
+        }
+    }
+
     fun attachActivity(activity: AppCompatActivity) {
         this.activity = activity
     }

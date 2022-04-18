@@ -1,6 +1,11 @@
 package ru.spbstu.feature.registration.presentation
 
+import android.view.View
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setDebounceClickListener
@@ -18,10 +23,13 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
 
     override val binding by viewBinding(FragmentRegistrationBinding::bind)
 
+    private lateinit var auth: FirebaseAuth
+
     override fun setupViews() {
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+        auth = Firebase.auth
 
         binding.frgRegistrationMbRegistration.setDebounceClickListener {
             checkFields()
@@ -38,6 +46,43 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
             binding.frgRegistrationEtRepeatPasswordLayout.error = null
             //binding.frgRegistrationEtEmailLayout.isErrorEnabled = false
         }
+    }
+
+    override fun subscribe() {
+        super.subscribe()
+        viewModel.state.observe {
+            handleUIState(it)
+        }
+    }
+
+    private fun handleUIState(state: RegistrationViewModel.UIState) {
+        when (state) {
+            RegistrationViewModel.UIState.Initial -> {
+                binding.frgRegistrationPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RegistrationViewModel.UIState.Progress -> {
+                binding.frgRegistrationPbProgress.visibility = View.VISIBLE
+                setActionsClickability(false)
+            }
+            RegistrationViewModel.UIState.Success -> {
+                binding.frgRegistrationPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RegistrationViewModel.UIState.Failure -> {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.try_again_later,
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.frgRegistrationPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+        }
+    }
+
+    private fun setActionsClickability(isClickable: Boolean) {
+        binding.frgRegistrationMbRegistration.isClickable = isClickable
     }
 
     private fun checkFields() {
@@ -70,7 +115,7 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
             return
         }
 
-        viewModel.register(email, password)
+        viewModel.register(auth, email, password)
     }
 
     override fun inject() {

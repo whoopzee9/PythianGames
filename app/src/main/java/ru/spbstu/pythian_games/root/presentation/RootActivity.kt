@@ -1,6 +1,9 @@
 package ru.spbstu.pythian_games.root.presentation
 
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseActivity
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.viewBinding
@@ -19,6 +22,8 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
     override val binding: ActivityRootBinding by viewBinding(ActivityRootBinding::inflate)
 
+    private lateinit var auth: FirebaseAuth
+
     override fun setupViews() {
         super.setupViews()
         navigator.attachActivity(this)
@@ -26,6 +31,10 @@ class RootActivity : BaseActivity<RootViewModel>() {
             supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
         val navController = navHostFragment.navController
         navigator.attachNavController(navController)
+        auth = Firebase.auth
+        if (auth.currentUser == null) {
+            navigator.clearBackStackAndOpenAuthFragment()
+        }
     }
 
     override fun onDestroy() {

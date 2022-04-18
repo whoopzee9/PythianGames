@@ -54,6 +54,7 @@
     <string name="game_stats">Игровая статистика</string>
     <string name="question_number">Вопрос %d</string>
     <string name="dig">Копать</string>
+    <string name="try_again_later">Ошибка, повторите позднее</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

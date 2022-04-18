@@ -75,4 +75,7 @@ dependencies {
 
     implementation coroutinesDep
     implementation coroutinesAndroidDep
+
+    implementation platform(firebaseBomDep)
+    implementation firebaseAuthDep
 }
