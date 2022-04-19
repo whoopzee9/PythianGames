@@ -91,4 +91,5 @@ dependencies {
     implementation firebaseAnalyticsDep
     implementation firebaseCrashlyticsDep
     implementation firebaseAuthDep
+    implementation firebaseDatabaseDep
 }

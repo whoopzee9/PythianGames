@@ -93,6 +93,7 @@ buildscript {
         firebaseAnalyticsDep = 'com.google.firebase:firebase-analytics-ktx'
         firebaseCrashlyticsDep = 'com.google.firebase:firebase-crashlytics-ktx'
         firebaseAuthDep = 'com.google.firebase:firebase-auth-ktx'
+        firebaseDatabaseDep = 'com.google.firebase:firebase-database-ktx'
     }
 
     ext.kotlin_version = "1.5.30"

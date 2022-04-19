@@ -15,7 +15,7 @@ class OnboardingViewModel(val router: FeatureRouter) : BackViewModel(router) {
         when (uiState.value) {
             UIState.First -> _uiState.value = UIState.Second
             UIState.Second -> _uiState.value = UIState.Third
-            UIState.Third -> router.back()
+            UIState.Third -> router.openAuthFragment()
         }
     }
 

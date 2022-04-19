@@ -10,6 +10,7 @@ import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.character_selection.presentation.CharacterSelectionViewModel
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module(
     includes = [
@@ -21,8 +22,11 @@ class CharacterSelectionModule {
     @Provides
     @IntoMap
     @ViewModelKey(CharacterSelectionViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return CharacterSelectionViewModel(router)
+    fun provideViewModel(
+        router: FeatureRouter,
+        gameJoiningDataWrapper: GameJoiningDataWrapper
+    ): ViewModel {
+        return CharacterSelectionViewModel(router, gameJoiningDataWrapper)
     }
 
     @Provides

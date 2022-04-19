@@ -10,6 +10,7 @@ import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.team_selection.presentation.TeamSelectionViewModel
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module(
     includes = [
@@ -21,8 +22,11 @@ class TeamSelectionModule {
     @Provides
     @IntoMap
     @ViewModelKey(TeamSelectionViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return TeamSelectionViewModel(router)
+    fun provideViewModel(
+        router: FeatureRouter,
+        gameJoiningDataWrapper: GameJoiningDataWrapper
+    ): ViewModel {
+        return TeamSelectionViewModel(router, gameJoiningDataWrapper)
     }
 
     @Provides

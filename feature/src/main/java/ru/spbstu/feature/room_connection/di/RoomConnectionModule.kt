@@ -10,6 +10,7 @@ import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.room_connection.presentation.RoomConnectionViewModel
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module(
     includes = [
@@ -21,8 +22,11 @@ class RoomConnectionModule {
     @Provides
     @IntoMap
     @ViewModelKey(RoomConnectionViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return RoomConnectionViewModel(router)
+    fun provideViewModel(
+        router: FeatureRouter,
+        gameJoiningDataWrapper: GameJoiningDataWrapper
+    ): ViewModel {
+        return RoomConnectionViewModel(router, gameJoiningDataWrapper)
     }
 
     @Provides

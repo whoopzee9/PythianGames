@@ -17,31 +17,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/frg_team_selection__mb_first_team"
+        android:id="@+id/frg_team_selection__mb_green_team"
         style="@style/Button.Filled"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_80"
         android:layout_marginTop="@dimen/dp_120"
-        android:text="@string/red_team"
+        android:text="@string/green_team"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frg_team_selection__tv_choose_team" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/frg_team_selection__mb_second_team"
-        style="@style/Button.Filled"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_80"
-        android:layout_marginTop="@dimen/dp_16"
-        android:text="@string/orange_team"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_first_team" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/frg_team_selection__mb_third_team"
+        android:id="@+id/frg_team_selection__mb_blue_team"
         style="@style/Button.Filled"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -50,19 +38,31 @@
         android:text="@string/blue_team"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_second_team" />
+        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_green_team" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/frg_team_selection__mb_fourth_team"
+        android:id="@+id/frg_team_selection__mb_red_team"
         style="@style/Button.Filled"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_80"
         android:layout_marginTop="@dimen/dp_16"
-        android:text="@string/green_team"
+        android:text="@string/red_team"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_third_team" />
+        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_blue_team" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frg_team_selection__mb_orange_team"
+        style="@style/Button.Filled"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_80"
+        android:layout_marginTop="@dimen/dp_16"
+        android:text="@string/orange_team"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_red_team" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/frg_team_selection__mb_next"
@@ -78,7 +78,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_fourth_team"
+        app:layout_constraintTop_toBottomOf="@id/frg_team_selection__mb_orange_team"
         app:layout_constraintVertical_bias="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

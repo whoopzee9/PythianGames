@@ -21,9 +21,6 @@ class Navigator : FeatureRouter {
     }
 
     fun clearBackStackAndOpenAuthFragment() {
-        if (navController?.currentDestination?.id == R.id.onboardingFragment) {
-            return
-        }
         while (navController?.popBackStack() == true) {
             Timber.tag(TAG).d("Skipped backstack entry")
         }

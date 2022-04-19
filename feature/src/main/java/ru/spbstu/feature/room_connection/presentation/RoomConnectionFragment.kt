@@ -3,6 +3,7 @@ package ru.spbstu.feature.room_connection.presentation
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import ru.spbstu.common.base.BaseFragment
@@ -15,6 +16,7 @@ import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentRoomConnectionBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import java.lang.IllegalStateException
 
 class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
     R.layout.fragment_room_connection,
@@ -49,7 +51,37 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
                     binding.frgRoomConnectionSpPlayers.visibility = View.VISIBLE
                     binding.frgRoomConnectionMbNext.setDebounceClickListener {
                         checkFields { name, code ->
-                            viewModel.createRoom(name, code)
+                            val selectedPosition = binding.frgRoomConnectionSpPlayers.selectedItemPosition
+                            var numOfTeams = 0
+                            var numOfPlayers = 0
+                            when (selectedPosition) {
+                                0 -> { // 1 x 1
+                                    numOfTeams = 2
+                                    numOfPlayers = 2
+                                }
+                                1 -> { // 2 x 2
+                                    numOfTeams = 2
+                                    numOfPlayers = 4
+                                }
+                                2 -> { // 1 x 1 x 1 x 1
+                                    numOfTeams = 4
+                                    numOfPlayers = 4
+                                }
+                                3 -> { // 2 x 2 x 2
+                                    numOfTeams = 3
+                                    numOfPlayers = 6
+                                }
+                                4 -> { // 4 x 4
+                                    numOfTeams = 2
+                                    numOfPlayers = 8
+                                }
+                                5 -> { // 2 x 2 x 2 x 2
+                                    numOfTeams = 4
+                                    numOfPlayers = 8
+                                }
+                                else -> throw IllegalStateException("Wrong selected position")
+                            }
+                            viewModel.createRoom(name, code, numOfTeams, numOfPlayers)
                         }
                     }
                 }
@@ -64,6 +96,59 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
                 }
             }
         }
+    }
+
+    override fun subscribe() {
+        super.subscribe()
+        viewModel.state.observe {
+            handleUIState(it)
+        }
+    }
+
+    private fun handleUIState(state: RoomConnectionViewModel.UIState) {
+        when (state) {
+            RoomConnectionViewModel.UIState.Failure -> {
+                Toast.makeText(requireContext(), R.string.try_again_later, Toast.LENGTH_SHORT).show()
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.GameAlreadyExists -> {
+                Toast.makeText(requireContext(), R.string.game_already_exists, Toast.LENGTH_SHORT).show()
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.Initial -> {
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.Progress -> {
+                binding.frgRoomConnectionPbProgress.visibility = View.VISIBLE
+                setActionsClickability(false)
+            }
+            RoomConnectionViewModel.UIState.Success -> {
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.WrongCode -> {
+                Toast.makeText(requireContext(), R.string.wrong_code, Toast.LENGTH_SHORT).show()
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.GameDoesntExist -> {
+                Toast.makeText(requireContext(), R.string.game_doesnt_exist, Toast.LENGTH_SHORT).show()
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+            RoomConnectionViewModel.UIState.GameIsFull -> {
+                Toast.makeText(requireContext(), R.string.game_is_full, Toast.LENGTH_SHORT).show()
+                binding.frgRoomConnectionPbProgress.visibility = View.GONE
+                setActionsClickability(true)
+            }
+        }
+    }
+
+    private fun setActionsClickability(isClickable: Boolean) {
+        binding.frgRoomConnectionMbNext.isClickable = isClickable
     }
 
     private fun checkFields(onCheck: (name: String, code: String) -> Unit) {

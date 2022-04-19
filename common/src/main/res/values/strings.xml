@@ -55,6 +55,10 @@
     <string name="question_number">Вопрос %d</string>
     <string name="dig">Копать</string>
     <string name="try_again_later">Ошибка, повторите позднее</string>
+    <string name="game_already_exists">Игра с таким названием уже существует</string>
+    <string name="wrong_code">Неправильный код комнаты</string>
+    <string name="game_doesnt_exist">Игры с таким названием не найдено</string>
+    <string name="game_is_full">Достигнуто максимальное количество игроков</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

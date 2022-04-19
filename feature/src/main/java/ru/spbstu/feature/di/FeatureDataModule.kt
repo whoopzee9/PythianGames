@@ -10,6 +10,7 @@ import ru.spbstu.feature.data.remote.source.FeatureDataSourceImpl
 import ru.spbstu.feature.data.repository.FeatureRepositoryImpl
 import ru.spbstu.feature.data.source.FeatureDataSource
 import ru.spbstu.feature.domain.repository.FeatureRepository
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module
 abstract class FeatureDataModule {
@@ -27,5 +28,11 @@ abstract class FeatureDataModule {
         @FeatureScope
         fun provideFeatureApiService(retrofit: Retrofit): FeatureApiService =
             retrofit.create(FeatureApiService::class.java)
+
+        @Provides
+        @FeatureScope
+        fun provideGameJoiningDataWrapper(): GameJoiningDataWrapper {
+            return GameJoiningDataWrapper()
+        }
     }
 }
