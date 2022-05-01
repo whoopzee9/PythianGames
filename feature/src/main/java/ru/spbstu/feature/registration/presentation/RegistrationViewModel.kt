@@ -30,9 +30,7 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
         _state.value = UIState.Progress
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                _state.value = UIState.Success
                 createUser(email)
-                router.openMainFragment()
             } else {
                 Timber.tag(TAG).e(it.exception)
                 _state.value = UIState.Failure
@@ -44,7 +42,15 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
         val database = Firebase.database
         val userId = Firebase.auth.currentUser?.uid ?: ""
         val userRef = database.getReference(DatabaseReferences.USERS_REF)
-        userRef.child(userId).setValue(User(userId, email))
+        userRef.child(userId).setValue(User(userId, email)).addOnCompleteListener {
+            if (it.isSuccessful) {
+                _state.value = UIState.Success
+                router.openMainFragment()
+            } else {
+                Timber.tag(TAG).e(it.exception)
+                _state.value = UIState.Failure
+            }
+        }
     }
 
     sealed class UIState {

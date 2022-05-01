@@ -1,7 +1,6 @@
 package ru.spbstu.pythian_games
 
 import android.app.Application
-import androidx.viewbinding.BuildConfig
 import ru.spbstu.common.di.CommonApi
 import ru.spbstu.common.di.FeatureContainer
 import ru.spbstu.pythian_games.di.app.AppComponent

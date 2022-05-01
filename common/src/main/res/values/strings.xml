@@ -59,6 +59,9 @@
     <string name="wrong_code">Неправильный код комнаты</string>
     <string name="game_doesnt_exist">Игры с таким названием не найдено</string>
     <string name="game_is_full">Достигнуто максимальное количество игроков</string>
+    <string name="empty_name">Введите имя!</string>
+    <string name="character_not_selected">Персонаж не выбран!</string>
+    <string name="short_passowrd">Пароль должен содержать не менее 6 символов</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

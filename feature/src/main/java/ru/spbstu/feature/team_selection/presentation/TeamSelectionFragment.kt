@@ -1,9 +1,9 @@
 package ru.spbstu.feature.team_selection.presentation
 
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import android.view.ViewGroup
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
@@ -14,6 +14,7 @@ import ru.spbstu.common.extenstions.setDisabledStyle
 import ru.spbstu.common.extenstions.setInactiveStyle
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
+import ru.spbstu.common.extenstions.subscribe
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.common.utils.TeamsConstants
@@ -26,7 +27,18 @@ import ru.spbstu.feature.domain.model.Game
 class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
     R.layout.fragment_team_selection,
 ) {
-    override val binding by viewBinding(FragmentTeamSelectionBinding::bind)
+
+    private var _binding: FragmentTeamSelectionBinding? = null
+    override val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTeamSelectionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun setupViews() {
         super.setupViews()
@@ -72,44 +84,31 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
         }
         updateTeamsButtons()
         binding.frgTeamSelectionMbNext.setDebounceClickListener {
-            viewModel.openCharacterSelectionFragment()
+            viewModel.saveTeam()
         }
     }
 
     override fun subscribe() {
         super.subscribe()
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        ref.child(viewModel.gameJoiningDataWrapper.game.name) //todo test this!!
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val game = snapshot.getValue(Game::class.java)
-                    if (game != null) {
-                        if (game.players.filter { it.teamStr == TeamsConstants.GREEN_TEAM }.size >= game.numOfPlayers / game.numOfTeams) {
-                            binding.frgTeamSelectionMbGreenTeam.setDisabledStyle()
-                        } else {
-                            binding.frgTeamSelectionMbGreenTeam.setInactiveStyle(R.color.color_team_green)
-                        }
-                        if (game.players.filter { it.teamStr == TeamsConstants.BLUE_TEAM }.size >= game.numOfPlayers / game.numOfTeams) {
-                            binding.frgTeamSelectionMbBlueTeam.setDisabledStyle()
-                        } else {
-                            binding.frgTeamSelectionMbBlueTeam.setInactiveStyle(R.color.color_team_blue)
-                        }
-                        if (game.numOfTeams > 2 && game.players.filter { it.teamStr == TeamsConstants.RED_TEAM }.size >= game.numOfPlayers / game.numOfTeams) {
-                            binding.frgTeamSelectionMbRedTeam.setDisabledStyle()
-                        } else {
-                            binding.frgTeamSelectionMbRedTeam.setInactiveStyle(R.color.color_team_red)
-                        }
-                        if (game.numOfTeams > 3 && game.players.filter { it.teamStr == TeamsConstants.ORANGE_TEAM }.size >= game.numOfPlayers / game.numOfTeams) {
-                            binding.frgTeamSelectionMbOrangeTeam.setDisabledStyle()
-                        } else {
-                            binding.frgTeamSelectionMbOrangeTeam.setInactiveStyle(R.color.color_team_orange)
-                        }
-                    }
+        ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
+            val game = snapshot.getValue(Game::class.java)
+            if (game != null) {
+                val playersPerTeam = game.numOfPlayers / game.numOfTeams
+                if (game.players.filter { it.value.teamStr == TeamsConstants.GREEN_TEAM }.size >= playersPerTeam) {
+                    binding.frgTeamSelectionMbGreenTeam.setDisabledStyle()
                 }
-
-                override fun onCancelled(error: DatabaseError) {
+                if (game.players.filter { it.value.teamStr == TeamsConstants.BLUE_TEAM }.size >= playersPerTeam) {
+                    binding.frgTeamSelectionMbBlueTeam.setDisabledStyle()
                 }
-            })
+                if (game.numOfTeams > 2 && game.players.filter { it.value.teamStr == TeamsConstants.RED_TEAM }.size >= playersPerTeam) {
+                    binding.frgTeamSelectionMbRedTeam.setDisabledStyle()
+                }
+                if (game.numOfTeams > 3 && game.players.filter { it.value.teamStr == TeamsConstants.ORANGE_TEAM }.size >= playersPerTeam) {
+                    binding.frgTeamSelectionMbOrangeTeam.setDisabledStyle()
+                }
+            }
+        }, onCancelled = {})
     }
 
     private fun updateTeamsButtons() {

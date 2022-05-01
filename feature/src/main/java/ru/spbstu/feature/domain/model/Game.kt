@@ -7,7 +7,7 @@ data class Game(
     val numOfPlayers: Int = 0,
     val numOfPlayersReady: Int = 0,
     val numOfPlayersJoined: Int = 0,
-    val players: List<PlayerInfo> = listOf(),
+    val players: HashMap<String, PlayerInfo> = hashMapOf(),
     val currentPlayerTurn: String = "",
     val morganTurnFlag: Boolean = false,
     val playingFlag: Boolean = false,

@@ -5,7 +5,7 @@ import ru.spbstu.common.R
 
 data class PlayerInfo(
     val id: String = "",
-    @DrawableRes val iconRes: Int = R.drawable.character_1,
+    @DrawableRes val iconRes: Int = 0,
     val teamStr: String = "",
     val playerNum: Int = 1,
     val name: String = ""

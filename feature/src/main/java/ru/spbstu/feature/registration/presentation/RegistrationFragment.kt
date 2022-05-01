@@ -108,6 +108,12 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
             return
         }
 
+        if (password.length < 6) {
+            binding.frgRegistrationEtPasswordLayout.error = " "
+            binding.frgRegistrationEtRepeatPasswordLayout.error =
+                getString(R.string.short_passowrd)
+        }
+
         if (!viewModel.arePasswordsMatch(password, repeatPassword)) {
             binding.frgRegistrationEtPasswordLayout.error = " "
             binding.frgRegistrationEtRepeatPasswordLayout.error =

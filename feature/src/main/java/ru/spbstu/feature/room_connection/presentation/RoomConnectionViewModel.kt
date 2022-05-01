@@ -1,16 +1,16 @@
 package ru.spbstu.feature.room_connection.presentation
 
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
+import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -26,29 +26,35 @@ class RoomConnectionViewModel(
         _state.value = UIState.Progress
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
-        ref.child(name).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    _state.value = UIState.GameAlreadyExists
-                } else {
-                    val game = Game(
-                        name = name,
-                        code = code,
-                        numOfTeams = numOfTeams,
-                        numOfPlayers = numOfPlayers,
-                        numOfPlayersJoined = 1
-                    )
-                    ref.child(name).setValue(game)
-                    gameJoiningDataWrapper.game = game
-                    _state.value = UIState.Success
-                    router.openTeamSelectionFragment()
+        ref.child(name).readValue(onSuccess = { snapshot ->
+            if (snapshot.exists()) {
+                _state.value = UIState.GameAlreadyExists
+            } else {
+                val id = Firebase.auth.currentUser?.uid ?: ""
+                val game = Game(
+                    name = name,
+                    code = code,
+                    numOfTeams = numOfTeams,
+                    numOfPlayers = numOfPlayers,
+                    numOfPlayersJoined = 1,
+                    players = hashMapOf(id to PlayerInfo(id = id))
+                )
+                ref.child(name).setValue(game).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        gameJoiningDataWrapper.game = game
+                        gameJoiningDataWrapper.playerInfo = PlayerInfo(id = id)
+                        _state.value = UIState.Success
+                        router.openTeamSelectionFragment()
+                    } else {
+                        Timber.tag(TAG).e(it.exception)
+                        it.exception?.printStackTrace()
+                        _state.value = UIState.Failure
+                    }
                 }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Timber.tag(TAG).e(error.message)
-                _state.value = UIState.Success
-            }
+        }, onCancelled = { error ->
+            Timber.tag(TAG).e(error.message)
+            _state.value = UIState.Failure
         })
     }
 
@@ -56,32 +62,40 @@ class RoomConnectionViewModel(
         _state.value = UIState.Progress
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
-        ref.child(name).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    val game = snapshot.getValue(Game::class.java)
-                    if (game?.code == code) {
-                        if (game.numOfPlayersJoined < game.numOfPlayers) {
-                            ref.child(name).child("numOfPlayersJoined")
-                                .setValue(game.numOfPlayersJoined + 1)
-                            _state.value = UIState.Success
-                            gameJoiningDataWrapper.game = game
-                            router.openTeamSelectionFragment()
-                        } else {
-                            _state.value = UIState.GameIsFull
-                        }
+        ref.child(name).readValue(onSuccess = { snapshot ->
+            if (snapshot.exists()) {
+                val game = snapshot.getValue(Game::class.java)
+                if (game?.code == code) {
+                    if (game.numOfPlayersJoined < game.numOfPlayers) {
+                        ref.child(name).child("numOfPlayersJoined")
+                            .setValue(game.numOfPlayersJoined + 1)
+                        val id = Firebase.auth.currentUser?.uid ?: ""
+                        ref.child(name)
+                            .child("players")
+                            .child(id)
+                            .setValue(PlayerInfo(id = id)).addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    _state.value = UIState.Success
+                                    gameJoiningDataWrapper.game = game
+                                    gameJoiningDataWrapper.playerInfo = PlayerInfo(id = id)
+                                    router.openTeamSelectionFragment()
+                                } else {
+                                    Timber.tag(TAG).e(it.exception)
+                                    _state.value = UIState.Failure
+                                }
+                            }
                     } else {
-                        _state.value = UIState.WrongCode
+                        _state.value = UIState.GameIsFull
                     }
                 } else {
-                    _state.value = UIState.GameDoesntExist
+                    _state.value = UIState.WrongCode
                 }
+            } else {
+                _state.value = UIState.GameDoesntExist
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Timber.tag(TAG).e(error.message)
-                _state.value = UIState.Success
-            }
+        }, onCancelled = { error ->
+            Timber.tag(TAG).e(error.message)
+            _state.value = UIState.Failure
         })
     }
 
