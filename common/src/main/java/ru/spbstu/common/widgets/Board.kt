@@ -125,7 +125,7 @@ class Board @JvmOverloads constructor(
         requestLayout()
     }
 
-    fun setCurrentPlayer(playerId: Long) {
+    fun setCurrentPlayer(playerId: String) {
         currPlayer = playersList.first { it.player.id == playerId }
     }
 

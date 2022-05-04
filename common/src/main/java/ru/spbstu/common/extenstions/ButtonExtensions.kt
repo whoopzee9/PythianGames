@@ -7,11 +7,15 @@ import ru.spbstu.common.R
 
 fun MaterialButton.setInactiveStyle(@ColorRes color: Int) {
     this.apply {
-        setBackgroundColor(ContextCompat.getColor(context, R.color.background_primary))
-        setTextColor(ContextCompat.getColor(context, color))
-        setStrokeColorResource(color)
-        setStrokeWidthResource(R.dimen.dp_2)
-        isEnabled = true
+        if (!isEnabled) {
+            setDisabledStyle()
+        } else {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.background_primary))
+            setTextColor(ContextCompat.getColor(context, color))
+            setStrokeColorResource(color)
+            setStrokeWidthResource(R.dimen.dp_2)
+            isEnabled = true
+        }
     }
 }
 

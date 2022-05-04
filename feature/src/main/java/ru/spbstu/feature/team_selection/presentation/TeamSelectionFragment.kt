@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
@@ -15,7 +16,6 @@ import ru.spbstu.common.extenstions.setInactiveStyle
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.subscribe
-import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.common.utils.TeamsConstants
 import ru.spbstu.feature.R
@@ -92,23 +92,27 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
         super.subscribe()
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
-            val game = snapshot.getValue(Game::class.java)
-            if (game != null) {
-                val playersPerTeam = game.numOfPlayers / game.numOfTeams
-                if (game.players.filter { it.value.teamStr == TeamsConstants.GREEN_TEAM }.size >= playersPerTeam) {
-                    binding.frgTeamSelectionMbGreenTeam.setDisabledStyle()
-                }
-                if (game.players.filter { it.value.teamStr == TeamsConstants.BLUE_TEAM }.size >= playersPerTeam) {
-                    binding.frgTeamSelectionMbBlueTeam.setDisabledStyle()
-                }
-                if (game.numOfTeams > 2 && game.players.filter { it.value.teamStr == TeamsConstants.RED_TEAM }.size >= playersPerTeam) {
-                    binding.frgTeamSelectionMbRedTeam.setDisabledStyle()
-                }
-                if (game.numOfTeams > 3 && game.players.filter { it.value.teamStr == TeamsConstants.ORANGE_TEAM }.size >= playersPerTeam) {
-                    binding.frgTeamSelectionMbOrangeTeam.setDisabledStyle()
-                }
-            }
+            handleGameSnapshotData(snapshot)
         }, onCancelled = {})
+    }
+
+    private fun handleGameSnapshotData(snapshot: DataSnapshot) {
+        val game = snapshot.getValue(Game::class.java)
+        if (game != null) {
+            val playersPerTeam = game.numOfPlayers / game.numOfTeams
+            if (game.players.filter { it.value.teamStr == TeamsConstants.GREEN_TEAM }.size >= playersPerTeam) {
+                binding.frgTeamSelectionMbGreenTeam.setDisabledStyle()
+            }
+            if (game.players.filter { it.value.teamStr == TeamsConstants.BLUE_TEAM }.size >= playersPerTeam) {
+                binding.frgTeamSelectionMbBlueTeam.setDisabledStyle()
+            }
+            if (game.numOfTeams > 2 && game.players.filter { it.value.teamStr == TeamsConstants.RED_TEAM }.size >= playersPerTeam) {
+                binding.frgTeamSelectionMbRedTeam.setDisabledStyle()
+            }
+            if (game.numOfTeams > 3 && game.players.filter { it.value.teamStr == TeamsConstants.ORANGE_TEAM }.size >= playersPerTeam) {
+                binding.frgTeamSelectionMbOrangeTeam.setDisabledStyle()
+            }
+        }
     }
 
     private fun updateTeamsButtons() {

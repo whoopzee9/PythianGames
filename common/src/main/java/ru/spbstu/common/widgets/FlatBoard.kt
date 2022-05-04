@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -33,6 +34,7 @@ class FlatBoard @JvmOverloads constructor(
     private var leftPlayerOffset = 0
     private var topPlayerOffset = 0
     private var additionalMatchParentOffset = 0
+    private var idsList: MutableList<String> = mutableListOf()
 
     init {
         for (i in 0 until size * size) {
@@ -52,12 +54,15 @@ class FlatBoard @JvmOverloads constructor(
         }
     }
 
+    fun getDisplayedPlayersIds(): List<String> = idsList
+
     fun addPlayer(player: Player) {
         val view = CharacterIcon(context)
         view.setDrawableResource(player.iconRes)
         view.setPlayer(player)
         addView(view)
-        //requestLayout()
+        idsList.add(player.id)
+        requestLayout()
         playersCount++
     }
 
@@ -74,9 +79,9 @@ class FlatBoard @JvmOverloads constructor(
                 val childWidth = childRight - childLeft
                 val childHeight = childBottom - childTop
 
-                child.pivotY = child.height.toFloat()
-                child.pivotX = child.width / 2f
                 child.setDebounceClickListener {
+                    child.pivotY = child.height.toFloat()
+                    child.pivotX = child.width / 2f
                     val to = if (child.scaleX == 1.0f) 1.2f else 1.0f
                     val scaleAnimation = ScaleAnimation(
                         child.scaleX,

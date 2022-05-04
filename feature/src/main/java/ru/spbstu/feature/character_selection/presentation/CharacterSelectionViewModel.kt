@@ -1,5 +1,6 @@
 package ru.spbstu.feature.character_selection.presentation
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
@@ -32,12 +33,13 @@ class CharacterSelectionViewModel(
                 val generic = object : GenericTypeIndicator<HashMap<String, PlayerInfo>>() {}
                 val players = snapshot.getValue(generic)
                 val team = gameJoiningDataWrapper.playerInfo.teamStr
-                val alreadyJoined = players?.count { it.value.teamStr == team } ?: 0
+                val readyCount = players?.count { it.value.teamStr == team && it.value.readyFlag } ?: 0
 
                 val currPlayer = gameJoiningDataWrapper.playerInfo.copy(
                     iconRes = resId,
-                    playerNum = alreadyJoined + 1,
-                    name = name
+                    playerNum = readyCount + 1,
+                    name = name,
+                    readyFlag = true
                 )
                 ref.child(gameJoiningDataWrapper.game.name)
                     .child("players")

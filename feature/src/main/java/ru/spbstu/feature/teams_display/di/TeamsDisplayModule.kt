@@ -10,6 +10,7 @@ import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.teams_display.presentation.TeamsDisplayViewModel
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module(
     includes = [
@@ -21,8 +22,11 @@ class TeamsDisplayModule {
     @Provides
     @IntoMap
     @ViewModelKey(TeamsDisplayViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return TeamsDisplayViewModel(router)
+    fun provideViewModel(
+        router: FeatureRouter,
+        gameJoiningDataWrapper: GameJoiningDataWrapper
+    ): ViewModel {
+        return TeamsDisplayViewModel(router, gameJoiningDataWrapper)
     }
 
     @Provides

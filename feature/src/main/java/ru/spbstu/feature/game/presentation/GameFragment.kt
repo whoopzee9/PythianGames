@@ -4,9 +4,12 @@ import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
@@ -18,7 +21,6 @@ import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.extenstions.setStatusBarColor
-import ru.spbstu.common.extenstions.setToDisabledStyle
 import ru.spbstu.common.extenstions.setToSelectedStyle
 import ru.spbstu.common.extenstions.setToUnselectedStyle
 import ru.spbstu.common.extenstions.viewBinding
@@ -44,7 +46,17 @@ class GameFragment : BaseFragment<GameViewModel>(
     private lateinit var statisticsPopup: PopupWindow
     private val statisticsBinding by viewBinding(FragmentGameStatisticsDialogBinding::inflate)
 
-    override val binding by viewBinding(FragmentGameBinding::bind)
+    private var _binding: FragmentGameBinding? = null
+    override val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGameBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     private val timer = Timer()
 
@@ -54,14 +66,32 @@ class GameFragment : BaseFragment<GameViewModel>(
         requireView().setLightStatusBar()
         //binding.stack.addPlayer(Player())
 
-        val player = Player(1, R.drawable.character_2, Team.Orange, 2, "12", true)
+        val player = Player("1", R.drawable.character_2, Team.Orange, 2, "12", true)
         binding.frgGameBoard.addPlayer(player)
         binding.frgGameBoard.setCurrentPlayer(player.id)
-        binding.frgGameBoard.addPlayer(Player(2, R.drawable.character_3, Team.Green, 1, "2", false))
-        binding.frgGameBoard.addPlayer(Player(3, R.drawable.character_4, Team.Red, 2, "qwe", false))
         binding.frgGameBoard.addPlayer(
             Player(
-                4,
+                "2",
+                R.drawable.character_3,
+                Team.Green,
+                1,
+                "2",
+                false
+            )
+        )
+        binding.frgGameBoard.addPlayer(
+            Player(
+                "3",
+                R.drawable.character_4,
+                Team.Red,
+                2,
+                "qwe",
+                false
+            )
+        )
+        binding.frgGameBoard.addPlayer(
+            Player(
+                "4",
                 R.drawable.character_5,
                 Team.Red,
                 2,
@@ -69,7 +99,16 @@ class GameFragment : BaseFragment<GameViewModel>(
                 false
             )
         )
-        binding.frgGameBoard.addPlayer(Player(1, R.drawable.character_2, Team.Green, 2, "", false))
+        binding.frgGameBoard.addPlayer(
+            Player(
+                "5",
+                R.drawable.character_2,
+                Team.Green,
+                2,
+                "",
+                false
+            )
+        )
 
         setupAdapter()
         setupStatisticsPopup()

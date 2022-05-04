@@ -1,8 +1,12 @@
 package ru.spbstu.feature.character_selection.presentation
 
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -14,7 +18,6 @@ import ru.spbstu.common.extenstions.setEnabled
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.subscribe
-import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.common.utils.TeamsConstants
 import ru.spbstu.feature.R
@@ -26,7 +29,18 @@ import ru.spbstu.feature.domain.model.PlayerInfo
 class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
     R.layout.fragment_character_selection,
 ) {
-    override val binding by viewBinding(FragmentCharacterSelectionBinding::bind)
+
+    private var _binding: FragmentCharacterSelectionBinding? = null
+    override val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCharacterSelectionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun setupViews() {
         super.setupViews()
@@ -104,26 +118,30 @@ class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(viewModel.gameJoiningDataWrapper.game.name).child("players").subscribe(
             onSuccess = { snapshot ->
-                val generic = object : GenericTypeIndicator<HashMap<String, PlayerInfo>>() {}
-                val players = snapshot.getValue(generic)
-                players?.forEach { entry ->
-                    val imageViewList = listOf(
-                        binding.frgCharacterSelectionIvCharacter1,
-                        binding.frgCharacterSelectionIvCharacter2,
-                        binding.frgCharacterSelectionIvCharacter3,
-                        binding.frgCharacterSelectionIvCharacter4
-                    )
-                    imageViewList.forEach {
-                        if (entry.value.iconRes != 0 && it.tag as Int == entry.value.iconRes) {
-                            it.setDisabled()
-                        } else {
-                            it.setEnabled()
-                        }
-                    }
-                }
+                handleGameSnapshotData(snapshot)
             }, onCancelled = {
             }
         )
+    }
+
+    private fun handleGameSnapshotData(snapshot: DataSnapshot) {
+        val generic = object : GenericTypeIndicator<HashMap<String, PlayerInfo>>() {}
+        val players = snapshot.getValue(generic)
+        players?.forEach { entry ->
+            val imageViewList = listOf(
+                binding.frgCharacterSelectionIvCharacter1,
+                binding.frgCharacterSelectionIvCharacter2,
+                binding.frgCharacterSelectionIvCharacter3,
+                binding.frgCharacterSelectionIvCharacter4
+            )
+            imageViewList.forEach {
+                if (entry.value.iconRes != 0 && it.tag as Int == entry.value.iconRes) {
+                    it.setDisabled()
+                } else {
+                    it.setEnabled()
+                }
+            }
+        }
     }
 
     private fun setCharacters() {

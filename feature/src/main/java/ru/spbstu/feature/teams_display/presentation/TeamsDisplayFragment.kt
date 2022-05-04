@@ -1,43 +1,87 @@
 package ru.spbstu.feature.teams_display.presentation
 
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
-import ru.spbstu.common.extenstions.viewBinding
-import ru.spbstu.common.model.Player
-import ru.spbstu.common.model.Team
+import ru.spbstu.common.extenstions.subscribe
+import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentTeamsDisplayBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.domain.model.Game
+import ru.spbstu.feature.domain.model.toPlayer
 
 class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
     R.layout.fragment_teams_display,
 ) {
-    override val binding by viewBinding(FragmentTeamsDisplayBinding::bind)
+    private var _binding: FragmentTeamsDisplayBinding? = null
+    override val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTeamsDisplayBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun setupViews() {
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
-        binding.frgTeamsDisplayBoard.numOfTeams = 4
-        binding.frgTeamsDisplayBoard.numOfPlayers = 8
-        binding.frgTeamsDisplayBoard.size = 5
-        binding.frgTeamsDisplayBoard.addPlayer(Player(1, R.drawable.character_2, Team.Green, 1, "sdfsdf"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(2, R.drawable.character_1, Team.Green, 2, "qweqwe"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(3, R.drawable.character_3, Team.Blue, 1, "123123"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(4, R.drawable.character_5, Team.Blue, 2, "gdf"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(5, R.drawable.character_4, Team.Red, 1, "fgdаывываfg"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(6, R.drawable.character_6, Team.Red, 2, "12"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(7, R.drawable.character_7, Team.Orange, 1, "12dfgddfgdf3123"))
-        binding.frgTeamsDisplayBoard.addPlayer(Player(8, R.drawable.character_8, Team.Orange, 2, "12wewfsddfs3123"))
+        setupBoard()
+    }
 
+    override fun subscribe() {
+        super.subscribe()
+        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
+            handleGameSnapshotData(snapshot)
+        }, onCancelled = {})
 
+        viewModel.timerData.observe {
+            binding.frgTeamsDisplayTvWaitingForPlayers.text =
+                getString(R.string.game_starts_in, it / 1000)
+        }
+    }
+
+    private fun handleGameSnapshotData(snapshot: DataSnapshot) {
+        val game = snapshot.getValue(Game::class.java)
+        if (game != null) {
+            val players = game.players.values
+            val displayedPlayersIds = binding.frgTeamsDisplayBoard.getDisplayedPlayersIds()
+            players.forEach {
+                if (!displayedPlayersIds.contains(it.id) && it.readyFlag) {
+                    binding.frgTeamsDisplayBoard.addPlayer(it.toPlayer())
+                }
+            }
+            val readyCount = players.count { it.readyFlag }
+            binding.frgTeamsDisplayTvWaitingForPlayers.text =
+                getString(R.string.waiting_for_players, readyCount, game.numOfPlayers)
+
+            if (readyCount == game.numOfPlayers) {
+                viewModel.startGameTimer.start()
+            }
+        }
+    }
+
+    private fun setupBoard() {
+        with(binding.frgTeamsDisplayBoard) {
+            numOfTeams = viewModel.gameJoiningDataWrapper.game.numOfTeams
+            numOfPlayers = viewModel.gameJoiningDataWrapper.game.numOfPlayers
+            size = if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
+        }
     }
 
     override fun inject() {
