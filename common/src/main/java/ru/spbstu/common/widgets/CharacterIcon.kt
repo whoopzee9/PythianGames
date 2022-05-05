@@ -1,21 +1,17 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import ru.spbstu.common.R
-import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.model.Player
 import kotlin.math.abs
 import kotlin.math.max
@@ -28,8 +24,8 @@ class CharacterIcon @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var imageHeight = context.dpToPx(50f)
-    private var imageWidth = context.dpToPx(50f)
+    private var imageHeight = resources.getDimension(R.dimen.dp_50)
+    private var imageWidth = resources.getDimension(R.dimen.dp_50)
     private var drawableRes: Int
     var scale = 1f
     private var defScale = 1f
@@ -40,7 +36,7 @@ class CharacterIcon @JvmOverloads constructor(
     private var paint = Paint()
     private var textPadding = 10
     var fontHeight = 0f
-    var drawable : Drawable?
+    var drawable: Drawable?
     val rect = Rect()
     private var offset = 0
 
@@ -120,7 +116,7 @@ class CharacterIcon @JvmOverloads constructor(
     }
 
     private fun computeMaximumHeight(): Int {
-        return (imageHeight * scale ).toInt() + fontHeight.toInt() + paddingTop + paddingBottom
+        return (imageHeight * scale).toInt() + fontHeight.toInt() + paddingTop + paddingBottom
     }
 
     private fun computeMaximumWidth(): Int {
@@ -149,22 +145,25 @@ class CharacterIcon @JvmOverloads constructor(
             paint.getTextBounds(text, 0, text.length, bounds)
             textWidth = bounds.width()
             additionalWidth = if (textWidth > imageWidth) (textWidth - imageWidth).toInt() else 0
-            offset = if (relativeLeft < 50 && textWidth > imageWidth) abs(rect.left) else 0
+            offset = if (relativeLeft < LEFT_BORDER && textWidth > imageWidth) abs(rect.left) else 0
             val x = if (textWidth > imageWidth) {
-                if (relativeLeft < 50) {
-                    abs(40f)
-                } else if (relativeRight > group.width) {
-                    (group.width - relativeRight).toFloat()
-                } else {
-                    0f
+                when {
+                    relativeLeft < LEFT_BORDER -> abs(LEFT_SHIFT)
+                    relativeRight > group.width -> (group.width - relativeRight).toFloat()
+                    else -> 0f
                 }
             } else (imageWidth - textWidth) / 2
             canvas?.drawText(text, x, fontHeight - textPadding, paint)
         }
 
         canvas?.translate(additionalWidth / 2f, fontHeight)
-        drawable?.setBounds(0,0,imageWidth.toInt(), imageHeight.toInt())
+        drawable?.setBounds(0, 0, imageWidth.toInt(), imageHeight.toInt())
         drawable?.draw(canvas!!)
         canvas?.translate(-additionalWidth / 2f, -fontHeight)
+    }
+
+    companion object {
+        const val LEFT_BORDER = 50f
+        const val LEFT_SHIFT = 40f
     }
 }

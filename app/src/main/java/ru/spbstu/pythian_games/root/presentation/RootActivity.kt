@@ -32,6 +32,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
         val navController = navHostFragment.navController
         navigator.attachNavController(navController)
         auth = Firebase.auth
+        auth.useAppLanguage()
         if (auth.currentUser == null) {
             navigator.clearBackStackAndOpenAuthFragment()
         }

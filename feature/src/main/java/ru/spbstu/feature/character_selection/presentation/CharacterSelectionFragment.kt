@@ -133,7 +133,7 @@ class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
                 binding.frgCharacterSelectionIvCharacter2,
                 binding.frgCharacterSelectionIvCharacter3,
                 binding.frgCharacterSelectionIvCharacter4
-            )
+            ).filter { it.visibility == View.VISIBLE }
             imageViewList.forEach {
                 if (entry.value.iconRes != 0 && it.tag as Int == entry.value.iconRes) {
                     it.setDisabled()

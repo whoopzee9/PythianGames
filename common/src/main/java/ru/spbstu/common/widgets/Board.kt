@@ -1,24 +1,19 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
-import android.graphics.PointF
-import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.ScaleAnimation
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
-import ru.spbstu.common.extenstions.scale
-import ru.spbstu.common.extenstions.setPivot
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.PlayerBoard
 import ru.spbstu.common.model.Team
+import ru.spbstu.common.utils.ZoomHelper
+import java.lang.IllegalStateException
 import kotlin.math.min
 
 class Board @JvmOverloads constructor(
@@ -31,23 +26,26 @@ class Board @JvmOverloads constructor(
     private var totalPlayers = 8
     private var totalTeams = 4
 
+    //todo idk what to do with these shifts
     private val dx = 32f
     private val dy = 19f
 
-    private var cardHeight = context.dpToPx(35f)
-    private var cardWidth = context.dpToPx(58f)
-    private var spacing = context.dpToPx(8f)
+    private var cardHeight = resources.getDimension(R.dimen.dp_35)
+    private var cardWidth = resources.getDimension(R.dimen.dp_58)
+    private var spacing = resources.getDimension(R.dimen.dp_8)
     private var boardSpacing = context.dpToPx(5.5f)
 
-    private var iconHeight = context.dpToPx(32f)
-    private var iconWidth = context.dpToPx(32f)
-    private var strokeWidth = context.dpToPx(3f)
-    private var activeTurnStrokeWidth = context.dpToPx(1f)
+    private var iconHeight = resources.getDimension(R.dimen.dp_32)
+    private var iconWidth = resources.getDimension(R.dimen.dp_32)
+    private var strokeWidth = resources.getDimension(R.dimen.dp_3)
+    private var activeTurnStrokeWidth = resources.getDimension(R.dimen.dp_1)
     private var characterBackground: GradientDrawable
 
     private val playersList: MutableList<PlayerBoard> = mutableListOf()
 
     private var currPlayer: PlayerBoard? = null
+
+    private val zoomHelper = ZoomHelper(this)
 
     init {
         characterBackground = ContextCompat.getDrawable(
@@ -132,13 +130,6 @@ class Board @JvmOverloads constructor(
     fun getCurrentPlayer() = currPlayer
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        var curWidth: Int
-        var curHeight: Int
-        var curLeft: Int
-        var curTop: Int
-
-        //get the available size of child view
-
         val childLeft = paddingLeft
         val childTop = paddingTop
         val childRight = measuredWidth - paddingRight
@@ -146,224 +137,239 @@ class Board @JvmOverloads constructor(
         val childWidth = childRight - childLeft
         val childHeight = childBottom - childTop
 
-        var maxHeight = 0
-
         for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            when (child) {
+            when (val child = getChildAt(i)) {
                 is MorganBoard -> {
-                    child.measure(
-                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                    )
-                    curWidth = child.measuredWidth
-                    curLeft = 0
-                    curHeight = child.measuredHeight
-                    curTop = 0
-                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+                    layoutBoard(child, childWidth, childHeight)
                 }
                 is CardStack -> {
-                    val h = (i - 1) / size
-                    val w = (i - 1) % size
-
-                    val shift =
-                        if (size == 5) spacing.toInt() else (spacing + cardHeight + boardSpacing / 2).toInt()
-
-                    curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
-                    curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt() + shift
-
-
-                    child.measure(
-                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                    )
-                    curWidth = child.measuredWidth
-                    curLeft -= curWidth / 2
-                    curHeight = child.measuredHeight
-                    curTop -= curHeight * 5 / 2
-                    if (curLeft + curWidth >= childRight) {
-                        curLeft = childLeft
-                        curTop += maxHeight
-                        maxHeight = 0
-                    }
-
-                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
-
+                    layoutCardStack(child, childWidth, childHeight, i)
                 }
                 is BoardIcon -> {
-                    val player = child.getPlayer()
-                    val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
-
-                    val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
-                        .toInt() - iconWidth.toInt() / 2
-                    val baseCurTop =
-                        cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
-                            .toInt() - boardSpacing.toInt()
-                    when (sameSquareList.size) {
-                        1 -> {
-                            curLeft = baseCurLeft
-                            curTop = baseCurTop
-                        }
-                        2 -> {
-                            val index = sameSquareList.indexOf(player)
-                            curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
-                            curTop = baseCurTop
-                        }
-                        else -> { // 3 icons
-                            val index = sameSquareList.indexOf(player)
-                            if (index < 2) {
-                                curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
-                                curTop = baseCurTop
-                            } else {
-                                curLeft = baseCurLeft
-                                curTop = baseCurTop + iconHeight.toInt() / 3
-                            }
-                        }
-                    }
-
-                    child.measure(
-                        MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
-                    )
-
-                    curWidth = iconWidth.toInt()
-                    curHeight = iconHeight.toInt()
-
-                    child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+                    layoutBoardIcon(child, childWidth, childHeight)
                 }
                 is BoardArrow -> { //arrows
-                    val player = currPlayer
-                    if (player != null && player.player.isActiveTurn) {
-                        //todo get info about layers from cardStack's to decide where we can go
-                        when (child.getDirection()) {
-                            BoardArrow.Direction.Up -> {
-                                if (player.y > 0) {
-                                    val arrowShift = 0.2f
-                                    curLeft =
-                                        width / 2 + context.dpToPx(-(player.y - arrowShift) * dx + player.x * dx)
-                                            .toInt()
-                                    curTop =
-                                        cardHeight.toInt() + context.dpToPx((player.y - arrowShift) * dy + player.x * dy)
-                                            .toInt()
-                                    child.measure(
-                                        MeasureSpec.makeMeasureSpec(
-                                            childWidth,
-                                            MeasureSpec.AT_MOST
-                                        ),
-                                        MeasureSpec.makeMeasureSpec(
-                                            childHeight,
-                                            MeasureSpec.AT_MOST
-                                        )
-                                    )
+                    layoutBoardArrow(child, childWidth, childHeight)
+                }
+            }
+        }
+    }
 
-                                    curWidth = child.measuredWidth
-                                    curHeight = child.measuredHeight
+    private fun layoutBoard(child: View, childWidth: Int, childHeight: Int) {
+        child.measure(
+            MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+        )
+        val curWidth = child.measuredWidth
+        val curLeft = 0
+        val curHeight = child.measuredHeight
+        val curTop = 0
+        child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+    }
 
-                                    child.layout(
-                                        curLeft,
-                                        curTop,
-                                        curLeft + curWidth,
-                                        curTop + curHeight
-                                    )
-                                }
-                            }
-                            BoardArrow.Direction.Down -> {
-                                if (player.y < size - 1) {
-                                    val arrowShift = 1.4f
-                                    curLeft =
-                                        width / 2 + context.dpToPx(-(player.y + arrowShift) * dx + player.x * dx)
-                                            .toInt()
-                                    curTop =
-                                        cardHeight.toInt() + context.dpToPx((player.y + arrowShift) * dy + player.x * dy)
-                                            .toInt()
-                                    child.measure(
-                                        MeasureSpec.makeMeasureSpec(
-                                            childWidth,
-                                            MeasureSpec.AT_MOST
-                                        ),
-                                        MeasureSpec.makeMeasureSpec(
-                                            childHeight,
-                                            MeasureSpec.AT_MOST
-                                        )
-                                    )
+    private fun layoutCardStack(child: View, childWidth: Int, childHeight: Int, index: Int) {
+        val h = (index - 1) / size
+        val w = (index - 1) % size
 
-                                    curWidth = child.measuredWidth
-                                    curHeight = child.measuredHeight
+        val shift =
+            if (size == 5) spacing.toInt() else (spacing + cardHeight + boardSpacing / 2).toInt()
 
-                                    child.layout(
-                                        curLeft,
-                                        curTop,
-                                        curLeft + curWidth,
-                                        curTop + curHeight
-                                    )
-                                }
-                            }
-                            BoardArrow.Direction.Left -> {
-                                if (player.x > 0) {
-                                    val arrowShift = 1.4f
-                                    curLeft =
-                                        width / 2 + context.dpToPx(-player.y * dx + (player.x - arrowShift) * dx)
-                                            .toInt()
-                                    curTop =
-                                        cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x - 0.2f) * dy)
-                                            .toInt()
-                                    child.measure(
-                                        MeasureSpec.makeMeasureSpec(
-                                            childWidth,
-                                            MeasureSpec.AT_MOST
-                                        ),
-                                        MeasureSpec.makeMeasureSpec(
-                                            childHeight,
-                                            MeasureSpec.AT_MOST
-                                        )
-                                    )
+        var curLeft = width / 2 + context.dpToPx(-h * dx + w * dx).toInt()
+        var curTop = height / 2 + context.dpToPx(h * dy + w * dy).toInt() + shift
 
-                                    curWidth = child.measuredWidth
-                                    curHeight = child.measuredHeight
+        child.measure(
+            MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+        )
+        val curWidth = child.measuredWidth
+        curLeft -= curWidth / 2
+        val curHeight = child.measuredHeight
+        curTop -= curHeight * 5 / 2
 
-                                    child.layout(
-                                        curLeft,
-                                        curTop,
-                                        curLeft + curWidth,
-                                        curTop + curHeight
-                                    )
-                                }
-                            }
-                            BoardArrow.Direction.Right -> {
-                                if (player.x < size - 1) {
-                                    curLeft =
-                                        width / 2 + context.dpToPx(-player.y * dx + (player.x + 0.2f) * dx)
-                                            .toInt()
-                                    curTop =
-                                        cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x + 1.3f) * dy)
-                                            .toInt()
-                                    child.measure(
-                                        MeasureSpec.makeMeasureSpec(
-                                            childWidth,
-                                            MeasureSpec.AT_MOST
-                                        ),
-                                        MeasureSpec.makeMeasureSpec(
-                                            childHeight,
-                                            MeasureSpec.AT_MOST
-                                        )
-                                    )
+        child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+    }
 
-                                    curWidth = child.measuredWidth
-                                    curHeight = child.measuredHeight
+    private fun layoutBoardIcon(child: View, childWidth: Int, childHeight: Int) {
+        if (child !is BoardIcon) {
+            return
+        }
+        val player = child.getPlayer()
+        val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
 
-                                    child.layout(
-                                        curLeft,
-                                        curTop,
-                                        curLeft + curWidth,
-                                        curTop + curHeight
-                                    )
-                                }
-                            }
-                        }
+        val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
+            .toInt() - iconWidth.toInt() / 2
+        val baseCurTop =
+            cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
+                .toInt() - boardSpacing.toInt()
+        val curLeft: Int
+        val curTop: Int
+        when (sameSquareList.size) {
+            1 -> {
+                curLeft = baseCurLeft
+                curTop = baseCurTop
+            }
+            2 -> {
+                val index = sameSquareList.indexOf(player)
+                curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
+                curTop = baseCurTop
+            }
+            else -> { // 3 icons, more players will not display
+                val index = sameSquareList.indexOf(player)
+                if (index < 2) {
+                    curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
+                    curTop = baseCurTop
+                } else {
+                    curLeft = baseCurLeft
+                    curTop = baseCurTop + iconHeight.toInt() / 3
+                }
+            }
+        }
+
+        child.measure(
+            MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+        )
+
+        val curWidth = iconWidth.toInt()
+        val curHeight = iconHeight.toInt()
+
+        child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
+    }
+
+    fun layoutBoardArrow(child: View, childWidth: Int, childHeight: Int) {
+        if (child !is BoardArrow) {
+            return
+        }
+        val player = currPlayer
+        if (player != null && player.player.isActiveTurn) {
+            //todo get info about layers from cardStack's to decide where we can go
+            val curLeft: Int
+            val curTop: Int
+            when (child.getDirection()) {
+                BoardArrow.Direction.Up -> {
+                    if (player.y > 0) {
+                        val arrowShift = 0.2f
+                        curLeft =
+                            width / 2 + context.dpToPx(-(player.y - arrowShift) * dx + player.x * dx)
+                                .toInt()
+                        curTop =
+                            cardHeight.toInt() + context.dpToPx((player.y - arrowShift) * dy + player.x * dy)
+                                .toInt()
+                        child.measure(
+                            MeasureSpec.makeMeasureSpec(
+                                childWidth,
+                                MeasureSpec.AT_MOST
+                            ),
+                            MeasureSpec.makeMeasureSpec(
+                                childHeight,
+                                MeasureSpec.AT_MOST
+                            )
+                        )
+
+                        val curWidth = child.measuredWidth
+                        val curHeight = child.measuredHeight
+
+                        child.layout(
+                            curLeft,
+                            curTop,
+                            curLeft + curWidth,
+                            curTop + curHeight
+                        )
+                    }
+                }
+                BoardArrow.Direction.Down -> {
+                    if (player.y < size - 1) {
+                        val arrowShift = 1.4f
+                        curLeft =
+                            width / 2 + context.dpToPx(-(player.y + arrowShift) * dx + player.x * dx)
+                                .toInt()
+                        curTop =
+                            cardHeight.toInt() + context.dpToPx((player.y + arrowShift) * dy + player.x * dy)
+                                .toInt()
+                        child.measure(
+                            MeasureSpec.makeMeasureSpec(
+                                childWidth,
+                                MeasureSpec.AT_MOST
+                            ),
+                            MeasureSpec.makeMeasureSpec(
+                                childHeight,
+                                MeasureSpec.AT_MOST
+                            )
+                        )
+
+                        val curWidth = child.measuredWidth
+                        val curHeight = child.measuredHeight
+
+                        child.layout(
+                            curLeft,
+                            curTop,
+                            curLeft + curWidth,
+                            curTop + curHeight
+                        )
+                    }
+                }
+                BoardArrow.Direction.Left -> {
+                    if (player.x > 0) {
+                        val arrowShift = 1.4f
+                        curLeft =
+                            width / 2 + context.dpToPx(-player.y * dx + (player.x - arrowShift) * dx)
+                                .toInt()
+                        curTop =
+                            cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x - 0.2f) * dy)
+                                .toInt()
+                        child.measure(
+                            MeasureSpec.makeMeasureSpec(
+                                childWidth,
+                                MeasureSpec.AT_MOST
+                            ),
+                            MeasureSpec.makeMeasureSpec(
+                                childHeight,
+                                MeasureSpec.AT_MOST
+                            )
+                        )
+
+                        val curWidth = child.measuredWidth
+                        val curHeight = child.measuredHeight
+
+                        child.layout(
+                            curLeft,
+                            curTop,
+                            curLeft + curWidth,
+                            curTop + curHeight
+                        )
+                    }
+                }
+                BoardArrow.Direction.Right -> {
+                    if (player.x < size - 1) {
+                        curLeft =
+                            width / 2 + context.dpToPx(-player.y * dx + (player.x + 0.2f) * dx)
+                                .toInt()
+                        curTop =
+                            cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x + 1.3f) * dy)
+                                .toInt()
+                        child.measure(
+                            MeasureSpec.makeMeasureSpec(
+                                childWidth,
+                                MeasureSpec.AT_MOST
+                            ),
+                            MeasureSpec.makeMeasureSpec(
+                                childHeight,
+                                MeasureSpec.AT_MOST
+                            )
+                        )
+
+                        val curWidth = child.measuredWidth
+                        val curHeight = child.measuredHeight
+
+                        child.layout(
+                            curLeft,
+                            curTop,
+                            curLeft + curWidth,
+                            curTop + curHeight
+                        )
                     }
                 }
             }
-
         }
     }
 
@@ -423,14 +429,8 @@ class Board @JvmOverloads constructor(
         return (cardWidth * (size + 2)).toInt() + (spacing * 3 + boardSpacing * (size + 2)).toInt()
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return super.dispatchTouchEvent(ev)
-    }
-
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-        scaleGestureDetector.onTouchEvent(event)
-        translationHandler.onTouch(this, event)
+        zoomHelper.onTouchEvent(event)
         return true
     }
 
@@ -477,6 +477,7 @@ class Board @JvmOverloads constructor(
                                     }
                                 }
                             }
+                            else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
                         }
                     }
                     4 -> {
@@ -539,6 +540,7 @@ class Board @JvmOverloads constructor(
                             }
                         }
                     }
+                    else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
                 }
             }
             8 -> {
@@ -585,7 +587,9 @@ class Board @JvmOverloads constructor(
                                     }
                                 }
                             }
+                            else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
                         }
+
                     }
                     4 -> {
                         when (playerBoard.player.team) {
@@ -644,166 +648,4 @@ class Board @JvmOverloads constructor(
         }
     }
 
-    private val originContentRect by lazy {
-        run {
-            val array = IntArray(2)
-            getLocationOnScreen(array)
-            Rect(array[0], array[1], array[0] + width, array[1] + height)
-        }
-    }
-
-    private val translationHandler by lazy {
-        object : OnTouchListener {
-            private var prevX = 0f
-            private var prevY = 0f
-            private var moveStarted = false
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (event == null || scaleX == 1f) return false
-
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        prevX = event.x
-                        prevY = event.y
-                    }
-
-                    MotionEvent.ACTION_POINTER_UP -> {
-                        if (event.actionIndex == 0) {
-                            try {
-                                prevX = event.getX(1)
-                                prevY = event.getY(1)
-                            } catch (e: Exception) {
-                            }
-                        }
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        if (event.pointerCount > 1) {
-                            prevX = event.x
-                            prevY = event.y
-                            return false
-                        }
-                        moveStarted = true
-                        run {
-                            translationX += (event.x - prevX)
-                            translationY += (event.y - prevY)
-                            checkTranslation()
-                        }
-                        prevX = event.x
-                        prevY = event.y
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        if (!moveStarted) return false
-                        reset()
-                        //translateToOriginalRect()
-                    }
-                }
-                return true
-            }
-
-            private fun reset() {
-                prevX = 0f
-                prevY = 0f
-                moveStarted = false
-            }
-        }
-    }
-
-    private fun checkTranslation() {
-        if (translationX > MAX_TRANSLATION_X) {
-            translationX = MAX_TRANSLATION_X
-        }
-        if (translationX < MIN_TRANSLATION_X) {
-            translationX = MIN_TRANSLATION_X
-        }
-        if (translationY > MAX_TRANSLATION_Y) {
-            translationY = MAX_TRANSLATION_Y
-        }
-        if (translationY < MIN_TRANSLATION_Y) {
-            translationY = MIN_TRANSLATION_Y
-        }
-    }
-
-    private val scaleGestureDetector by lazy {
-        ScaleGestureDetector(
-            context,
-            object : ScaleGestureDetector.OnScaleGestureListener {
-                var totalScale = 1f
-
-                override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                    run {
-                        val actualPivot = PointF(
-                            (detector.focusX - translationX + pivotX * (totalScale - 1)) / totalScale,
-                            (detector.focusY - translationY + pivotY * (totalScale - 1)) / totalScale,
-                        )
-
-                        translationX -= (pivotX - actualPivot.x) * (totalScale - 1)
-                        translationY -= (pivotY - actualPivot.y) * (totalScale - 1)
-                        checkTranslation()
-                        setPivot(actualPivot)
-                    }
-                    return true
-                }
-
-                override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    val prev = totalScale
-                    totalScale *= detector.scaleFactor
-                    totalScale = totalScale.coerceIn(MIN_SCALE_FACTOR, MAX_SCALE_FACTOR)
-                    //Log.d("qwerty", "onScale")
-                    run {
-                        val scaleAnimation = ScaleAnimation(
-                            prev,
-                            totalScale,
-                            prev,
-                            totalScale,
-                            detector.focusX,
-                            detector.focusY
-                        )
-                        scaleAnimation.duration = 0
-                        scaleAnimation.fillAfter = true
-                        startAnimation(scaleAnimation)
-                        scale(totalScale)
-                        invalidate()
-                        getContentViewTranslation().run {
-                            translationX += x
-                            translationY += y
-                            checkTranslation()
-                        }
-                    }
-                    return true
-                }
-
-                override fun onScaleEnd(detector: ScaleGestureDetector) = Unit
-            })
-    }
-
-    private fun getContentViewTranslation(): PointF {
-        return run {
-            originContentRect.let { rect ->
-                val array = IntArray(2)
-                getLocationOnScreen(array)
-                PointF(
-                    when {
-                        array[0] > rect.left -> rect.left - array[0].toFloat()
-                        array[0] + width * scaleX < rect.right -> rect.right - (array[0] + width * scaleX)
-                        else -> 0f
-                    },
-                    when {
-                        array[1] > rect.top -> rect.top - array[1].toFloat()
-                        array[1] + height * scaleY < rect.bottom -> rect.bottom - (array[1] + height * scaleY)
-                        else -> 0f
-                    }
-                )
-            }
-        }
-    }
-
-    companion object {
-        const val MAX_SCALE_FACTOR = 1.2f
-        const val MIN_SCALE_FACTOR = 1f
-        const val MAX_TRANSLATION_X = 190f
-        const val MIN_TRANSLATION_X = -190f
-        const val MAX_TRANSLATION_Y = 50f
-        const val MIN_TRANSLATION_Y = -50f
-    }
 }

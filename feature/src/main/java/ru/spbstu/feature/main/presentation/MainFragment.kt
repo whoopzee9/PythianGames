@@ -29,6 +29,10 @@ class MainFragment : BaseFragment<MainViewModel>(
             viewModel.openRoomConnectionFragment(RoomConnectionFragment.Companion.RoomMode.Join)
         }
         binding.frgMainMbTutorial.setDebounceClickListener {}
+        binding.frgMainMbTutorial.isEnabled = false
+        binding.frgMainMbLogOut.setDebounceClickListener {
+            viewModel.logout()
+        }
     }
 
     override fun inject() {

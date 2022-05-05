@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -27,9 +26,9 @@ class FlatBoard @JvmOverloads constructor(
     var size = 5
     var numOfPlayers = 8
     var numOfTeams = 4
-    private val padding = context.dpToPx(10f).toInt()
-    private val squareWidth = context.dpToPx(60f).toInt()
-    private val squareHeight = context.dpToPx(60f).toInt()
+    private val padding = resources.getDimension(R.dimen.dp_10).toInt()
+    private val squareWidth = resources.getDimension(R.dimen.dp_60).toInt()
+    private val squareHeight = resources.getDimension(R.dimen.dp_60).toInt()
     private var playersCount = 0
     private var leftPlayerOffset = 0
     private var topPlayerOffset = 0
@@ -42,7 +41,7 @@ class FlatBoard @JvmOverloads constructor(
             background.color =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.background_primary))
             background.setStroke(
-                context.dpToPx(1f).toInt(),
+                resources.getDimension(R.dimen.dp_1).toInt(),
                 ContextCompat.getColor(context, R.color.stroke_color_secondary)
             )
             val view = View(context)
@@ -100,6 +99,7 @@ class FlatBoard @JvmOverloads constructor(
                         override fun onAnimationEnd(animation: Animation?) {
                             child.scale(to)
                         }
+
                         override fun onAnimationRepeat(animation: Animation?) {}
                     })
                     child.startAnimation(scaleAnimation)
@@ -114,7 +114,8 @@ class FlatBoard @JvmOverloads constructor(
 
                 calculatePlayerOffset(child.getPlayer())
 
-                val left = context.dpToPx(5f).toInt() + padding + leftPlayerOffset - child.additionalWidth / 2 + additionalMatchParentOffset
+                val left = context.dpToPx(5f)
+                    .toInt() + padding + leftPlayerOffset - child.additionalWidth / 2 + additionalMatchParentOffset
                 val top = -context.dpToPx(10f).toInt() + padding * 4 + topPlayerOffset
 
                 child.layout(left, top, curWidth + left, curHeight + top)
@@ -131,9 +132,14 @@ class FlatBoard @JvmOverloads constructor(
                 val background = child.background as GradientDrawable
 
                 background.color =
-                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.background_primary))
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.background_primary
+                        )
+                    )
                 background.setStroke(
-                    context.dpToPx(1f).toInt(),
+                    resources.getDimension(R.dimen.dp_1).toInt(),
                     ContextCompat.getColor(context, R.color.stroke_color_secondary)
                 )
 
@@ -339,7 +345,12 @@ class FlatBoard @JvmOverloads constructor(
         setMeasuredDimension(width, height)
     }
 
-    private fun calculateSize(suggestedSize: Int, paramSize: Int, measureSpec: Int, isWidth: Boolean): Int {
+    private fun calculateSize(
+        suggestedSize: Int,
+        paramSize: Int,
+        measureSpec: Int,
+        isWidth: Boolean
+    ): Int {
         var result = 0
         val size = MeasureSpec.getSize(measureSpec)
         val mode = MeasureSpec.getMode(measureSpec)

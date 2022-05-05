@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
@@ -21,8 +20,8 @@ class BoardIcon @JvmOverloads constructor(
         context,
         R.drawable.background_character_board
     ) as GradientDrawable
-    private var iconHeight = context.dpToPx(32f)
-    private var iconWidth = context.dpToPx(32f)
+    private var iconHeight = resources.getDimension(R.dimen.dp_32)
+    private var iconWidth = resources.getDimension(R.dimen.dp_32)
 
     fun setPlayer(playerBoard: PlayerBoard) {
         this.playerBoard = playerBoard
@@ -39,7 +38,10 @@ class BoardIcon @JvmOverloads constructor(
             activeTurnStrokeWidth.toInt(),
             ContextCompat.getColor(
                 context,
-                if (playerBoard.player.isActiveTurn) R.color.color_active_turn else playerBoard.player.team.colorRes
+                if (playerBoard.player.isActiveTurn)
+                    R.color.color_active_turn
+                else
+                    playerBoard.player.team.colorRes
             )
         )
         background = characterBackground

@@ -132,4 +132,15 @@
         <item name="android:windowExitAnimation">@anim/collapse_popup_layout</item>
     </style>
 
+    <style name="MaterialButton.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:insetTop">10dp</item>
+        <item name="android:insetBottom">10dp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="rippleColor">@color/ripple_color_primary</item>
+    </style>
+
 </resources>

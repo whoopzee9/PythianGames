@@ -9,6 +9,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.handleBackPressed
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.subscribe
@@ -41,6 +42,7 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
         requireView().setLightStatusBar()
 
         setupBoard()
+        handleBackPressed {  }
     }
 
     override fun subscribe() {

@@ -26,17 +26,17 @@ class MorganBoard @JvmOverloads constructor(
     private var selectedSide = 4 // 1, 2, 3, 4
     private var isChoosingPosition = false
 
-    private var height = context.dpToPx(35f)
-    private var width = context.dpToPx(58f)
-    private var spacing = context.dpToPx(8f)
+    private var height = resources.getDimension(R.dimen.dp_35)
+    private var width = resources.getDimension(R.dimen.dp_58)
+    private var spacing = resources.getDimension(R.dimen.dp_8)
     private var boardSpacing = context.dpToPx(5.5f)
 
     private var skeletonWidth = 0
     private var skeletonHeight = 0
 
-    private val dx = context.dpToPx(33f)
-    private val dy = context.dpToPx(20f)
-    private var activeTurnStrokeWidth = context.dpToPx(1f)
+    private val dx = resources.getDimension(R.dimen.dp_33)
+    private val dy = resources.getDimension(R.dimen.dp_20)
+    private var activeTurnStrokeWidth = resources.getDimension(R.dimen.dp_1)
 
     private var morganBackground = ContextCompat.getDrawable(
         context,
@@ -44,8 +44,8 @@ class MorganBoard @JvmOverloads constructor(
     ) as GradientDrawable
 
     var isMorganTurn = false
-    private var morganHeight = context.dpToPx(32f)
-    private var morganWidth = context.dpToPx(32f)
+    private var morganHeight = resources.getDimension(R.dimen.dp_32)
+    private var morganWidth = resources.getDimension(R.dimen.dp_32)
 
     init {
         var attributesArray =
