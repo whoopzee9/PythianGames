@@ -21,7 +21,7 @@ class MorganBoard @JvmOverloads constructor(
     private var size = 5
 
     private var totalPositions = (size - 1) * 4
-    private var currentMorganPosition = 7
+    private var currentMorganPosition = 1
 
     private var selectedSide = 4 // 1, 2, 3, 4
     private var isChoosingPosition = false
@@ -173,7 +173,7 @@ class MorganBoard @JvmOverloads constructor(
                         else -> 0
                     }
                     curTop = when (i) {
-                        1 -> 0
+                        1 -> context.dpToPx(4f).toInt()
                         3 -> (height * size + spacing * 2 + boardSpacing * (size / 2 + 4 + (size - 3) / 2)).toInt()
                         2, 4 -> (measuredHeight - child.measuredHeight) / 2
                         else -> 0
@@ -277,7 +277,7 @@ class MorganBoard @JvmOverloads constructor(
                             curLeft =
                                 ((r - l) / 2 + boardSpacing + dx * ((j % (size - 2)) + 1)).toInt()
                             curTop =
-                                (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 - context.dpToPx(1f)).toInt()
+                                (dy * ((j % (size - 2)) + 2) + boardSpacing / 2 + context.dpToPx(2f)).toInt()
                         }
                         1 -> {
                             curLeft =
@@ -287,17 +287,15 @@ class MorganBoard @JvmOverloads constructor(
                         }
                         2 -> {
                             curLeft =
-                                ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1)).toInt()
+                                ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1) - context.dpToPx(1f)).toInt()
                             curTop =
-                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2)))).toInt()
+                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2))) + context.dpToPx(1f)).toInt()
                         }
                         3 -> {
                             curLeft =
                                 ((r - l) / 2 - curWidth - boardSpacing - dx * (size - 2 - (j % (size - 2)))).toInt()
                             curTop =
-                                (dy * (size - 1 - (j % (size - 2))) + boardSpacing / 2 - context.dpToPx(
-                                    1f
-                                )).toInt()
+                                (dy * (size - 1 - (j % (size - 2))) + boardSpacing / 2 + context.dpToPx(2f)).toInt()
                         }
                     }
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
