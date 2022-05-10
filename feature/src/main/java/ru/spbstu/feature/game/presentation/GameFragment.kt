@@ -3,6 +3,7 @@ package ru.spbstu.feature.game.presentation
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,7 +105,7 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         setupAdapter()
         setupStatisticsPopup()
-
+        
         val questionBackground = GradientDrawable()
         questionBackground.setStroke(
             resources.getDimension(R.dimen.dp_1).toInt(),

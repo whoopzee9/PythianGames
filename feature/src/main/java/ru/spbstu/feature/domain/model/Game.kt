@@ -11,5 +11,6 @@ data class Game(
     val currentPlayerTurn: String = "",
     val morganTurnFlag: Boolean = false,
     val playingFlag: Boolean = false,
-    val turnState: String = ""
+    val turnState: String = "",
+    val cards: List<Card> = listOf()
 )

@@ -1,16 +1,23 @@
 package ru.spbstu.feature.room_connection.presentation
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
+import ru.spbstu.common.utils.BoardConstants
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.domain.model.Card
+import ru.spbstu.feature.domain.model.CardType
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.Question
+import ru.spbstu.feature.domain.model.QuestionGame
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -31,26 +38,69 @@ class RoomConnectionViewModel(
                 _state.value = UIState.GameAlreadyExists
             } else {
                 val id = Firebase.auth.currentUser?.uid ?: ""
-                val game = Game(
-                    name = name,
-                    code = code,
-                    numOfTeams = numOfTeams,
-                    numOfPlayers = numOfPlayers,
-                    numOfPlayersJoined = 1,
-                    players = hashMapOf(id to PlayerInfo(id = id))
-                )
-                ref.child(name).setValue(game).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        gameJoiningDataWrapper.game = game
-                        gameJoiningDataWrapper.playerInfo = PlayerInfo(id = id)
-                        _state.value = UIState.Success
-                        router.openTeamSelectionFragment()
-                    } else {
-                        Timber.tag(TAG).e(it.exception)
-                        it.exception?.printStackTrace()
-                        _state.value = UIState.Failure
+                val boardSize = if (numOfPlayers > 4) 5 else 3
+                setupLayers(boardSize) { cards ->
+                    val game = Game(
+                        name = name,
+                        code = code,
+                        numOfTeams = numOfTeams,
+                        numOfPlayers = numOfPlayers,
+                        numOfPlayersJoined = 1,
+                        players = hashMapOf(id to PlayerInfo(id = id)),
+                        cards = cards
+                    )
+                    ref.child(name).setValue(game).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            gameJoiningDataWrapper.game = game
+                            gameJoiningDataWrapper.playerInfo = PlayerInfo(id = id)
+                            _state.value = UIState.Success
+                            router.openTeamSelectionFragment()
+                        } else {
+                            Timber.tag(TAG).e(it.exception)
+                            it.exception?.printStackTrace()
+                            _state.value = UIState.Failure
+                        }
                     }
                 }
+            }
+        }, onCancelled = { error ->
+            Timber.tag(TAG).e(error.message)
+            _state.value = UIState.Failure
+        })
+    }
+
+    private fun setupLayers(boardSize: Int, onSuccess: (List<Card>) -> Unit) {
+        val database = Firebase.database
+        val questionsRef = database.getReference(DatabaseReferences.QUESTIONS_REF)
+        questionsRef.readValue(onSuccess = { snapshot ->
+            val generic = object : GenericTypeIndicator<HashMap<String, Question>>() {}
+            val questions = snapshot.getValue(generic)
+            if (questions != null) {
+                val cardList = mutableListOf<Card>()
+                for (i in 1..5) {
+                    val layerQuestions =
+                        questions.filter { it.value.questionTier == i }.values.shuffled()
+                    val toothAmount = BoardConstants.getToothAmount(i, boardSize)
+                    val currCards = mutableListOf<Card>()
+                    for (j in 0 until toothAmount) {
+                        currCards.add(Card(layer = i, type = CardType.Tooth))
+                    }
+                    for (j in 0 until boardSize * boardSize - toothAmount) {
+                        currCards.add(
+                            Card(
+                                layer = i,
+                                type = CardType.Question,
+                                question = QuestionGame(question = layerQuestions[j])
+                            )
+                        )
+                    }
+                    currCards.shuffle()
+                    currCards.forEachIndexed { index, card ->
+                        card.cardNum = index + 1
+                    }
+                    cardList.addAll(currCards)
+                }
+                onSuccess(cardList)
             }
         }, onCancelled = { error ->
             Timber.tag(TAG).e(error.message)

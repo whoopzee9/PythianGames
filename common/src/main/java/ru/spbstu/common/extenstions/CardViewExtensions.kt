@@ -12,6 +12,7 @@ fun MaterialCardView.setToUnselectedStyle() {
     background = null
     //setCardBackgroundColor(ContextCompat.getColor(context, R.color.color_transparent_background))
     isEnabled = true
+    isChecked = false
     (getChildAt(0) as TextView).setTextColor(
         ContextCompat.getColor(
             context,
@@ -27,6 +28,7 @@ fun MaterialCardView.setToSelectedStyle() {
     setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.background_answer))
     setCardBackgroundColor(ContextCompat.getColor(context, R.color.button_tint_primary))
     isEnabled = true
+    isChecked = true
     (getChildAt(0) as TextView).setTextColor(
         ContextCompat.getColor(
             context,
