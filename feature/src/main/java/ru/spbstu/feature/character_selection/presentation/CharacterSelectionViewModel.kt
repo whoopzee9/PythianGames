@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
@@ -35,11 +36,25 @@ class CharacterSelectionViewModel(
                 val team = gameJoiningDataWrapper.playerInfo.teamStr
                 val readyCount = players?.count { it.value.teamStr == team && it.value.readyFlag } ?: 0
 
+                val startPos = GameUtils.getPlayerStartPosition(
+                    gameJoiningDataWrapper.game.numOfTeams,
+                    gameJoiningDataWrapper.game.numOfPlayers,
+                    team,
+                    readyCount + 1
+                )
+                val orderNum = GameUtils.getPlayerOrderNumber(
+                    gameJoiningDataWrapper.game.numOfTeams,
+                    gameJoiningDataWrapper.game.numOfPlayers,
+                    team,
+                    readyCount + 1
+                )
                 val currPlayer = gameJoiningDataWrapper.playerInfo.copy(
                     iconRes = resId,
                     playerNum = readyCount + 1,
                     name = name,
-                    readyFlag = true
+                    readyFlag = true,
+                    position = startPos,
+                    turnOrder = orderNum
                 )
                 ref.child(gameJoiningDataWrapper.game.name)
                     .child("players")
@@ -59,6 +74,17 @@ class CharacterSelectionViewModel(
                 _state.value = UIState.Failure
             }
         )
+    }
+
+    fun onBack() {
+        val database = Firebase.database
+        val ref = database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(Firebase.auth.currentUser?.uid ?: "")
+            .child("teamStr")
+            .setValue("")
+        router.back()
     }
 
     sealed class UIState {

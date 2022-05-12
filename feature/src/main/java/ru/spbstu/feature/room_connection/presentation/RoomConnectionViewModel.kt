@@ -1,6 +1,5 @@
 package ru.spbstu.feature.room_connection.presentation
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
@@ -9,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
-import ru.spbstu.common.utils.BoardConstants
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Card
@@ -80,7 +79,7 @@ class RoomConnectionViewModel(
                 for (i in 1..5) {
                     val layerQuestions =
                         questions.filter { it.value.questionTier == i }.values.shuffled()
-                    val toothAmount = BoardConstants.getToothAmount(i, boardSize)
+                    val toothAmount = GameUtils.getToothAmount(i, boardSize)
                     val currCards = mutableListOf<Card>()
                     for (j in 0 until toothAmount) {
                         currCards.add(Card(layer = i, type = CardType.Tooth))

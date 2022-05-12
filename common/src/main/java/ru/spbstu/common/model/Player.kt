@@ -10,7 +10,14 @@ data class Player(
     val team: Team = Team.Red,
     val playerNum: Int = 1,
     val name: String = "",
-    val isActiveTurn: Boolean = false
+    val isActiveTurn: Boolean = false,
+    val position: Position = Position(),
+    val turnOrder: Int = 0
+)
+
+data class Position(
+    val x: Int = 0,
+    val y: Int = 0
 )
 
 sealed class Team(@ColorRes val colorRes: Int) {

@@ -12,6 +12,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.handleBackPressed
 import ru.spbstu.common.extenstions.setDebounceClickListener
 import ru.spbstu.common.extenstions.setDisabled
 import ru.spbstu.common.extenstions.setEnabled
@@ -110,6 +111,10 @@ class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
                     viewModel.setCharacter(id, name)
                 }
             }
+        }
+
+        handleBackPressed {
+            viewModel.onBack()
         }
     }
 

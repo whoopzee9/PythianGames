@@ -10,16 +10,13 @@ import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.model.Player
-import ru.spbstu.common.model.PlayerBoard
-import ru.spbstu.common.model.Team
 import ru.spbstu.common.utils.ZoomHelper
-import java.lang.IllegalStateException
 import kotlin.math.min
 
 class Board @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    private val attrs: AttributeSet? = null,
+    private val defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     private var size = 5
@@ -41,13 +38,14 @@ class Board @JvmOverloads constructor(
     private var activeTurnStrokeWidth = resources.getDimension(R.dimen.dp_1)
     private var characterBackground: GradientDrawable
 
-    private val playersList: MutableList<PlayerBoard> = mutableListOf()
+    private val playersList: MutableList<Player> = mutableListOf()
 
-    private var currPlayer: PlayerBoard? = null
+    private var currPlayer: Player? = null
 
     private val zoomHelper = ZoomHelper(this)
 
     init {
+
         characterBackground = ContextCompat.getDrawable(
             context,
             R.drawable.background_character_board
@@ -61,7 +59,14 @@ class Board @JvmOverloads constructor(
             5
         )
 
+        initView()
+
+        attributesArray.recycle()
+    }
+
+    private fun initView() {
         val board = MorganBoard(context, attrs, defStyleAttr)
+        board.setSize(size)
         addView(board)
 
         for (i in 0 until size * size) {
@@ -101,8 +106,6 @@ class Board @JvmOverloads constructor(
         addView(arrowDown)
         addView(arrowLeft)
         addView(arrowRight)
-
-        attributesArray.recycle()
     }
 
     fun setTotalPlayers(players: Int) {
@@ -114,20 +117,25 @@ class Board @JvmOverloads constructor(
     }
 
     fun addPlayer(player: Player) {
-        val playerBoard = PlayerBoard(player, 1, 1)
-        determineStartPositions(playerBoard)
-        playersList.add(playerBoard)
+        playersList.add(player)
         val icon = BoardIcon(context)
-        icon.setPlayer(playerBoard)
+        icon.setPlayer(player)
         addView(icon)
         requestLayout()
     }
 
     fun setCurrentPlayer(playerId: String) {
-        currPlayer = playersList.first { it.player.id == playerId }
+        currPlayer = playersList.first { it.id == playerId }
     }
 
     fun getCurrentPlayer() = currPlayer
+
+    fun setSize(size: Int) {
+        this.size = size
+        removeAllViews()
+        initView()
+        invalidate()
+    }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val childLeft = paddingLeft
@@ -194,12 +202,14 @@ class Board @JvmOverloads constructor(
             return
         }
         val player = child.getPlayer()
-        val sameSquareList = playersList.filter { player.x == it.x && player.y == it.y }
+        val sameSquareList =
+            playersList.filter { player.position.x == it.position.x && player.position.y == it.position.y }
 
-        val baseCurLeft = width / 2 + context.dpToPx(-player.y * dx + player.x * dx)
-            .toInt() - iconWidth.toInt() / 2
+        val baseCurLeft =
+            width / 2 + context.dpToPx(-player.position.y * dx + player.position.x * dx)
+                .toInt() - iconWidth.toInt() / 2
         val baseCurTop =
-            cardHeight.toInt() + context.dpToPx(player.y * dy + player.x * dy)
+            cardHeight.toInt() + context.dpToPx(player.position.y * dy + player.position.x * dy)
                 .toInt() - boardSpacing.toInt()
         val curLeft: Int
         val curTop: Int
@@ -236,24 +246,24 @@ class Board @JvmOverloads constructor(
         child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)
     }
 
-    fun layoutBoardArrow(child: View, childWidth: Int, childHeight: Int) {
+    private fun layoutBoardArrow(child: View, childWidth: Int, childHeight: Int) {
         if (child !is BoardArrow) {
             return
         }
         val player = currPlayer
-        if (player != null && player.player.isActiveTurn) {
+        if (player != null && player.isActiveTurn) {
             //todo get info about layers from cardStack's to decide where we can go
             val curLeft: Int
             val curTop: Int
             when (child.getDirection()) {
                 BoardArrow.Direction.Up -> {
-                    if (player.y > 0) {
+                    if (player.position.y > 0) {
                         val arrowShift = 0.2f
                         curLeft =
-                            width / 2 + context.dpToPx(-(player.y - arrowShift) * dx + player.x * dx)
+                            width / 2 + context.dpToPx(-(player.position.y - arrowShift) * dx + player.position.x * dx)
                                 .toInt()
                         curTop =
-                            cardHeight.toInt() + context.dpToPx((player.y - arrowShift) * dy + player.x * dy)
+                            cardHeight.toInt() + context.dpToPx((player.position.y - arrowShift) * dy + player.position.x * dy)
                                 .toInt()
                         child.measure(
                             MeasureSpec.makeMeasureSpec(
@@ -278,13 +288,13 @@ class Board @JvmOverloads constructor(
                     }
                 }
                 BoardArrow.Direction.Down -> {
-                    if (player.y < size - 1) {
+                    if (player.position.y < size - 1) {
                         val arrowShift = 1.4f
                         curLeft =
-                            width / 2 + context.dpToPx(-(player.y + arrowShift) * dx + player.x * dx)
+                            width / 2 + context.dpToPx(-(player.position.y + arrowShift) * dx + player.position.x * dx)
                                 .toInt()
                         curTop =
-                            cardHeight.toInt() + context.dpToPx((player.y + arrowShift) * dy + player.x * dy)
+                            cardHeight.toInt() + context.dpToPx((player.position.y + arrowShift) * dy + player.position.x * dy)
                                 .toInt()
                         child.measure(
                             MeasureSpec.makeMeasureSpec(
@@ -309,13 +319,13 @@ class Board @JvmOverloads constructor(
                     }
                 }
                 BoardArrow.Direction.Left -> {
-                    if (player.x > 0) {
+                    if (player.position.x > 0) {
                         val arrowShift = 1.4f
                         curLeft =
-                            width / 2 + context.dpToPx(-player.y * dx + (player.x - arrowShift) * dx)
+                            width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x - arrowShift) * dx)
                                 .toInt()
                         curTop =
-                            cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x - 0.2f) * dy)
+                            cardHeight.toInt() + context.dpToPx(player.position.y * dy + (player.position.x - 0.2f) * dy)
                                 .toInt()
                         child.measure(
                             MeasureSpec.makeMeasureSpec(
@@ -340,12 +350,12 @@ class Board @JvmOverloads constructor(
                     }
                 }
                 BoardArrow.Direction.Right -> {
-                    if (player.x < size - 1) {
+                    if (player.position.x < size - 1) {
                         curLeft =
-                            width / 2 + context.dpToPx(-player.y * dx + (player.x + 0.2f) * dx)
+                            width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x + 0.2f) * dx)
                                 .toInt()
                         curTop =
-                            cardHeight.toInt() + context.dpToPx(player.y * dy + (player.x + 1.3f) * dy)
+                            cardHeight.toInt() + context.dpToPx(player.position.y * dy + (player.position.x + 1.3f) * dy)
                                 .toInt()
                         child.measure(
                             MeasureSpec.makeMeasureSpec(
@@ -432,220 +442,6 @@ class Board @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         zoomHelper.onTouchEvent(event)
         return true
-    }
-
-    private fun determineStartPositions(playerBoard: PlayerBoard) {
-        when (totalPlayers) {
-            2 -> {
-                when (playerBoard.player.team) {
-                    Team.Green -> {
-                        playerBoard.x = 0
-                        playerBoard.y = 0
-                    }
-                    Team.Blue -> {
-                        playerBoard.x = size - 1
-                        playerBoard.y = size - 1
-                    }
-                    else -> {}
-                }
-            }
-            4 -> {
-                when (totalTeams) {
-                    2 -> {
-                        when (playerBoard.player.team) {
-                            Team.Green -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            Team.Blue -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
-                        }
-                    }
-                    4 -> {
-                        when (playerBoard.player.team) {
-                            Team.Green -> {
-                                playerBoard.x = 0
-                                playerBoard.y = 0
-                            }
-                            Team.Blue -> {
-                                playerBoard.x = size - 1
-                                playerBoard.y = size - 1
-                            }
-                            Team.Orange -> {
-                                playerBoard.x = size - 1
-                                playerBoard.y = 0
-                            }
-                            Team.Red -> {
-                                playerBoard.x = 0
-                                playerBoard.y = size - 1
-                            }
-                        }
-                    }
-                }
-            }
-            6 -> {
-                when (playerBoard.player.team) {
-                    Team.Green -> {
-                        when (playerBoard.player.playerNum) {
-                            1 -> {
-                                playerBoard.x = 0
-                                playerBoard.y = 0
-                            }
-                            2 -> {
-                                playerBoard.x = size - 1
-                                playerBoard.y = size - 1
-                            }
-                        }
-                    }
-                    Team.Blue -> {
-                        when (playerBoard.player.playerNum) {
-                            1 -> {
-                                playerBoard.x = size - 1
-                                playerBoard.y = 0
-                            }
-                            2 -> {
-                                playerBoard.x = 0
-                                playerBoard.y = size - 1
-                            }
-                        }
-                    }
-                    Team.Red -> {
-                        when (playerBoard.player.playerNum) {
-                            1 -> {
-                                playerBoard.x = 0
-                                playerBoard.y = size / 2
-                            }
-                            2 -> {
-                                playerBoard.x = size - 1
-                                playerBoard.y = size / 2
-                            }
-                        }
-                    }
-                    else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
-                }
-            }
-            8 -> {
-                when (totalTeams) {
-                    2 -> {
-                        when (playerBoard.player.team) {
-                            Team.Green -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = size - 1
-                                    }
-                                    3 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = 0
-                                    }
-                                    4 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            Team.Blue -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = size / 2
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size / 2
-                                        playerBoard.y = size - 1
-                                    }
-                                    3 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = size / 2
-                                    }
-                                    4 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = size / 2
-                                    }
-                                }
-                            }
-                            else -> throw IllegalStateException("Wrong team color in ${Board::class.simpleName}")
-                        }
-
-                    }
-                    4 -> {
-                        when (playerBoard.player.team) {
-                            Team.Green -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            Team.Blue -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            Team.Orange -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = size / 2
-                                        playerBoard.y = 0
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size / 2
-                                        playerBoard.y = size - 1
-                                    }
-                                }
-                            }
-                            Team.Red -> {
-                                when (playerBoard.player.playerNum) {
-                                    1 -> {
-                                        playerBoard.x = 0
-                                        playerBoard.y = size / 2
-                                    }
-                                    2 -> {
-                                        playerBoard.x = size - 1
-                                        playerBoard.y = size / 2
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 }

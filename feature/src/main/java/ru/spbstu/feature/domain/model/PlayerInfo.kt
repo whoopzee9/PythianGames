@@ -2,6 +2,7 @@ package ru.spbstu.feature.domain.model
 
 import androidx.annotation.DrawableRes
 import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.TeamsConstants
 
 data class PlayerInfo(
@@ -10,7 +11,9 @@ data class PlayerInfo(
     val teamStr: String = "",
     val playerNum: Int = 1,
     val name: String = "",
-    val readyFlag: Boolean = false
+    val readyFlag: Boolean = false,
+    val position: Position = Position(),
+    val turnOrder: Int = 0
 )
 
 fun PlayerInfo.toPlayer(): Player {
@@ -20,6 +23,8 @@ fun PlayerInfo.toPlayer(): Player {
         team = TeamsConstants.getTeamFromString(teamStr),
         playerNum = playerNum,
         name = name,
-        isActiveTurn = false
+        isActiveTurn = false,
+        position = position,
+        turnOrder = turnOrder
     )
 }

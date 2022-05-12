@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
-import ru.spbstu.common.model.PlayerBoard
+import ru.spbstu.common.model.Player
 
 class BoardIcon @JvmOverloads constructor(
     context: Context,
@@ -15,7 +15,7 @@ class BoardIcon @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : androidx.appcompat.widget.AppCompatImageView(context, attrs, defStyleAttr) {
     private var activeTurnStrokeWidth = context.dpToPx(1f)
-    private var playerBoard: PlayerBoard = PlayerBoard()
+    private var player: Player = Player()
     private var characterBackground = ContextCompat.getDrawable(
         context,
         R.drawable.background_character_board
@@ -23,31 +23,31 @@ class BoardIcon @JvmOverloads constructor(
     private var iconHeight = resources.getDimension(R.dimen.dp_32)
     private var iconWidth = resources.getDimension(R.dimen.dp_32)
 
-    fun setPlayer(playerBoard: PlayerBoard) {
-        this.playerBoard = playerBoard
-        val draw = ContextCompat.getDrawable(context, playerBoard.player.iconRes)
+    fun setPlayer(player: Player) {
+        this.player = player
+        val draw = ContextCompat.getDrawable(context, player.iconRes)
         draw?.setBounds(0, 0, iconWidth.toInt(), iconHeight.toInt())
         setImageDrawable(draw)
         characterBackground.color = ColorStateList.valueOf(
             ContextCompat.getColor(
                 context,
-                playerBoard.player.team.colorRes
+                player.team.colorRes
             )
         )
         characterBackground.setStroke(
             activeTurnStrokeWidth.toInt(),
             ContextCompat.getColor(
                 context,
-                if (playerBoard.player.isActiveTurn)
+                if (player.isActiveTurn)
                     R.color.color_active_turn
                 else
-                    playerBoard.player.team.colorRes
+                    player.team.colorRes
             )
         )
         background = characterBackground
         requestLayout()
     }
 
-    fun getPlayer() = playerBoard
+    fun getPlayer() = player
 
 }

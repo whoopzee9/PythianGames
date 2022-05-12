@@ -43,6 +43,16 @@ class TeamSelectionViewModel(
             }
     }
 
+    fun onBack() {
+        val database = Firebase.database
+        val ref = database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(Firebase.auth.currentUser?.uid ?: "")
+            .removeValue()
+        router.back()
+    }
+
     sealed class UIState {
         object Initial : UIState()
         object Progress : UIState()

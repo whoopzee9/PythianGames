@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import kotlin.math.min
@@ -66,6 +67,12 @@ class MorganBoard @JvmOverloads constructor(
             5
         )
 
+        initView()
+
+        attributesArray.recycle()
+    }
+
+    private fun initView() {
         totalPositions = (size - 1) * 4
 
         morganBackground.color = ColorStateList.valueOf(
@@ -105,8 +112,13 @@ class MorganBoard @JvmOverloads constructor(
         morgan.setImageResource(R.drawable.morgan)
         morgan.background = morganBackground
         addView(morgan)
+    }
 
-        attributesArray.recycle()
+    fun setSize(size: Int) {
+        this.size = size
+        removeAllViews()
+        initView()
+        invalidate()
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -146,15 +158,21 @@ class MorganBoard @JvmOverloads constructor(
                         (isChoosingPosition && (i == selectedSide || i == selectedSide + 1)) ||
                         (isChoosingPosition && (selectedSide == 4 && i == 1))
                     ) {
-                        child.drawable.setTintMode(PorterDuff.Mode.SRC_ATOP)
-                        child.drawable.setTint(
-                            ContextCompat.getColor(
+                        DrawableCompat.setTintMode(
+                            child.drawable.mutate(),
+                            PorterDuff.Mode.SRC_ATOP
+                        )
+                        DrawableCompat.setTint(
+                            child.drawable, ContextCompat.getColor(
                                 context,
                                 R.color.color_morgan_place
                             )
                         )
                     } else {
-                        child.drawable.setTintMode(PorterDuff.Mode.DST)
+                        DrawableCompat.setTintMode(
+                            child.drawable.mutate(),
+                            PorterDuff.Mode.DST
+                        )
                     }
                     child.measure(
                         MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
@@ -253,15 +271,21 @@ class MorganBoard @JvmOverloads constructor(
 
                     val adding = j / (size - 2)
                     if (j + adding + 1 == currentMorganPosition || (isChoosingPosition && j / (size - 2) == selectedSide - 1)) {
-                        child.drawable.setTintMode(PorterDuff.Mode.SRC_ATOP)
-                        child.drawable.setTint(
-                            ContextCompat.getColor(
+                        DrawableCompat.setTintMode(
+                            child.drawable.mutate(),
+                            PorterDuff.Mode.SRC_ATOP
+                        )
+                        DrawableCompat.setTint(
+                            child.drawable, ContextCompat.getColor(
                                 context,
                                 R.color.color_morgan_place
                             )
                         )
                     } else {
-                        child.drawable.setTintMode(PorterDuff.Mode.DST)
+                        DrawableCompat.setTintMode(
+                            child.drawable.mutate(),
+                            PorterDuff.Mode.DST
+                        )
                     }
 
                     child.measure(
@@ -287,15 +311,21 @@ class MorganBoard @JvmOverloads constructor(
                         }
                         2 -> {
                             curLeft =
-                                ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1) - context.dpToPx(1f)).toInt()
+                                ((r - l) / 2 - curWidth - boardSpacing - dx * ((j % (size - 2)) + 1) - context.dpToPx(
+                                    1f
+                                )).toInt()
                             curTop =
-                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2))) + context.dpToPx(1f)).toInt()
+                                ((measuredHeight) / 2 + height / 2 + spacing - boardSpacing / 2 + (dy) * (size - 3 - (j % (size - 2))) + context.dpToPx(
+                                    1f
+                                )).toInt()
                         }
                         3 -> {
                             curLeft =
                                 ((r - l) / 2 - curWidth - boardSpacing - dx * (size - 2 - (j % (size - 2)))).toInt()
                             curTop =
-                                (dy * (size - 1 - (j % (size - 2))) + boardSpacing / 2 + context.dpToPx(2f)).toInt()
+                                (dy * (size - 1 - (j % (size - 2))) + boardSpacing / 2 + context.dpToPx(
+                                    2f
+                                )).toInt()
                         }
                     }
                     child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight)

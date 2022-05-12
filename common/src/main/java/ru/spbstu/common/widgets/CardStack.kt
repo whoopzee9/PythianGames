@@ -25,31 +25,49 @@ class CardStack @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var clearLayer: Drawable?
+//    private var clearLayer: Drawable?
+
+    private var firstLayer: Drawable?
+    private var secondLayer: Drawable?
+    private var thirdLayer: Drawable?
+    private var fourthLayer: Drawable?
+    private var fifthLayer: Drawable?
 
     private var height = resources.getDimension(R.dimen.dp_35)
     private var width = resources.getDimension(R.dimen.dp_58)
     private var spacing = resources.getDimension(R.dimen.dp_2)
 
-    private val firstLayerColor: Int
-    private val secondLayerColor: Int
-    private val thirdLayerColor: Int
-    private val fourthLayerColor: Int
-    private val fifthLayerColor: Int
+//    private val firstLayerColor: Int
+//    private val secondLayerColor: Int
+//    private val thirdLayerColor: Int
+//    private val fourthLayerColor: Int
+//    private val fifthLayerColor: Int
 
     var count = 5
 
     init {
 
-        clearLayer = ContextCompat.getDrawable(context, R.drawable.ic_clear_layer_36)
-        clearLayer?.setBounds(0, 0, width.toInt(), height.toInt())
-        clearLayer?.setTintMode(PorterDuff.Mode.MULTIPLY)
+//        clearLayer = ContextCompat.getDrawable(context, R.drawable.ic_clear_layer_36)
+//        clearLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+//        clearLayer?.setTintMode(PorterDuff.Mode.MULTIPLY)
 
-        firstLayerColor = ContextCompat.getColor(context, R.color.color_layer_yellow)
-        secondLayerColor = ContextCompat.getColor(context, R.color.color_layer_orange)
-        thirdLayerColor = ContextCompat.getColor(context, R.color.color_layer_red)
-        fourthLayerColor = ContextCompat.getColor(context, R.color.color_layer_blue)
-        fifthLayerColor = ContextCompat.getColor(context, R.color.color_layer_purple)
+        firstLayer = ContextCompat.getDrawable(context, R.drawable.ic_first_layer_36)
+        secondLayer = ContextCompat.getDrawable(context, R.drawable.ic_second_layer_36)
+        thirdLayer = ContextCompat.getDrawable(context, R.drawable.ic_third_layer_36)
+        fourthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fourth_layer_36)
+        fifthLayer = ContextCompat.getDrawable(context, R.drawable.ic_fifth_layer_36)
+
+        firstLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        secondLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        thirdLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        fourthLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+        fifthLayer?.setBounds(0, 0, width.toInt(), height.toInt())
+
+//        firstLayerColor = ContextCompat.getColor(context, R.color.color_layer_yellow)
+//        secondLayerColor = ContextCompat.getColor(context, R.color.color_layer_orange)
+//        thirdLayerColor = ContextCompat.getColor(context, R.color.color_layer_red)
+//        fourthLayerColor = ContextCompat.getColor(context, R.color.color_layer_blue)
+//        fifthLayerColor = ContextCompat.getColor(context, R.color.color_layer_purple)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -110,69 +128,54 @@ class CardStack @JvmOverloads constructor(
             5 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
-                    clearLayer?.setTint(fifthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fifthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(fourthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fourthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(thirdLayerColor)
-                    clearLayer?.draw(canvas)
+                    thirdLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(secondLayerColor)
-                    clearLayer?.draw(canvas)
+                    secondLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(firstLayerColor)
-                    clearLayer?.draw(canvas)
+                    firstLayer?.draw(canvas)
                 }
             }
             4 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
-                    clearLayer?.setTint(fifthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fifthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(fourthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fourthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(thirdLayerColor)
-                    clearLayer?.draw(canvas)
+                    thirdLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(secondLayerColor)
-                    clearLayer?.draw(canvas)
+                    secondLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-1))
                 }
             }
             3 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
-                    clearLayer?.setTint(fifthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fifthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(fourthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fourthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(thirdLayerColor)
-                    clearLayer?.draw(canvas)
+                    thirdLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-2))
                 }
             }
             2 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
-                    clearLayer?.setTint(fifthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fifthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
-                    clearLayer?.setTint(fourthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fourthLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-3))
                 }
             }
             1 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
-                    clearLayer?.setTint(fifthLayerColor)
-                    clearLayer?.draw(canvas)
+                    fifthLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-4))
                 }
             }

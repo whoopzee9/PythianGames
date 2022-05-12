@@ -1,5 +1,7 @@
 package ru.spbstu.feature.domain.model
 
+import ru.spbstu.feature.game.presentation.GameFragment
+
 data class Game(
     val name: String = "",
     val code: String = "",
@@ -11,6 +13,6 @@ data class Game(
     val currentPlayerTurn: String = "",
     val morganTurnFlag: Boolean = false,
     val playingFlag: Boolean = false,
-    val turnState: String = "",
+    val gameState: GameFragment.GameState = GameFragment.GameState.Start,
     val cards: List<Card> = listOf()
 )

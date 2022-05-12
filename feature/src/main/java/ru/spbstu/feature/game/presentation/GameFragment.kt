@@ -3,13 +3,14 @@ package ru.spbstu.feature.game.presentation
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setDebounceClickListener
@@ -17,15 +18,19 @@ import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.setToSelectedStyle
 import ru.spbstu.common.extenstions.setToUnselectedStyle
+import ru.spbstu.common.extenstions.subscribe
 import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.Team
+import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentGameBinding
 import ru.spbstu.feature.databinding.FragmentGameStatisticsDialogBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.InventoryModel
+import ru.spbstu.feature.domain.model.toPlayer
 import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
 import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
 import java.util.*
@@ -57,6 +62,11 @@ class GameFragment : BaseFragment<GameViewModel>(
         super.setupViews()
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
+
+//        binding.frgGameBoard.setSize(
+//            if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
+//        )
+        binding.frgGameBoard.setSize(5)
         //binding.stack.addPlayer(Player())
 
         val player = Player("1", R.drawable.character_2, Team.Orange, 2, "12", true)
@@ -72,26 +82,26 @@ class GameFragment : BaseFragment<GameViewModel>(
                 false
             )
         )
-        binding.frgGameBoard.addPlayer(
-            Player(
-                "3",
-                R.drawable.character_4,
-                Team.Red,
-                2,
-                "qwe",
-                false
-            )
-        )
-        binding.frgGameBoard.addPlayer(
-            Player(
-                "4",
-                R.drawable.character_5,
-                Team.Red,
-                2,
-                "qwавe",
-                false
-            )
-        )
+//        binding.frgGameBoard.addPlayer(
+//            Player(
+//                "3",
+//                R.drawable.character_4,
+//                Team.Red,
+//                2,
+//                "qwe",
+//                false
+//            )
+//        )
+//        binding.frgGameBoard.addPlayer(
+//            Player(
+//                "4",
+//                R.drawable.character_5,
+//                Team.Red,
+//                2,
+//                "qwавe",
+//                false
+//            )
+//        )
         binding.frgGameBoard.addPlayer(
             Player(
                 "5",
@@ -105,7 +115,7 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         setupAdapter()
         setupStatisticsPopup()
-        
+
         val questionBackground = GradientDrawable()
         questionBackground.setStroke(
             resources.getDimension(R.dimen.dp_1).toInt(),
@@ -173,6 +183,33 @@ class GameFragment : BaseFragment<GameViewModel>(
         }
     }
 
+    override fun subscribe() {
+        super.subscribe()
+        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
+            val game = snapshot.getValue(Game::class.java)
+            if (game != null) {
+                viewModel.setGame(game)
+                handleGameData(game)
+            }
+        }, onCancelled = {})
+    }
+
+    // Main handler for the game
+    private fun handleGameData(game: Game) {
+        when (game.gameState) {
+            GameState.Start -> {
+                game.players.values.forEach {
+                    binding.frgGameBoard.addPlayer(it.toPlayer())
+                }
+                //todo roll dice to determine Morgan position, then pass turn to the closest player
+
+            }
+            GameState.Turn -> TODO()
+            GameState.Question -> TODO()
+        }
+    }
+
     private fun setupStatisticsPopup() {
         val background = GradientDrawable()
         background.setStroke(
@@ -224,4 +261,10 @@ class GameFragment : BaseFragment<GameViewModel>(
             .inject(this)
     }
 
+    enum class GameState {
+        Start,
+        Turn,
+        Question,
+
+    }
 }
