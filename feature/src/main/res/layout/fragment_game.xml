@@ -249,4 +249,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__dice_layout"
+        layout="@layout/include_dice_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_16"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
 </androidx.constraintlayout.widget.ConstraintLayout>

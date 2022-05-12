@@ -6,11 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setDebounceClickListener
@@ -129,6 +134,45 @@ class GameFragment : BaseFragment<GameViewModel>(
         )
         questionBackground.cornerRadius = resources.getDimension(R.dimen.dp_14)
         binding.frgGameQuestionLayout.root.background = questionBackground
+
+        val diceBackground = GradientDrawable()
+        diceBackground.setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(requireContext(), R.color.color_neutral_action)
+        )
+        diceBackground.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_transparent_background
+            )
+        )
+        diceBackground.cornerRadius = resources.getDimension(R.dimen.dp_14)
+        //dice
+        binding.frgGameDiceLayout.root.background = diceBackground
+
+        binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text = "1"
+        binding.frgGameDiceLayout.includeDiceDialogIvDice.setDebounceClickListener {
+            val random = Random()
+            binding.frgGameDiceLayout.includeDiceDialogDiceWrapper.startAnimation(
+                AnimationUtils.loadAnimation(
+                    requireContext(),
+                    R.anim.shake_animation
+                )
+            )
+            var dice: Int
+            lifecycleScope.launch {
+                for (i in 0..20) {
+                    launch(Dispatchers.Main) {
+                        dice = random.nextInt(4) + 1
+                        binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text =
+                            dice.toString()
+                    }
+                    delay(30)
+                }
+                //todo use dice number
+            }
+        }
+
 
         binding.frgGameTeamStatsWrapper.setDebounceClickListener {
             //todo change teams stats and amount of teams
