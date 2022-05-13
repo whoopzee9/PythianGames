@@ -13,12 +13,14 @@ fun MaterialCardView.setToUnselectedStyle() {
     //setCardBackgroundColor(ContextCompat.getColor(context, R.color.color_transparent_background))
     isEnabled = true
     isChecked = false
-    (getChildAt(0) as TextView).setTextColor(
-        ContextCompat.getColor(
-            context,
-            R.color.text_color_primary
+    if (getChildAt(0) is TextView) {
+        (getChildAt(0) as TextView).setTextColor(
+            ContextCompat.getColor(
+                context,
+                R.color.text_color_primary
+            )
         )
-    )
+    }
 }
 
 fun MaterialCardView.setToSelectedStyle() {
@@ -29,22 +31,26 @@ fun MaterialCardView.setToSelectedStyle() {
     setCardBackgroundColor(ContextCompat.getColor(context, R.color.button_tint_primary))
     isEnabled = true
     isChecked = true
-    (getChildAt(0) as TextView).setTextColor(
-        ContextCompat.getColor(
-            context,
-            R.color.text_color_secondary
+    if (getChildAt(0) is TextView) {
+        (getChildAt(0) as TextView).setTextColor(
+            ContextCompat.getColor(
+                context,
+                R.color.text_color_secondary
+            )
         )
-    )
+    }
 }
 
 fun MaterialCardView.setToDisabledStyle() {
     strokeWidth = 0
     background = null
     isEnabled = false
-    (getChildAt(0) as TextView).setTextColor(
-        ContextCompat.getColor(
-            context,
-            R.color.text_color_primary
+    if (getChildAt(0) is TextView) {
+        (getChildAt(0) as TextView).setTextColor(
+            ContextCompat.getColor(
+                context,
+                R.color.text_color_primary
+            )
         )
-    )
+    }
 }

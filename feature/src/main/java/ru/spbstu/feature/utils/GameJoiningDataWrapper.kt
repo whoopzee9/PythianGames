@@ -4,6 +4,6 @@ import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.PlayerInfo
 
 class GameJoiningDataWrapper {
-    var game = Game()
+    var game = Game(name = "test")
     var playerInfo = PlayerInfo()
 }

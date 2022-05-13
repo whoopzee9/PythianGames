@@ -3,7 +3,9 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.PorterDuff
 import android.util.AttributeSet
+import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.setDebounceClickListener
 
@@ -22,7 +24,10 @@ class BoardArrow @JvmOverloads constructor(
 
         setDebounceClickListener {
             isHighlighted = true
-            drawable.setTintMode(PorterDuff.Mode.SRC_ATOP)
+            DrawableCompat.setTintMode(
+                drawable.mutate(),
+                PorterDuff.Mode.SRC_ATOP
+            )
             requestLayout()
             onClickCallback?.invoke()
         }
@@ -48,8 +53,16 @@ class BoardArrow @JvmOverloads constructor(
                 rotation = 180f
             }
         }
-        drawable.setTintMode(PorterDuff.Mode.DST)
-        drawable.setTint(ContextCompat.getColor(context, R.color.arrow_highlighted_color))
+        DrawableCompat.setTintMode(
+            drawable.mutate(),
+            PorterDuff.Mode.DST
+        )
+        DrawableCompat.setTint(
+            drawable, ContextCompat.getColor(
+                context,
+                R.color.arrow_highlighted_color
+            )
+        )
         requestLayout()
     }
 
@@ -61,7 +74,10 @@ class BoardArrow @JvmOverloads constructor(
 
     fun resetHighlighted() {
         isHighlighted = false
-        drawable.setTintMode(PorterDuff.Mode.DST)
+        DrawableCompat.setTintMode(
+            drawable.mutate(),
+            PorterDuff.Mode.DST
+        )
         requestLayout()
     }
 

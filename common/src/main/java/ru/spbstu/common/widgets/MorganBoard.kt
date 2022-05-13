@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -119,6 +120,27 @@ class MorganBoard @JvmOverloads constructor(
         removeAllViews()
         initView()
         invalidate()
+    }
+
+    fun setMorganPosition(position: Int) {
+        if (currentMorganPosition != position) {
+            currentMorganPosition = position
+            requestLayout()
+        }
+    }
+
+    fun setMorganSelectingSide(isSelecting: Boolean) {
+        if (isChoosingPosition != isSelecting) {
+            isChoosingPosition = isSelecting
+            requestLayout()
+        }
+    }
+
+    fun setSelectedSide(side: Int) {
+        if (selectedSide != side) {
+            selectedSide = side
+            requestLayout()
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {

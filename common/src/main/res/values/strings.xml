@@ -61,10 +61,15 @@
     <string name="game_is_full">Достигнуто максимальное количество игроков</string>
     <string name="empty_name">Введите имя!</string>
     <string name="character_not_selected">Персонаж не выбран!</string>
-    <string name="short_passowrd">Пароль должен содержать не менее 6 символов</string>
+    <string name="short_password">Пароль должен содержать не менее 6 символов</string>
     <string name="game_starts_in">Игра начнется через %d</string>
     <string name="log_out">Выйти из аккаунта</string>
     <string name="roll_dice">Нажмите чтобы бросить кубик</string>
+    <string name="roll_dice_morgan_side">Нажмите чтобы бросить кубик и определить сторону поля для Моргана</string>
+    <string name="roll_dice_morgan_position">Нажмите чтобы бросить кубик и определить позицию для Моргана</string>
+    <string name="determining_morgan_position">Определение начальной позиции для Моргана</string>
+    <string name="your_turn">Ваш ход!</string>
+    <string name="players_turn">Ход %s!</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

@@ -3,6 +3,7 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +21,6 @@ class Board @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     private var size = 5
-    private var totalPlayers = 8
-    private var totalTeams = 4
 
     //todo idk what to do with these shifts
     private val dx = 32f
@@ -38,11 +37,18 @@ class Board @JvmOverloads constructor(
     private var activeTurnStrokeWidth = resources.getDimension(R.dimen.dp_1)
     private var characterBackground: GradientDrawable
 
-    private val playersList: MutableList<Player> = mutableListOf()
+    private var morganPosition: Int = 0
+    private var isMorganSelectingSide: Boolean = false
+    private var morganSelectedSide: Int = 0
+
+    private val playersList: HashMap<String, Player> = hashMapOf()
 
     private var currPlayer: Player? = null
+    private var activeTurnPlayer: Player? = null
 
     private val zoomHelper = ZoomHelper(this)
+
+    private var selectedMovingDirection: BoardArrow.Direction? = null
 
     init {
 
@@ -86,21 +92,29 @@ class Board @JvmOverloads constructor(
             arrowDown.resetHighlighted()
             arrowLeft.resetHighlighted()
             arrowRight.resetHighlighted()
+            selectedMovingDirection = BoardArrow.Direction.Up
+            requestLayout()
         }
         arrowDown.setOnClickCallback {
             arrowUp.resetHighlighted()
             arrowLeft.resetHighlighted()
             arrowRight.resetHighlighted()
+            selectedMovingDirection = BoardArrow.Direction.Down
+            requestLayout()
         }
         arrowLeft.setOnClickCallback {
             arrowUp.resetHighlighted()
             arrowDown.resetHighlighted()
             arrowRight.resetHighlighted()
+            selectedMovingDirection = BoardArrow.Direction.Left
+            requestLayout()
         }
         arrowRight.setOnClickCallback {
             arrowUp.resetHighlighted()
             arrowDown.resetHighlighted()
             arrowLeft.resetHighlighted()
+            selectedMovingDirection = BoardArrow.Direction.Right
+            requestLayout()
         }
         addView(arrowUp)
         addView(arrowDown)
@@ -108,33 +122,66 @@ class Board @JvmOverloads constructor(
         addView(arrowRight)
     }
 
-    fun setTotalPlayers(players: Int) {
-        totalPlayers = players
-    }
-
-    fun setTotalTeams(teams: Int) {
-        totalTeams = teams
-    }
-
     fun addPlayer(player: Player) {
-        playersList.add(player)
+        playersList[player.id] = player
         val icon = BoardIcon(context)
         icon.setPlayer(player)
         addView(icon)
         requestLayout()
     }
 
+    fun updatePlayer(player: Player) {
+        playersList[player.id] = player
+        requestLayout()
+    }
+
     fun setCurrentPlayer(playerId: String) {
-        currPlayer = playersList.first { it.id == playerId }
+        currPlayer = playersList[playerId]
+        requestLayout()
     }
 
     fun getCurrentPlayer() = currPlayer
+
+    fun setActiveTurnPlayer(playerId: String) {
+        activeTurnPlayer = playersList[playerId]
+        Log.d("qwerty", "set active $activeTurnPlayer")
+        invalidate()
+        requestLayout()
+    }
+
+    fun getActiveTurnPlayer() = activeTurnPlayer
+
+    fun getPlayersAmount() = playersList.size
 
     fun setSize(size: Int) {
         this.size = size
         removeAllViews()
         initView()
         invalidate()
+    }
+
+    fun getSize() = size
+
+    fun setMorganPosition(position: Int) {
+        if (morganPosition != position) {
+            morganPosition = position
+            requestLayout()
+        }
+    }
+
+    fun setMorganSelectingSide(isSelecting: Boolean) {
+        if (isMorganSelectingSide != isSelecting) {
+            isMorganSelectingSide = isSelecting
+            requestLayout()
+        }
+    }
+
+    fun setMorganSelectedSide(side: Int) {
+        if (morganSelectedSide != side) {
+            morganSelectedSide = side
+            morganPosition = (side - 1) * size
+            requestLayout()
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -148,12 +195,16 @@ class Board @JvmOverloads constructor(
         for (i in 0 until childCount) {
             when (val child = getChildAt(i)) {
                 is MorganBoard -> {
+                    child.setMorganPosition(morganPosition)
+                    child.setMorganSelectingSide(isMorganSelectingSide)
+                    child.setSelectedSide(morganSelectedSide)
                     layoutBoard(child, childWidth, childHeight)
                 }
                 is CardStack -> {
                     layoutCardStack(child, childWidth, childHeight, i)
                 }
                 is BoardIcon -> {
+                    child.setActivePlayerId(activeTurnPlayer?.id ?: "")
                     layoutBoardIcon(child, childWidth, childHeight)
                 }
                 is BoardArrow -> { //arrows
@@ -201,9 +252,10 @@ class Board @JvmOverloads constructor(
         if (child !is BoardIcon) {
             return
         }
-        val player = child.getPlayer()
+        val playerID = child.getPlayer().id
+        val player = playersList[playerID] ?: child.getPlayer()
         val sameSquareList =
-            playersList.filter { player.position.x == it.position.x && player.position.y == it.position.y }
+            playersList.filter { player.position.x == it.value.position.x && player.position.y == it.value.position.y }
 
         val baseCurLeft =
             width / 2 + context.dpToPx(-player.position.y * dx + player.position.x * dx)
@@ -219,12 +271,12 @@ class Board @JvmOverloads constructor(
                 curTop = baseCurTop
             }
             2 -> {
-                val index = sameSquareList.indexOf(player)
+                val index = sameSquareList.values.indexOf(player)
                 curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
                 curTop = baseCurTop
             }
             else -> { // 3 icons, more players will not display
-                val index = sameSquareList.indexOf(player)
+                val index = sameSquareList.values.indexOf(player)
                 if (index < 2) {
                     curLeft = baseCurLeft + (index * 2 - 1) * iconWidth.toInt() / 3
                     curTop = baseCurTop
@@ -251,16 +303,19 @@ class Board @JvmOverloads constructor(
             return
         }
         val player = currPlayer
-        if (player != null && player.isActiveTurn) {
+        if (child.getDirection() != selectedMovingDirection) {
+            child.resetHighlighted()
+        }
+        if (player != null) { //player != null && player.id == activeTurnPlayer?.id
             //todo get info about layers from cardStack's to decide where we can go
             val curLeft: Int
             val curTop: Int
             when (child.getDirection()) {
                 BoardArrow.Direction.Up -> {
                     if (player.position.y > 0) {
-                        val arrowShift = 0.2f
+                        val arrowShift = 0.3f
                         curLeft =
-                            width / 2 + context.dpToPx(-(player.position.y - arrowShift) * dx + player.position.x * dx)
+                            width / 2 + context.dpToPx(-(player.position.y - arrowShift  + 0.2f) * dx + player.position.x * dx)
                                 .toInt()
                         curTop =
                             cardHeight.toInt() + context.dpToPx((player.position.y - arrowShift) * dy + player.position.x * dy)
@@ -289,7 +344,7 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Down -> {
                     if (player.position.y < size - 1) {
-                        val arrowShift = 1.4f
+                        val arrowShift = 1.2f
                         curLeft =
                             width / 2 + context.dpToPx(-(player.position.y + arrowShift) * dx + player.position.x * dx)
                                 .toInt()
@@ -320,7 +375,7 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Left -> {
                     if (player.position.x > 0) {
-                        val arrowShift = 1.4f
+                        val arrowShift = 1.3f
                         curLeft =
                             width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x - arrowShift) * dx)
                                 .toInt()
@@ -352,10 +407,10 @@ class Board @JvmOverloads constructor(
                 BoardArrow.Direction.Right -> {
                     if (player.position.x < size - 1) {
                         curLeft =
-                            width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x + 0.2f) * dx)
+                            width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x + 0.0f) * dx)
                                 .toInt()
                         curTop =
-                            cardHeight.toInt() + context.dpToPx(player.position.y * dy + (player.position.x + 1.3f) * dy)
+                            cardHeight.toInt() + context.dpToPx(player.position.y * dy + (player.position.x + 1.1f) * dy)
                                 .toInt()
                         child.measure(
                             MeasureSpec.makeMeasureSpec(

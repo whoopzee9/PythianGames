@@ -162,19 +162,58 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__mb_action_1"
-        style="@style/MaterialButton.Default"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginTop="@dimen/dp_16"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:text="@string/dig"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_shovel_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frg_game__board" />
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__mb_action_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_walk_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_3"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_1"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__mb_action_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_walk_and_dig_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_2"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:maxImageSize="@dimen/dp_30"
+        app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__mb_action_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_check_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_3"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/frg_game__inventory_wrapper"
@@ -242,9 +281,9 @@
         layout="@layout/include_question_dialog"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -255,9 +294,9 @@
         layout="@layout/include_dice_dialog"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="visible"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
