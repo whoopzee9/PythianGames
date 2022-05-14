@@ -1,10 +1,12 @@
 package ru.spbstu.feature.game.presentation
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
@@ -23,12 +25,13 @@ class GameViewModel(
 
     val currentUserId = Firebase.auth.currentUser?.uid
 
+    val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+
     fun setGame(game: Game) {
         _game.value = game
     }
 
     fun setGameState(gameState: GameState) {
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(gameJoiningDataWrapper.game.name)
             .child("gameState")
             .setValue(gameState).addOnCompleteListener {
@@ -41,7 +44,6 @@ class GameViewModel(
     }
 
     fun setMorganSide(side: Int) {
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(gameJoiningDataWrapper.game.name)
             .child("morganPosition")
             .setValue(side)
@@ -65,7 +67,6 @@ class GameViewModel(
     }
 
     fun setMorganStartPosition(position: Int) {
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(gameJoiningDataWrapper.game.name)
             .child("morganPosition")
             .setValue(position)
@@ -89,7 +90,6 @@ class GameViewModel(
     }
 
     fun setActivePlayerId(playerId: String) {
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(gameJoiningDataWrapper.game.name)
             .child("currentPlayerId")
             .setValue(playerId)
@@ -112,7 +112,6 @@ class GameViewModel(
                     it.turnOrder + (game.value.players.values.size - firstNum + 1)
             newMap[it.id] = it.copy(turnOrder = newTurn)
         }
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .setValue(newMap)
@@ -201,6 +200,45 @@ class GameViewModel(
                 }
             }
             else -> throw IllegalStateException("Wrong player amount!")
+        }
+    }
+
+    fun movePlayer(id: String, position: Position) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(id)
+            .child("position")
+            .setValue(position)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun passTurnToNextPlayer() {
+        val currPlayer = game.value.players[currentUserId]
+        Log.d("qwerty", "curr player $currPlayer")
+        if (currPlayer?.turnOrder == game.value.players.size) {
+            // todo need to roll dice for morgan to move
+
+        } else {
+            Log.d("qwerty", "passing turn")
+            val nextOrder = currPlayer?.turnOrder!! + 1
+            val nextPlayer = game.value.players.values.first { it.turnOrder == nextOrder }
+
+            ref.child(gameJoiningDataWrapper.game.name)
+                .child("currentPlayerId")
+                .setValue(nextPlayer.id)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+
+                    } else {
+                        Timber.tag(TAG).e(it.exception)
+                    }
+                }
         }
     }
 

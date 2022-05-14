@@ -8,8 +8,8 @@ import com.google.firebase.database.ValueEventListener
 fun DatabaseReference.subscribe(
     onSuccess: (DataSnapshot) -> Unit,
     onCancelled: (DatabaseError) -> Unit
-) {
-    addValueEventListener(object : ValueEventListener {
+): ValueEventListener {
+    return addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             onSuccess(snapshot)
         }

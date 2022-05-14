@@ -33,7 +33,7 @@
     <color name="ripple_color_primary">#A3A3A3</color>
 
     <color name="image_disabled_tint">#80A3A2A7</color>
-    <color name="stack_shade">#4D000000</color>
+    <color name="stack_cleaning_color">#4D000000</color>
     <color name="color_active_turn">#9A1AFF</color>
 
     <color name="color_morgan_place">#7F7A00</color>

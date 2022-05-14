@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
@@ -27,6 +28,8 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
     private var _binding: FragmentTeamsDisplayBinding? = null
     override val binding get() = _binding!!
 
+    private var listener: ValueEventListener? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +51,7 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
     override fun subscribe() {
         super.subscribe()
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
+        listener = ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
             handleGameSnapshotData(snapshot)
         }, onCancelled = {})
 
@@ -56,6 +59,13 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
             binding.frgTeamsDisplayTvWaitingForPlayers.text =
                 getString(R.string.game_starts_in, it / 1000)
         }
+    }
+
+    override fun onDestroyView() {
+        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+        listener?.let { ref.removeEventListener(it) }
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun handleGameSnapshotData(snapshot: DataSnapshot) {

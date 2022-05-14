@@ -1,22 +1,19 @@
 package ru.spbstu.common.widgets
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.PorterDuff
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
-import ru.spbstu.common.extenstions.dpToPx
-import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.Position
 import kotlin.math.min
+import kotlin.random.Random
 
 
 class CardStack @JvmOverloads constructor(
@@ -37,13 +34,18 @@ class CardStack @JvmOverloads constructor(
     private var width = resources.getDimension(R.dimen.dp_58)
     private var spacing = resources.getDimension(R.dimen.dp_2)
 
+    val random = java.util.Random()
+    private var isCleaning = random.nextInt(2) != 0
 //    private val firstLayerColor: Int
 //    private val secondLayerColor: Int
 //    private val thirdLayerColor: Int
 //    private val fourthLayerColor: Int
 //    private val fifthLayerColor: Int
 
-    var count = 5
+
+    private var count = random.nextInt(6)
+
+    private var position: Position = Position()
 
     init {
 
@@ -69,6 +71,28 @@ class CardStack @JvmOverloads constructor(
 //        fourthLayerColor = ContextCompat.getColor(context, R.color.color_layer_blue)
 //        fifthLayerColor = ContextCompat.getColor(context, R.color.color_layer_purple)
     }
+
+    fun reduceStack(amount: Int) {
+        count -= amount
+        requestLayout()
+    }
+
+    fun getStackCount() = count
+
+    fun getCurrentLayer() = 5 - count + 1
+
+    fun setPosition(x: Int, y: Int) {
+        this.position = position.copy(x = x, y = y)
+    }
+
+    fun getPosition() = position
+
+    fun setIsCleaning(isCleaning: Boolean) {
+        this.isCleaning = isCleaning
+        requestLayout()
+    }
+
+    fun isCleaning() = isCleaning
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var lp: ViewGroup.LayoutParams? = layoutParams
@@ -136,6 +160,13 @@ class CardStack @JvmOverloads constructor(
                     canvas.translate(0f, -spacing)
                     secondLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
+                    if (isCleaning) {
+                        DrawableCompat.setTint(
+                            firstLayer?.mutate()!!,
+                            ContextCompat.getColor(context, R.color.stack_cleaning_color)
+                        )
+                        DrawableCompat.setTintMode(firstLayer!!, PorterDuff.Mode.SRC_ATOP)
+                    }
                     firstLayer?.draw(canvas)
                 }
             }
@@ -148,6 +179,13 @@ class CardStack @JvmOverloads constructor(
                     canvas.translate(0f, -spacing)
                     thirdLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
+                    if (isCleaning) {
+                        DrawableCompat.setTint(
+                            secondLayer?.mutate()!!,
+                            ContextCompat.getColor(context, R.color.stack_cleaning_color)
+                        )
+                        DrawableCompat.setTintMode(secondLayer!!, PorterDuff.Mode.SRC_ATOP)
+                    }
                     secondLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-1))
                 }
@@ -159,6 +197,13 @@ class CardStack @JvmOverloads constructor(
                     canvas.translate(0f, -spacing)
                     fourthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
+                    if (isCleaning) {
+                        DrawableCompat.setTint(
+                            thirdLayer?.mutate()!!,
+                            ContextCompat.getColor(context, R.color.stack_cleaning_color)
+                        )
+                        DrawableCompat.setTintMode(thirdLayer!!, PorterDuff.Mode.SRC_ATOP)
+                    }
                     thirdLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-2))
                 }
@@ -168,6 +213,13 @@ class CardStack @JvmOverloads constructor(
                     canvas.translate(0f, spacing * 4)
                     fifthLayer?.draw(canvas)
                     canvas.translate(0f, -spacing)
+                    if (isCleaning) {
+                        DrawableCompat.setTint(
+                            fourthLayer?.mutate()!!,
+                            ContextCompat.getColor(context, R.color.stack_cleaning_color)
+                        )
+                        DrawableCompat.setTintMode(fourthLayer!!, PorterDuff.Mode.SRC_ATOP)
+                    }
                     fourthLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-3))
                 }
@@ -175,6 +227,13 @@ class CardStack @JvmOverloads constructor(
             1 -> {
                 if (canvas != null) {
                     canvas.translate(0f, spacing * 4)
+                    if (isCleaning) {
+                        DrawableCompat.setTint(
+                            fifthLayer?.mutate()!!,
+                            ContextCompat.getColor(context, R.color.stack_cleaning_color)
+                        )
+                        DrawableCompat.setTintMode(fifthLayer!!, PorterDuff.Mode.SRC_ATOP)
+                    }
                     fifthLayer?.draw(canvas)
                     canvas.translate(0f, spacing * (-4))
                 }

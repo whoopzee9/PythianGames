@@ -58,8 +58,10 @@ class BoardIcon @JvmOverloads constructor(
     fun getPlayer() = player
 
     fun setActivePlayerId(id: String) {
-        activePlayerId = id
-        updateBackground()
-        requestLayout()
+        if (activePlayerId != id) {
+            activePlayerId = id
+            updateBackground()
+            requestLayout()
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import ru.spbstu.common.base.BaseFragment
@@ -33,6 +34,8 @@ class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
 
     private var _binding: FragmentCharacterSelectionBinding? = null
     override val binding get() = _binding!!
+
+    private var listener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -121,12 +124,20 @@ class CharacterSelectionFragment : BaseFragment<CharacterSelectionViewModel>(
     override fun subscribe() {
         super.subscribe()
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        ref.child(viewModel.gameJoiningDataWrapper.game.name).child("players").subscribe(
+        listener = ref.child(viewModel.gameJoiningDataWrapper.game.name)
+            .child("players").subscribe(
             onSuccess = { snapshot ->
                 handleGameSnapshotData(snapshot)
             }, onCancelled = {
             }
         )
+    }
+
+    override fun onDestroyView() {
+        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+        listener?.let { ref.removeEventListener(it) }
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun handleGameSnapshotData(snapshot: DataSnapshot) {

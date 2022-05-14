@@ -73,12 +73,14 @@ class BoardArrow @JvmOverloads constructor(
     }
 
     fun resetHighlighted() {
-        isHighlighted = false
-        DrawableCompat.setTintMode(
-            drawable.mutate(),
-            PorterDuff.Mode.DST
-        )
-        requestLayout()
+        if (isHighlighted) {
+            isHighlighted = false
+            DrawableCompat.setTintMode(
+                drawable.mutate(),
+                PorterDuff.Mode.DST
+            )
+            requestLayout()
+        }
     }
 
     enum class Direction {

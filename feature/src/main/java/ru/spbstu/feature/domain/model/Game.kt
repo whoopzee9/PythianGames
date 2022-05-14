@@ -28,6 +28,8 @@ enum class GameStateTypes {
     Start,
     DiceRoll,
     Turn,
+    Wheel,
     Question,
+    Tooth
 
 }

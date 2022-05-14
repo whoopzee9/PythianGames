@@ -207,13 +207,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:src="@drawable/ic_check_24"
+        android:src="@drawable/ic_close_24"
         app:backgroundTint="@color/button_tint_primary"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_3"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__mb_action_decrease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_minus_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:fabSize="mini"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_1"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__mb_action_increase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_plus_24"
+        app:backgroundTint="@color/button_tint_primary"
+        app:fabSize="mini"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_decrease"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
+
+    <ImageView
+        android:id="@+id/frg_game__iv_coin"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:src="@drawable/ic_coin_24"
+        android:tintMode="multiply"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/frg_game__mb_action_increase"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_decrease"
+        app:layout_constraintTop_toTopOf="@id/frg_game__mb_action_increase"
+        app:tint="@color/color_layer_yellow" />
+
+    <TextView
+        android:id="@+id/frg_game__tv_bid_amount"
+        style="@style/TextView.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/dp_2"
+        app:layout_constraintBottom_toBottomOf="@id/frg_game__iv_coin"
+        app:layout_constraintEnd_toEndOf="@id/frg_game__iv_coin"
+        app:layout_constraintStart_toStartOf="@id/frg_game__iv_coin"
+        app:layout_constraintTop_toTopOf="@id/frg_game__iv_coin" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/frg_game__inventory_wrapper"
@@ -294,6 +350,19 @@
         layout="@layout/include_dice_dialog"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__wheel_layout"
+        layout="@layout/include_wheel_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
