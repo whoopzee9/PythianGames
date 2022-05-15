@@ -35,7 +35,7 @@ class CardStack @JvmOverloads constructor(
     private var spacing = resources.getDimension(R.dimen.dp_2)
 
     val random = java.util.Random()
-    private var isCleaning = random.nextInt(2) != 0
+    private var isCleaning = false //random.nextInt(2) != 0
 //    private val firstLayerColor: Int
 //    private val secondLayerColor: Int
 //    private val thirdLayerColor: Int
@@ -43,7 +43,7 @@ class CardStack @JvmOverloads constructor(
 //    private val fifthLayerColor: Int
 
 
-    private var count = random.nextInt(6)
+    private var count = 5   //random.nextInt(6)
 
     private var position: Position = Position()
 

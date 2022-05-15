@@ -1,11 +1,14 @@
 package ru.spbstu.feature.game.presentation
 
+import android.os.CountDownTimer
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
@@ -13,6 +16,8 @@ import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.Question
+import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -26,6 +31,23 @@ class GameViewModel(
     val currentUserId = Firebase.auth.currentUser?.uid
 
     val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
+
+    var bidAmount: Int = 0
+
+    var morganAnswerTimer: CountDownTimer? = null
+
+    fun setupAndStartMorganTimer(delaySec: Long, onFinishCallback: () -> Unit, onTickCallback: (Long) -> Unit) {
+        morganAnswerTimer = object : CountDownTimer(delaySec * 1000L, 1000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                onTickCallback(millisUntilFinished / 1000)
+            }
+
+            override fun onFinish() {
+                onFinishCallback()
+            }
+        }
+        morganAnswerTimer?.start()
+    }
 
     fun setGame(game: Game) {
         _game.value = game
@@ -89,13 +111,13 @@ class GameViewModel(
             }
     }
 
-    fun setActivePlayerId(playerId: String) {
+    fun setActivePlayerId(playerId: String, callback: (() -> Unit)? = null) {
         ref.child(gameJoiningDataWrapper.game.name)
             .child("currentPlayerId")
             .setValue(playerId)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-
+                    callback?.invoke()
                 } else {
                     Timber.tag(TAG).e(it.exception)
                 }
@@ -220,12 +242,10 @@ class GameViewModel(
 
     fun passTurnToNextPlayer() {
         val currPlayer = game.value.players[currentUserId]
-        Log.d("qwerty", "curr player $currPlayer")
         if (currPlayer?.turnOrder == game.value.players.size) {
             // todo need to roll dice for morgan to move
 
         } else {
-            Log.d("qwerty", "passing turn")
             val nextOrder = currPlayer?.turnOrder!! + 1
             val nextPlayer = game.value.players.values.first { it.turnOrder == nextOrder }
 
@@ -241,6 +261,39 @@ class GameViewModel(
                 }
         }
     }
+
+    fun updateBidInfo(wheelBet: WheelBet) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("gameState")
+            .child("bidInfo")
+            .child(wheelBet.playerId)
+            .setValue(wheelBet)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun giveCurrentPlayerCoins(layer: Int, amount: Int) {
+        val oldAmount = game.value.players[currentUserId]?.coinsCollected?.get(layer) ?: 0
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(currentUserId ?: "")
+            .child("coinsCollected")
+            .child(layer.toString())
+            .setValue(oldAmount + amount)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
 
     companion object {
         private val TAG = GameViewModel::class.simpleName

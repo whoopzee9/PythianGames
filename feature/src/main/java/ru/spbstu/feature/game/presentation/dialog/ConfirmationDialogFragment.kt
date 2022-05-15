@@ -33,11 +33,11 @@ class ConfirmationDialogFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.frgDeleteDialogMbCancel.setDebounceClickListener {
+        binding.frgConfirmationDialogMbCancel.setDebounceClickListener {
             onCancelClickListener?.invoke()
             dialog?.dismiss()
         }
-        binding.frgDeleteDialogMbOk.setDebounceClickListener {
+        binding.frgConfirmationDialogMbOk.setDebounceClickListener {
             onOkClickListener?.invoke()
             dialog?.dismiss()
         }
@@ -56,7 +56,7 @@ class ConfirmationDialogFragment : DialogFragment() {
     }
 
     private fun setupDialogView() {
-        binding.frgDeleteDialogText.text =
+        binding.frgConfirmationDialogText.text =
             if (!dialogWarningText.isNullOrEmpty()) dialogWarningText
             else getString(R.string.skip_confirmation)
     }

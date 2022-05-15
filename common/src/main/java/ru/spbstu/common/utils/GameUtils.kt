@@ -3,20 +3,20 @@ package ru.spbstu.common.utils
 import ru.spbstu.common.model.Position
 
 object GameUtils {
-    private const val TOOTH_LAYER_1_SIZE_3 = 9
-    private const val TOOTH_LAYER_1_SIZE_5 = 25
+    private const val TOOTH_LAYER_1_SIZE_3 = 2
+    private const val TOOTH_LAYER_1_SIZE_5 = 4
 
     private const val TOOTH_LAYER_2_SIZE_3 = 2
-    private const val TOOTH_LAYER_2_SIZE_5 = 7
+    private const val TOOTH_LAYER_2_SIZE_5 = 8
 
-    private const val TOOTH_LAYER_3_SIZE_3 = 2
-    private const val TOOTH_LAYER_3_SIZE_5 = 13
+    private const val TOOTH_LAYER_3_SIZE_3 = 4
+    private const val TOOTH_LAYER_3_SIZE_5 = 12
 
-    private const val TOOTH_LAYER_4_SIZE_3 = 3
-    private const val TOOTH_LAYER_4_SIZE_5 = 13
+    private const val TOOTH_LAYER_4_SIZE_3 = 4
+    private const val TOOTH_LAYER_4_SIZE_5 = 12
 
     private const val TOOTH_LAYER_5_SIZE_3 = 4
-    private const val TOOTH_LAYER_5_SIZE_5 = 15
+    private const val TOOTH_LAYER_5_SIZE_5 = 12
 
     fun getToothAmount(layer: Int, size: Int): Int {
         when (layer) {

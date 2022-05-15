@@ -257,6 +257,27 @@ class Board @JvmOverloads constructor(
     fun canDigLeft() = canDigLeft
     fun canDigRight() = canDigRight
 
+    fun canAskMorganInPosition(position: Position): Boolean {
+        val morganPos = when {
+            morganPosition < size -> {
+                Position(x = morganPosition, y = 0)
+            }
+            morganPosition >= size && morganPosition <= (size - 1) * 2 -> {
+                Position(x = size - 1, y = morganPosition - size + 1)
+            }
+            morganPosition > (size - 1) * 2 && morganPosition <= (size - 1) * 3 -> {
+                Position(x = (size - 1) * 3 - morganPosition, y = size - 1)
+            }
+            morganPosition > (size - 1) * 3 -> {
+                Position(x = 0, y = (size - 1) * 4 - morganPosition)
+            }
+            else -> {
+                Position()
+            }
+        }
+        return position.x == morganPos.x || position.y == morganPos.y
+    }
+
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val childLeft = paddingLeft
@@ -438,16 +459,13 @@ class Board @JvmOverloads constructor(
         if (child.getDirection() != selectedMovingDirection) {
             child.resetHighlighted()
         }
-        Log.d("qwerty", "before if")
         if (player != null && player.id == activeTurnPlayer?.id) {
             val curLeft: Int
             val curTop: Int
             child.visibility = View.VISIBLE
-            Log.d("qwerty", "player position ${player.position}")
             when (child.getDirection()) {
                 BoardArrow.Direction.Up -> {
                     if (player.position.y > 0) {
-                        Log.d("qwerty", "drawing up")
                         val arrowShift = 0.3f
                         curLeft =
                             width / 2 + context.dpToPx(-(player.position.y - arrowShift + 0.2f) * dx + player.position.x * dx)
@@ -455,8 +473,6 @@ class Board @JvmOverloads constructor(
                         curTop =
                             cardHeight.toInt() + context.dpToPx((player.position.y - arrowShift) * dy + player.position.x * dy)
                                 .toInt()
-                        Log.d("qwerty", "curleft $curLeft")
-                        Log.d("qwerty", "curtop $curTop")
                         child.measure(
                             MeasureSpec.makeMeasureSpec(
                                 childWidth,
@@ -471,7 +487,6 @@ class Board @JvmOverloads constructor(
                         val curWidth = child.measuredWidth
                         val curHeight = child.measuredHeight
 
-                        Log.d("qwerty", "before layout")
                         child.visibility = View.VISIBLE
                         child.layout(
                             curLeft,
@@ -483,7 +498,6 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Down -> {
                     if (player.position.y < size - 1) {
-                        Log.d("qwerty", "drawing down")
                         val arrowShift = 1.2f
                         curLeft =
                             width / 2 + context.dpToPx(-(player.position.y + arrowShift) * dx + player.position.x * dx)
@@ -515,7 +529,6 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Left -> {
                     if (player.position.x > 0) {
-                        Log.d("qwerty", "drawing left")
                         val arrowShift = 1.3f
                         curLeft =
                             width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x - arrowShift) * dx)
@@ -547,7 +560,6 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Right -> {
                     if (player.position.x < size - 1) {
-                        Log.d("qwerty", "drawing right")
                         curLeft =
                             width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x + 0.0f) * dx)
                                 .toInt()

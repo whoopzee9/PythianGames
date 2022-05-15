@@ -14,5 +14,5 @@ enum class CardType {
 
 data class QuestionGame(
     val question: Question = Question(),
-    val alreadyAnswered: List<Int> = listOf()
+    val alreadyAnswered: HashMap<Int, Int> = hashMapOf()
 )

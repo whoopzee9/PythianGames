@@ -44,6 +44,7 @@ fun MaterialCardView.setToSelectedStyle() {
 fun MaterialCardView.setToDisabledStyle() {
     strokeWidth = 0
     background = null
+    isChecked = false
     isEnabled = false
     if (getChildAt(0) is TextView) {
         (getChildAt(0) as TextView).setTextColor(

@@ -163,60 +163,64 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_1"
+        android:id="@+id/frg_game__fab_action_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_shovel_24"
-        app:backgroundTint="@color/button_tint_primary"
+        app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_2"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@color/button_tint_third" />
+        app:tint="@android:color/transparent"
+        android:tintMode="src_atop"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_2"
+        android:id="@+id/frg_game__fab_action_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_walk_24"
-        app:backgroundTint="@color/button_tint_primary"
+        app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_3"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_1"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_3"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@color/button_tint_third" />
+        app:tint="@android:color/transparent"
+        android:tintMode="src_atop"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_3"
+        android:id="@+id/frg_game__fab_action_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_walk_and_dig_24"
-        app:backgroundTint="@color/button_tint_primary"
+        app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_4"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_2"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_2"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:maxImageSize="@dimen/dp_30"
-        app:tint="@color/button_tint_third" />
+        app:tint="@android:color/transparent"
+        android:tintMode="src_atop" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_4"
+        android:id="@+id/frg_game__fab_action_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_close_24"
-        app:backgroundTint="@color/button_tint_primary"
+        app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_3"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_3"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@color/button_tint_third" />
+        app:tint="@android:color/transparent"
+        android:tintMode="src_atop" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_decrease"
+        android:id="@+id/frg_game__fab_action_decrease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
@@ -225,13 +229,13 @@
         app:fabSize="mini"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_increase"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_1"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:tint="@color/button_tint_third" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/frg_game__mb_action_increase"
+        android:id="@+id/frg_game__fab_action_increase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
@@ -240,8 +244,8 @@
         app:fabSize="mini"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_4"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_decrease"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_decrease"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:tint="@color/button_tint_third" />
 
@@ -252,10 +256,10 @@
         android:src="@drawable/ic_coin_24"
         android:tintMode="multiply"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/frg_game__mb_action_increase"
-        app:layout_constraintEnd_toStartOf="@id/frg_game__mb_action_increase"
-        app:layout_constraintStart_toEndOf="@id/frg_game__mb_action_decrease"
-        app:layout_constraintTop_toTopOf="@id/frg_game__mb_action_increase"
+        app:layout_constraintBottom_toBottomOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_decrease"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_increase"
         app:tint="@color/color_layer_yellow" />
 
     <TextView
@@ -340,10 +344,10 @@
         android:layout_marginHorizontal="@dimen/dp_12"
         android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
 
     <include
         android:id="@+id/frg_game__dice_layout"
@@ -353,10 +357,10 @@
         android:layout_marginHorizontal="@dimen/dp_12"
         android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
 
     <include
         android:id="@+id/frg_game__wheel_layout"
@@ -366,8 +370,21 @@
         android:layout_marginHorizontal="@dimen/dp_12"
         android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/frg_game__mb_action_1"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/frg_game__tv_action" />
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__morgan_answer_layout"
+        layout="@layout/include_morgan_answer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
 </androidx.constraintlayout.widget.ConstraintLayout>

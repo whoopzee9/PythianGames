@@ -107,7 +107,7 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
     override fun onDestroyView() {
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         listener?.let { ref.removeEventListener(it) }
-        _binding = null
+        //_binding = null
         super.onDestroyView()
     }
 

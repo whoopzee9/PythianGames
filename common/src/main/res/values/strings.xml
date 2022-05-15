@@ -52,7 +52,7 @@
     <string name="questions">Вопросы</string>
     <string name="inventory">Инвентарь</string>
     <string name="game_stats">Игровая статистика</string>
-    <string name="question_number">Вопрос %d</string>
+    <string name="question">Вопрос</string>
     <string name="dig">Копать</string>
     <string name="try_again_later">Ошибка, повторите позднее</string>
     <string name="game_already_exists">Игра с таким названием уже существует</string>
@@ -71,8 +71,19 @@
     <string name="your_turn">Ваш ход!</string>
     <string name="players_turn">Ход %s!</string>
     <string name="ok">Ок</string>
+    <string name="ok_delay">Ок (%d)</string>
     <string name="cancel">Отмена</string>
     <string name="skip_confirmation">Пропустить ход?</string>
+    <string name="bet_skip_confirmation">Пропустить этап ставок?</string>
+    <string name="test_luck">Испытайте удачу!</string>
+    <string name="bets_results">Результаты ставок:</string>
+    <string name="layer_1_question_title">Общекультурный вопрос</string>
+    <string name="layer_2_question_title">Общий вопрос по античной философии</string>
+    <string name="layer_3_question_title">Аристотелевский ликей</string>
+    <string name="layer_4_question_title">Платоновская академия</string>
+    <string name="layer_5_question_title">Пифагорейцы</string>
+    <string name="morgan_question_answer">Морган отвечает, что ответ - %d</string>
+    <string name="morgan_coin_answer">Морган загадочно улыбается и молча дает вам монетку</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

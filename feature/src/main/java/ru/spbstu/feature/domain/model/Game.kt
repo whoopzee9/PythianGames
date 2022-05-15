@@ -22,6 +22,8 @@ data class GameState(
     val param1: Any? = null,
     val param2: Any? = null,
     val param3: Any? = null,
+    val bidInfo: HashMap<String, WheelBet>? = null,
+    val card: Card? = null
 )
 
 enum class GameStateTypes {
