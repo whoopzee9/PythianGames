@@ -1,4 +1,4 @@
-package ru.spbstu.feature.domain.model
+package ru.spbstu.common.model
 
 data class Question(
     val id: String = "",

@@ -55,6 +55,7 @@
     <string name="question">Вопрос</string>
     <string name="dig">Копать</string>
     <string name="try_again_later">Ошибка, повторите позднее</string>
+    <string name="user_already_exists">Пользователь с таким email уже существует</string>
     <string name="game_already_exists">Игра с таким названием уже существует</string>
     <string name="wrong_code">Неправильный код комнаты</string>
     <string name="game_doesnt_exist">Игры с таким названием не найдено</string>
@@ -84,6 +85,7 @@
     <string name="layer_5_question_title">Пифагорейцы</string>
     <string name="morgan_question_answer">Морган отвечает, что ответ - %d</string>
     <string name="morgan_coin_answer">Морган загадочно улыбается и молча дает вам монетку</string>
+    <string name="choose_answer">Выберите вариант ответа!</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

@@ -1,7 +1,9 @@
 package ru.spbstu.feature.registration.presentation
 
 import android.util.Patterns
+import androidx.annotation.StringRes
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.R
 import ru.spbstu.feature.domain.model.User
 import timber.log.Timber
 
@@ -33,7 +36,11 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
                 createUser(email)
             } else {
                 Timber.tag(TAG).e(it.exception)
-                _state.value = UIState.Failure
+                val messageRes = when (it.exception) {
+                    is FirebaseAuthUserCollisionException -> R.string.user_already_exists
+                    else -> R.string.try_again_later
+                }
+                _state.value = UIState.Failure(messageRes)
             }
         }
     }
@@ -48,7 +55,7 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
                 router.openMainFragment()
             } else {
                 Timber.tag(TAG).e(it.exception)
-                _state.value = UIState.Failure
+                _state.value = UIState.Failure()
             }
         }
     }
@@ -57,7 +64,7 @@ class RegistrationViewModel(val router: FeatureRouter) : BackViewModel(router) {
         object Initial: UIState()
         object Progress: UIState()
         object Success: UIState()
-        object Failure: UIState()
+        data class Failure(@StringRes val messageRes: Int = R.string.try_again_later): UIState()
     }
 
     companion object {

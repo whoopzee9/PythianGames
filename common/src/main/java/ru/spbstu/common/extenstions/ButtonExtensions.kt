@@ -15,6 +15,7 @@ fun MaterialButton.setInactiveStyle(@ColorRes color: Int) {
             setStrokeColorResource(color)
             setStrokeWidthResource(R.dimen.dp_2)
             isEnabled = true
+            isChecked = false
         }
     }
 }
@@ -26,6 +27,7 @@ fun MaterialButton.setActiveStyle(@ColorRes color: Int) {
         setStrokeColorResource(color)
         setStrokeWidthResource(R.dimen.dp_2)
         isEnabled = true
+        isChecked = true
     }
 }
 
@@ -36,5 +38,6 @@ fun MaterialButton.setDisabledStyle() {
         setStrokeColorResource(R.color.button_disabled_tint)
         setStrokeWidthResource(R.dimen.dp_2)
         isEnabled = false
+        isChecked = false
     }
 }

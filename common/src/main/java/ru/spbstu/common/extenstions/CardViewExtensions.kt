@@ -50,7 +50,41 @@ fun MaterialCardView.setToDisabledStyle() {
         (getChildAt(0) as TextView).setTextColor(
             ContextCompat.getColor(
                 context,
-                R.color.text_color_primary
+                R.color.text_color_disabled
+            )
+        )
+    }
+}
+
+fun MaterialCardView.setCorrectStyle() {
+    strokeWidth = 0
+    radius = resources.getDimension(R.dimen.dp_12)
+    //setBackgroundColor(ContextCompat.getColor(context, R.color.button_tint_primary))
+    setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.background_correct_answer))
+    setCardBackgroundColor(ContextCompat.getColor(context, R.color.background_button_correct))
+    isEnabled = false
+    if (getChildAt(0) is TextView) {
+        (getChildAt(0) as TextView).setTextColor(
+            ContextCompat.getColor(
+                context,
+                R.color.text_color_secondary
+            )
+        )
+    }
+}
+
+fun MaterialCardView.setIncorrectStyle() {
+    strokeWidth = 0
+    radius = resources.getDimension(R.dimen.dp_12)
+    //setBackgroundColor(ContextCompat.getColor(context, R.color.button_tint_primary))
+    setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.background_incorrect_answer))
+    setCardBackgroundColor(ContextCompat.getColor(context, R.color.background_button_incorrect))
+    isEnabled = false
+    if (getChildAt(0) is TextView) {
+        (getChildAt(0) as TextView).setTextColor(
+            ContextCompat.getColor(
+                context,
+                R.color.text_color_secondary
             )
         )
     }

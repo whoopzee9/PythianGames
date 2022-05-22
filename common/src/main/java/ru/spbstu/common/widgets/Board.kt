@@ -3,7 +3,6 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
+import ru.spbstu.common.model.Card
 import ru.spbstu.common.model.MovingPossibilities
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.Position
@@ -63,6 +63,8 @@ class Board @JvmOverloads constructor(
     private var canDigDown = MovingPossibilities()
     private var canDigLeft = MovingPossibilities()
     private var canDigRight = MovingPossibilities()
+
+    private var cardsList: List<Card> = listOf()
 
     init {
 
@@ -176,7 +178,6 @@ class Board @JvmOverloads constructor(
     fun setActiveTurnPlayer(playerId: String) {
         if (activeTurnPlayer != playersList[playerId]) {
             activeTurnPlayer = playersList[playerId]
-            Log.d("qwerty", "active turn $activeTurnPlayer")
             invalidate()
             requestLayout()
         }
@@ -278,6 +279,12 @@ class Board @JvmOverloads constructor(
         return position.x == morganPos.x || position.y == morganPos.y
     }
 
+    fun setCardList(cards: List<Card>) {
+        if (cardsList != cards) {
+            cardsList = cards
+            requestLayout()
+        }
+    }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val childLeft = paddingLeft
@@ -298,6 +305,11 @@ class Board @JvmOverloads constructor(
                 is CardStack -> {
                     val cardPos = i - 1
                     child.setPosition(cardPos % size, cardPos / size)
+                    if (cardsList.isNotEmpty()) {
+                        val indexInCardsList =
+                            (child.getCurrentLayer() - 1) * (size * size) + cardPos
+                        child.setIsCleaning(!cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty())
+                    }
                     layoutCardStack(child, childWidth, childHeight, i)
                 }
                 is BoardIcon -> {
@@ -351,7 +363,7 @@ class Board @JvmOverloads constructor(
             return MovingPossibilities(
                 canDig = true,
                 isCleaning = currStack.isCleaning(),
-                canBet = currStack.getCurrentLayer() > 1,
+                canBet = currStack.getCurrentLayer() > 1 && !currStack.isCleaning(),
                 position = currStack.getPosition(),
                 layer = currStack.getCurrentLayer()
             )

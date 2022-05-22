@@ -50,4 +50,6 @@
     <color name="color_scrollbar_thumb">#000000</color>
     <color name="color_scrollbar_track">#A3A3A3</color>
 
+    <color name="background_button_correct">#2DAD69</color>
+    <color name="background_button_incorrect">#EF1000</color>
 </resources>

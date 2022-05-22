@@ -91,6 +91,11 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
             viewModel.saveTeam()
         }
 
+        binding.frgTeamSelectionMbGreenTeam.isCheckable = true
+        binding.frgTeamSelectionMbBlueTeam.isCheckable = true
+        binding.frgTeamSelectionMbRedTeam.isCheckable = true
+        binding.frgTeamSelectionMbOrangeTeam.isCheckable = true
+
         handleBackPressed {
             viewModel.onBack()
         }
@@ -114,6 +119,21 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
     private fun handleGameSnapshotData(snapshot: DataSnapshot) {
         val game = snapshot.getValue(Game::class.java)
         if (game != null) {
+            listOf(
+                binding.frgTeamSelectionMbGreenTeam,
+                binding.frgTeamSelectionMbBlueTeam,
+                binding.frgTeamSelectionMbRedTeam,
+                binding.frgTeamSelectionMbOrangeTeam
+            ).forEachIndexed { index, materialButton ->
+                if (!materialButton.isChecked) {
+                    materialButton.setInactiveStyle(when (index) {
+                        0 -> R.color.color_team_green
+                        1 -> R.color.color_team_blue
+                        2 -> R.color.color_team_red
+                        else -> R.color.color_team_orange
+                    })
+                }
+            }
             val playersPerTeam = game.numOfPlayers / game.numOfTeams
             if (game.players.filter { it.value.teamStr == TeamsConstants.GREEN_TEAM }.size >= playersPerTeam) {
                 binding.frgTeamSelectionMbGreenTeam.setDisabledStyle()

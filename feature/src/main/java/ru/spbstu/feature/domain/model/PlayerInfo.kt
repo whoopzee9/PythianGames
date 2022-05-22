@@ -14,8 +14,9 @@ data class PlayerInfo(
     val readyFlag: Boolean = false,
     val position: Position = Position(),
     val turnOrder: Int = 0,
-    val coinsCollected: HashMap<Int, Int> = hashMapOf(),
-    val questionsAnswered: HashMap<Int, Int> = hashMapOf()
+    val coinsCollected: HashMap<String, Int>? = hashMapOf(),
+    val questionsAnswered: HashMap<String, Int>? = hashMapOf(),
+    val inventory: HashMap<String, InventoryElement>? = hashMapOf()
 )
 
 fun PlayerInfo.toPlayer(): Player {

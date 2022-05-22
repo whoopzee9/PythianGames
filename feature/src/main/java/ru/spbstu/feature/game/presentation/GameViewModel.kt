@@ -1,14 +1,12 @@
 package ru.spbstu.feature.game.presentation
 
 import android.os.CountDownTimer
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.spbstu.common.extenstions.readValue
+import ru.spbstu.common.model.Card
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
@@ -16,7 +14,6 @@ import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.PlayerInfo
-import ru.spbstu.feature.domain.model.Question
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
@@ -34,10 +31,16 @@ class GameViewModel(
 
     var bidAmount: Int = 0
 
-    var morganAnswerTimer: CountDownTimer? = null
+    var size = 0
 
-    fun setupAndStartMorganTimer(delaySec: Long, onFinishCallback: () -> Unit, onTickCallback: (Long) -> Unit) {
-        morganAnswerTimer = object : CountDownTimer(delaySec * 1000L, 1000L) {
+    var delayTimer: CountDownTimer? = null
+
+    fun setupAndStartDelayTimer(
+        delaySec: Long,
+        onFinishCallback: () -> Unit,
+        onTickCallback: (Long) -> Unit
+    ) {
+        delayTimer = object : CountDownTimer(delaySec * 1000L, 1000L) {
             override fun onTick(millisUntilFinished: Long) {
                 onTickCallback(millisUntilFinished / 1000)
             }
@@ -46,7 +49,7 @@ class GameViewModel(
                 onFinishCallback()
             }
         }
-        morganAnswerTimer?.start()
+        delayTimer?.start()
     }
 
     fun setGame(game: Game) {
@@ -278,7 +281,8 @@ class GameViewModel(
     }
 
     fun giveCurrentPlayerCoins(layer: Int, amount: Int) {
-        val oldAmount = game.value.players[currentUserId]?.coinsCollected?.get(layer) ?: 0
+        val oldAmount =
+            game.value.players[currentUserId]?.coinsCollected?.get(layer.toString()) ?: 0
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .child(currentUserId ?: "")
@@ -294,6 +298,20 @@ class GameViewModel(
             }
     }
 
+    fun updateCard(newCard: Card) {
+        val key = (newCard.layer - 1) * (size * size) + newCard.cardNum - 1
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("cards")
+            .child(key.toString())
+            .setValue(newCard)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
 
     companion object {
         private val TAG = GameViewModel::class.simpleName

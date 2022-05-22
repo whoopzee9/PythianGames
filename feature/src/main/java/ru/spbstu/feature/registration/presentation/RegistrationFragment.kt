@@ -69,10 +69,10 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
                 binding.frgRegistrationPbProgress.visibility = View.GONE
                 setActionsClickability(true)
             }
-            RegistrationViewModel.UIState.Failure -> {
+            is RegistrationViewModel.UIState.Failure -> {
                 Toast.makeText(
                     requireContext(),
-                    R.string.try_again_later,
+                    state.messageRes,
                     Toast.LENGTH_SHORT
                 ).show()
                 binding.frgRegistrationPbProgress.visibility = View.GONE

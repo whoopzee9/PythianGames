@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ValueEventListener
@@ -19,7 +20,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
+import ru.spbstu.common.extenstions.handleBackPressed
+import ru.spbstu.common.extenstions.setCorrectStyle
 import ru.spbstu.common.extenstions.setDebounceClickListener
+import ru.spbstu.common.extenstions.setIncorrectStyle
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.extenstions.setToDisabledStyle
@@ -27,6 +31,7 @@ import ru.spbstu.common.extenstions.setToSelectedStyle
 import ru.spbstu.common.extenstions.setToUnselectedStyle
 import ru.spbstu.common.extenstions.subscribe
 import ru.spbstu.common.extenstions.viewBinding
+import ru.spbstu.common.model.CardType
 import ru.spbstu.common.model.MovingPossibilities
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.Position
@@ -38,7 +43,6 @@ import ru.spbstu.feature.databinding.FragmentGameBinding
 import ru.spbstu.feature.databinding.FragmentGameStatisticsDialogBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
-import ru.spbstu.feature.domain.model.CardType
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
@@ -85,9 +89,8 @@ class GameFragment : BaseFragment<GameViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
-        binding.frgGameBoard.setSize(
-            if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
-        )
+        viewModel.size = if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
+        binding.frgGameBoard.setSize(viewModel.size)
 
         setupAdapter()
         setupStatisticsPopup()
@@ -218,7 +221,69 @@ class GameFragment : BaseFragment<GameViewModel>(
                     }
                 }
                 GameStateTypes.Question -> {
-                    //todo handle answer  
+                    //todo handle answer
+                    val list = listOf(
+                        binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer1Wrapper,
+                        binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer2Wrapper,
+                        binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer3Wrapper,
+                        binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer4Wrapper,
+                    )
+                    var selectedAnswer = 0
+                    var selectedCard =
+                        binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer1Wrapper
+                    list.forEachIndexed { index, materialCardView ->
+                        if (materialCardView.isChecked) {
+                            selectedAnswer = index + 1
+                            selectedCard = materialCardView
+                        }
+                    }
+
+                    if (selectedAnswer == 0) {
+                        Toast.makeText(requireContext(), R.string.choose_answer, Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        val card = viewModel.game.value.gameState.card
+                        if (card != null && card.question?.question?.correctAnswer == selectedAnswer) {
+                            viewModel.setGameState(
+                                GameState(
+                                    type = GameStateTypes.Question,
+                                    card = card,
+                                    param1 = selectedAnswer
+                                )
+                            )
+                            viewModel.updateCard(card.copy(cleared = true))
+                            selectedCard.setCorrectStyle()
+                            list.forEach {
+                                if (it != selectedCard) {
+                                    it.setToDisabledStyle()
+                                }
+                            }
+                        } else if (card != null) {
+                            viewModel.setGameState(
+                                GameState(
+                                    type = GameStateTypes.Question,
+                                    card = card,
+                                    param1 = selectedAnswer
+                                )
+                            )
+                            val newAlreadyAnswered = card.question?.alreadyAnswered ?: mutableListOf()
+                            newAlreadyAnswered[selectedAnswer] = selectedAnswer
+                            viewModel.updateCard(
+                                card.copy(
+                                    question = card.question?.copy(
+                                        alreadyAnswered = newAlreadyAnswered
+                                    ),
+                                    cleared = false
+                                )
+                            )
+                            selectedCard.setIncorrectStyle()
+                            list.forEach {
+                                if (it != selectedCard) {
+                                    it.setToDisabledStyle()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -359,7 +424,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 val possibilities = mutableListOf(1, 2, 3, 4)
                                 possibilities.remove(card?.question?.question?.correctAnswer)
                                 card?.question?.alreadyAnswered?.forEach {
-                                    possibilities.remove(it.key)
+                                    possibilities.remove(it)
                                 }
                                 possibilities.shuffle()
                                 binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text =
@@ -379,7 +444,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                         binding.frgGameQuestionLayout.root.visibility = View.GONE
                         binding.frgGameFabAction1.visibility = View.INVISIBLE
                         binding.frgGameFabAction4.visibility = View.INVISIBLE
-                        viewModel.setupAndStartMorganTimer(5, onFinishCallback = {
+                        viewModel.setupAndStartDelayTimer(5, onFinishCallback = {
                             binding.frgGameMorganAnswerLayout.root.visibility = View.GONE
                             binding.frgGameQuestionLayout.root.visibility = View.VISIBLE
                             binding.frgGameFabAction1.visibility = View.VISIBLE
@@ -393,9 +458,11 @@ class GameFragment : BaseFragment<GameViewModel>(
         }
 
         binding.frgGameMorganAnswerLayout.includeMorganAnswerMbClose.setDebounceClickListener {
-            viewModel.morganAnswerTimer?.onFinish()
-            viewModel.morganAnswerTimer?.cancel()
+            viewModel.delayTimer?.onFinish()
+            viewModel.delayTimer?.cancel()
         }
+
+        handleBackPressed {  }
 
         binding.frgGameFabAction1.visibility = View.GONE
         binding.frgGameFabAction2.visibility = View.GONE
@@ -419,7 +486,7 @@ class GameFragment : BaseFragment<GameViewModel>(
     override fun onDestroyView() {
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
         listener?.let { ref.removeEventListener(it) }
-        _binding = null
+        //_binding = null
         super.onDestroyView()
     }
 
@@ -452,6 +519,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         binding.frgGameBoard.updatePlayers(game.players.mapValues { it.value.toPlayer() } as HashMap<String, Player>)
         binding.frgGameBoard.setActiveTurnPlayer(game.currentPlayerId)
         binding.frgGameBoard.clearArrowCallback()
+        binding.frgGameBoard.setCardList(game.cards)
         binding.frgGameDiceLayout.root.visibility = View.GONE
         binding.frgGameWheelLayout.root.visibility = View.GONE
         binding.frgGameQuestionLayout.root.visibility = View.GONE
@@ -738,8 +806,11 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer4Wrapper
         )
 
+        val answeredNum = game.gameState.param1 as? Long
+
         if (game.currentPlayerId == viewModel.currentUserId) { // current user is answering
             binding.frgGameFabAction1.visibility = View.VISIBLE
+            binding.frgGameFabAction1.isEnabled = false
             binding.frgGameFabAction1.setImageResource(R.drawable.ic_check_24)
             binding.frgGameFabAction2.visibility = View.INVISIBLE
             binding.frgGameFabAction3.visibility = View.INVISIBLE
@@ -749,9 +820,22 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameFabAction4.setMaxImageSize(resources.getDimension(R.dimen.dp_30).toInt())
             binding.frgGameFabAction4.setImageResource(R.drawable.morgan)
             wrapperList.forEachIndexed { index, materialCardView ->
-                if (game.gameState.card.question.alreadyAnswered.containsKey(index + 1)) {
+                if (game.gameState.card.question?.alreadyAnswered?.contains(index + 1) == true) {
                     materialCardView.setToDisabledStyle()
                 }
+            }
+
+            if (answeredNum != null) { //start timer to change state
+                wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
+                wrapperList.forEachIndexed { index, materialCardView ->
+                    if (index != answeredNum.toInt() - 1) {
+                        materialCardView.setToDisabledStyle()
+                    }
+                }
+                viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
+                    viewModel.setGameState(GameState(GameStateTypes.Turn))
+                    viewModel.passTurnToNextPlayer()
+                }, onTickCallback = {})
             }
         } else { // for other users
             binding.frgGameFabAction1.visibility = View.INVISIBLE
@@ -760,6 +844,9 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameFabAction4.visibility = View.INVISIBLE
             wrapperList.forEach {
                 it.setToDisabledStyle()
+            }
+            if (answeredNum != null) {
+                wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
             }
         }
     }
@@ -1158,7 +1245,7 @@ class GameFragment : BaseFragment<GameViewModel>(
             val player = viewModel.game.value.players[viewModel.currentUserId]
             var totalYellowCoins = 0
             player?.coinsCollected?.forEach {
-                totalYellowCoins += it.key * it.value
+                totalYellowCoins += it.key.toInt() * it.value
             }
             if (viewModel.bidAmount < totalYellowCoins && viewModel.bidAmount < 99) {
                 viewModel.bidAmount++
@@ -1207,9 +1294,16 @@ class GameFragment : BaseFragment<GameViewModel>(
             )
             list.forEachIndexed { index, card ->
                 card.setToUnselectedStyle()
+                card.isCheckable = true
+                card.checkedIcon = null
                 card.setDebounceClickListener {
                     //todo save index of clicked
-                    list.forEach { it.setToUnselectedStyle() }
+                    binding.frgGameFabAction1.isEnabled = true
+                    list.forEach {
+                        if (it.isEnabled) {
+                            it.setToUnselectedStyle()
+                        }
+                    }
                     card.setToSelectedStyle()
                 }
             }
@@ -1287,9 +1381,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                         )
                         viewModel.setMorganSide(dice)
                     } else {
-                        lifecycleScope.launch {
-                            //delay is needed to display dice longer before closing
-                            delay(1000) //todo maybe change to timer
+                        viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
                             val side = viewModel.game.value.morganPosition
                             val size = binding.frgGameBoard.getSize()
                             val position = if (dice > size) dice - size else dice
@@ -1302,7 +1394,24 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 viewModel.setGameState(GameState(type = GameStateTypes.Turn))
                             }
                             viewModel.updatePlayersTurnOrders(firstPlayer.turnOrder)
-                        }
+                        }, onTickCallback = {
+                        })
+//                        lifecycleScope.launch {
+//                            //delay is needed to display dice longer before closing
+//                            delay(1000) //todo maybe change to timer
+//                            val side = viewModel.game.value.morganPosition
+//                            val size = binding.frgGameBoard.getSize()
+//                            val position = if (dice > size) dice - size else dice
+//                            viewModel.setMorganStartPosition((side - 1) * size + position - 1)
+//                            val firstPlayer = viewModel.getFirstPlayerByMorganPosition(
+//                                (side - 1) * size + position - 1,
+//                                viewModel.game.value.players.values.toList()
+//                            )
+//                            viewModel.setActivePlayerId(firstPlayer.id) {
+//                                viewModel.setGameState(GameState(type = GameStateTypes.Turn))
+//                            }
+//                            viewModel.updatePlayersTurnOrders(firstPlayer.turnOrder)
+//                        }
                     }
                 }
             }
@@ -1335,19 +1444,19 @@ class GameFragment : BaseFragment<GameViewModel>(
 
     private fun setupAdapter() {
         adapter = InventoryAdapter()
-        adapter.bindData(
-            listOf(
-                InventoryModel(1, "", R.drawable.ic_brush_78),
-                InventoryModel(2, "", R.drawable.ic_rope_78),
-                InventoryModel(3, "", R.drawable.ic_rope_78),
-                InventoryModel(4, "", R.drawable.ic_sieve_78),
-                InventoryModel(5, "", R.drawable.ic_sieve_78),
-                InventoryModel(6, "", R.drawable.ic_brush_78),
-                InventoryModel(7, "", R.drawable.ic_sieve_78),
-                InventoryModel(8, "", R.drawable.ic_brush_78),
-                InventoryModel(9, "", R.drawable.ic_brush_78),
-            )
-        )
+//        adapter.bindData(
+//            listOf(
+//                InventoryModel(1, "", R.drawable.ic_brush_78),
+//                InventoryModel(2, "", R.drawable.ic_rope_78),
+//                InventoryModel(3, "", R.drawable.ic_rope_78),
+//                InventoryModel(4, "", R.drawable.ic_sieve_78),
+//                InventoryModel(5, "", R.drawable.ic_sieve_78),
+//                InventoryModel(6, "", R.drawable.ic_brush_78),
+//                InventoryModel(7, "", R.drawable.ic_sieve_78),
+//                InventoryModel(8, "", R.drawable.ic_brush_78),
+//                InventoryModel(9, "", R.drawable.ic_brush_78),
+//            )
+//        )
 
         binding.frgGameRvInventory.addItemDecoration(InventoryItemDecoration())
         binding.frgGameRvInventory.adapter = adapter

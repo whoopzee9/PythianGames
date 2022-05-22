@@ -1,5 +1,7 @@
 package ru.spbstu.feature.domain.model
 
+import ru.spbstu.common.model.Card
+
 data class Game(
     val name: String = "",
     val code: String = "",
@@ -28,7 +30,7 @@ data class GameState(
 
 enum class GameStateTypes {
     Start,
-    DiceRoll,
+    MorganTurn,
     Turn,
     Wheel,
     Question,
