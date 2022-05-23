@@ -13,6 +13,7 @@ import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
+import ru.spbstu.feature.domain.model.InventoryElement
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
@@ -304,6 +305,50 @@ class GameViewModel(
             .child("cards")
             .child(key.toString())
             .setValue(newCard)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun setInventoryAmount(name: String, value: Int) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("inventoryPool")
+            .child(name)
+            .setValue(value)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun setEventAmount(name: String, value: Int) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("eventPool")
+            .child(name)
+            .setValue(value)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun setPlayerInventoryAmount(name: String, value: Int) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(currentUserId ?: "")
+            .child("inventory")
+            .child(name)
+            .setValue(InventoryElement(name, value))
             .addOnCompleteListener {
                 if (it.isSuccessful) {
 

@@ -16,7 +16,9 @@ data class Game(
     val gameState: GameState = GameState(GameStateTypes.Start, false, 1, 0),
     val cards: List<Card> = listOf(),
     val morganPosition: Int = 0,
-    val morganSideSelecting: Boolean = false
+    val morganSideSelecting: Boolean = false,
+    val inventoryPool: HashMap<String, Int> = hashMapOf(),
+    val eventPool: HashMap<String, Int> = hashMapOf()
 )
 
 data class GameState(
@@ -24,6 +26,7 @@ data class GameState(
     val param1: Any? = null,
     val param2: Any? = null,
     val param3: Any? = null,
+    val param4: Any? = null,
     val bidInfo: HashMap<String, WheelBet>? = null,
     val card: Card? = null
 )
@@ -35,5 +38,22 @@ enum class GameStateTypes {
     Wheel,
     Question,
     Tooth
+}
 
+enum class ToothType {
+    Tooth,
+    Bone
+}
+
+enum class ToothResult {
+    Sieve,
+    Brush,
+    Rope,
+    Treasure,
+    ToolLoss,
+    Collapse,
+    Rainfall,
+    RiverHorizontal,
+    RiverVertical,
+    Cavern
 }

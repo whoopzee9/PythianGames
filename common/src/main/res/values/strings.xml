@@ -68,7 +68,9 @@
     <string name="roll_dice">Нажмите чтобы бросить кубик</string>
     <string name="roll_dice_morgan_side">Нажмите чтобы бросить кубик и определить сторону поля для Моргана</string>
     <string name="roll_dice_morgan_position">Нажмите чтобы бросить кубик и определить позицию для Моргана</string>
+    <string name="roll_dice_tooth">Нажмите чтобы бросить кубик и определить исход</string>
     <string name="determining_morgan_position">Определение начальной позиции для Моргана</string>
+    <string name="determining_tooth">Определение исхода зуба Пифона</string>
     <string name="your_turn">Ваш ход!</string>
     <string name="players_turn">Ход %s!</string>
     <string name="ok">Ок</string>
@@ -86,6 +88,26 @@
     <string name="morgan_question_answer">Морган отвечает, что ответ - %d</string>
     <string name="morgan_coin_answer">Морган загадочно улыбается и молча дает вам монетку</string>
     <string name="choose_answer">Выберите вариант ответа!</string>
+    <string name="tooth">Зуб Пифона!</string>
+    <string name="bone">Кость Пифона!</string>
+    <string name="inventory_result">Получен инвентарь!</string>
+    <string name="inventory_player_receive">Игрок %s получил предмет инвентаря!</string>
+    <string name="inventory_sieve">Получено сито!</string>
+    <string name="inventory_brush">Получена кисть!</string>
+    <string name="inventory_rope">Получена веревка!</string>
+    <string name="event_treasure">Сокровище!</string>
+    <string name="event_tool_loss">Инструмент утрачен!</string>
+    <string name="event_collapse">Обвал!</string>
+    <string name="event_rainfall">Ливень!</string>
+    <string name="event_river">Подземная река!</string>
+    <string name="event_cavern">Каверна!</string>
+    <string name="event_treasure_desc">Обнаружен клад! Активный игрок получает 3 монеты %d слоя!</string>
+    <string name="event_tool_loss_desc">Инструмент утрачен, ход "копать" невозможен! Используйте предмет инвентаря либо пропустите 3 хода и заплатите 3 желтые монеты для восстановления.</string>
+    <string name="event_collapse_desc">Правила проведения раскопок нарушены! Активный игрок должен ответить на все прилегающие по вертикали и горизонтали вопросы.</string>
+    <string name="event_rainfall_desc">Внезапно пошел ливень! Все игроки на прилегающих клетках пропускают один ход!</string>
+    <string name="event_river_desc_1">Обнаружена подземная река! Все игроки по горизонтали пропускают один ход!</string>
+    <string name="event_river_desc_2">Обнаружена подземная река! Все игроки по вертикали пропускают один ход!</string>
+    <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой.</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

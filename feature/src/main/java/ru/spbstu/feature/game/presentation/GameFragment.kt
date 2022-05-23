@@ -46,8 +46,10 @@ import ru.spbstu.feature.di.FeatureComponent
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
-import ru.spbstu.feature.domain.model.InventoryModel
+import ru.spbstu.feature.domain.model.InventoryElement
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.ToothResult
+import ru.spbstu.feature.domain.model.ToothType
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.domain.model.WheelBetType
 import ru.spbstu.feature.domain.model.toPlayer
@@ -99,6 +101,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         setupWheelDialog()
         setupQuestionsDialog()
         setupMorganDialog()
+        setupToothDialog()
 
 
         binding.frgGameTeamStatsWrapper.setDebounceClickListener {
@@ -148,9 +151,16 @@ class GameFragment : BaseFragment<GameViewModel>(
                                             type = GameStateTypes.Question,
                                             card = card
                                         )
-                                    ) //todo do we need params here?
+                                    )
                                 } else {
-                                    viewModel.setGameState(GameState(type = GameStateTypes.Tooth)) //todo do we need params here?
+                                    viewModel.setGameState(GameState(
+                                        type = GameStateTypes.Tooth,
+                                        card = card,
+                                        param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                        param2 = "",
+                                        param3 = false,
+                                        param4 = false
+                                    ))
                                 }
                             }
                         }
@@ -266,7 +276,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     param1 = selectedAnswer
                                 )
                             )
-                            val newAlreadyAnswered = card.question?.alreadyAnswered ?: mutableListOf()
+                            val newAlreadyAnswered =
+                                card.question?.alreadyAnswered ?: mutableListOf()
                             newAlreadyAnswered[selectedAnswer] = selectedAnswer
                             viewModel.updateCard(
                                 card.copy(
@@ -378,9 +389,18 @@ class GameFragment : BaseFragment<GameViewModel>(
                                                 type = GameStateTypes.Question,
                                                 card = card
                                             )
-                                        ) //todo do we need params here?
+                                        )
                                     } else {
-                                        viewModel.setGameState(GameState(type = GameStateTypes.Tooth)) //todo do we need params here?
+                                        viewModel.setGameState(
+                                            GameState(
+                                                type = GameStateTypes.Tooth,
+                                                card = card,
+                                                param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                                param2 = "",
+                                                param3 = false,
+                                                param4 = false
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -462,7 +482,7 @@ class GameFragment : BaseFragment<GameViewModel>(
             viewModel.delayTimer?.cancel()
         }
 
-        handleBackPressed {  }
+        handleBackPressed { }
 
         binding.frgGameFabAction1.visibility = View.GONE
         binding.frgGameFabAction2.visibility = View.GONE
@@ -477,8 +497,8 @@ class GameFragment : BaseFragment<GameViewModel>(
             .subscribe(onSuccess = { snapshot ->
                 val game = snapshot.getValue(Game::class.java)
                 if (game != null) {
-                    viewModel.setGame(game)
                     handleGameData(game)
+                    viewModel.setGame(game)
                 }
             }, onCancelled = {})
     }
@@ -497,7 +517,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                 binding.frgGameBoard.addPlayer(it.toPlayer())
             }
         }
-        val currPlayer = viewModel.game.value.players[viewModel.currentUserId]
+        val currPlayer = game.players[viewModel.currentUserId]
+
         (statisticsBinding.root.background as GradientDrawable).setStroke(
             resources.getDimension(R.dimen.dp_1).toInt(),
             ContextCompat.getColor(
@@ -540,6 +561,9 @@ class GameFragment : BaseFragment<GameViewModel>(
             }
             GameStateTypes.Question -> {
                 handleQuestionGameState(game)
+            }
+            GameStateTypes.Tooth -> {
+                handleToothGameState(game)
             }
         }
     }
@@ -654,7 +678,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         binding.frgGameTvBidAmount.text = viewModel.bidAmount.toString()
 
         val wheelBackground = binding.frgGameWheelLayout.root.background as GradientDrawable
-        val activePlayer = viewModel.game.value.players[viewModel.game.value.currentPlayerId]
+        val activePlayer = game.players[game.currentPlayerId]
         wheelBackground.setStroke(
             resources.getDimension(R.dimen.dp_1).toInt(),
             ContextCompat.getColor(
@@ -720,16 +744,28 @@ class GameFragment : BaseFragment<GameViewModel>(
 
             // if all players made their move -> next state
             if (betMap.size == game.players.size && viewModel.currentUserId == game.currentPlayerId) {
-                if (card.type == CardType.Question) {
-                    viewModel.setGameState(
-                        GameState(
-                            type = GameStateTypes.Question,
-                            card = card
+                viewModel.setupAndStartDelayTimer(2, onFinishCallback = {
+                    if (card.type == CardType.Question) {
+                        viewModel.setGameState(
+                            GameState(
+                                type = GameStateTypes.Question,
+                                card = card
+                            )
                         )
-                    ) //todo do we need params here?
-                } else {
-                    viewModel.setGameState(GameState(type = GameStateTypes.Tooth)) //todo do we need params here?
-                }
+                    } else {
+                        //todo handle bets
+                        viewModel.setGameState(
+                            GameState(
+                                type = GameStateTypes.Tooth,
+                                card = card,
+                                param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                param2 = "",
+                                param3 = false,
+                                param4 = false
+                            )
+                        )
+                    }
+                }, onTickCallback = {})
             }
 
             if (betMap.containsKey(viewModel.currentUserId) ||
@@ -807,6 +843,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         )
 
         val answeredNum = game.gameState.param1 as? Long
+        val card = game.gameState.card
 
         if (game.currentPlayerId == viewModel.currentUserId) { // current user is answering
             binding.frgGameFabAction1.visibility = View.VISIBLE
@@ -820,13 +857,17 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameFabAction4.setMaxImageSize(resources.getDimension(R.dimen.dp_30).toInt())
             binding.frgGameFabAction4.setImageResource(R.drawable.morgan)
             wrapperList.forEachIndexed { index, materialCardView ->
-                if (game.gameState.card.question?.alreadyAnswered?.contains(index + 1) == true) {
+                if (card.question?.alreadyAnswered?.contains(index + 1) == true) {
                     materialCardView.setToDisabledStyle()
                 }
             }
 
             if (answeredNum != null) { //start timer to change state
-                wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
+                if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                    wrapperList[(answeredNum - 1).toInt()].setCorrectStyle()
+                } else {
+                    wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
+                }
                 wrapperList.forEachIndexed { index, materialCardView ->
                     if (index != answeredNum.toInt() - 1) {
                         materialCardView.setToDisabledStyle()
@@ -846,8 +887,184 @@ class GameFragment : BaseFragment<GameViewModel>(
                 it.setToDisabledStyle()
             }
             if (answeredNum != null) {
-                wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
+                if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                    wrapperList[(answeredNum - 1).toInt()].setCorrectStyle()
+                } else {
+                    wrapperList[(answeredNum - 1).toInt()].setIncorrectStyle()
+                }
             }
+        }
+    }
+
+    //--------------------------------------------------------------------------------- Tooth Handler
+    private fun handleToothGameState(game: Game) {
+        val type = game.gameState.param1 as? String
+        val result = game.gameState.param2 as? String
+        val isRolled = game.gameState.param3 as? Boolean
+        val toothShown = game.gameState.param4 as? Boolean
+        val card = game.gameState.card
+
+        if (type != null && result != null && isRolled != null && toothShown != null && card != null) {
+            binding.frgGameToothLayout.root.visibility = View.GONE
+            binding.frgGameDiceLayout.root.visibility = View.GONE
+            binding.frgGameWheelLayout.root.visibility = View.GONE
+            binding.frgGameQuestionLayout.root.visibility = View.GONE
+            binding.frgGameFabAction1.visibility = View.GONE
+            binding.frgGameFabAction2.visibility = View.GONE
+            binding.frgGameFabAction3.visibility = View.GONE
+            binding.frgGameFabAction4.visibility = View.GONE
+            binding.frgGameFabActionIncrease.visibility = View.GONE
+            binding.frgGameFabActionDecrease.visibility = View.GONE
+            binding.frgGameIvCoin.visibility = View.GONE
+            binding.frgGameTvBidAmount.visibility = View.GONE
+            if (!toothShown) { //initial display of outcome
+                val toothBackground = binding.frgGameToothLayout.root.background as GradientDrawable
+                val activePlayer = game.players[game.currentPlayerId]
+                toothBackground.setStroke(
+                    resources.getDimension(R.dimen.dp_1).toInt(),
+                    ContextCompat.getColor(
+                        requireContext(),
+                        TeamsConstants.getTeamFromString(activePlayer?.teamStr ?: "").colorRes
+                    )
+                )
+                if (type == ToothType.Tooth.name) {
+                    binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.VISIBLE
+                    binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_tooth_white_90)
+                    binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.tooth)
+                } else {
+                    binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.VISIBLE
+                    binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_bone_155)
+                    binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.bone)
+                }
+                binding.frgGameToothLayout.root.visibility = View.VISIBLE
+                if (game.currentPlayerId == viewModel.currentUserId) {
+                    viewModel.setupAndStartDelayTimer(2, onFinishCallback = {
+                        if (type == ToothType.Tooth.name) {
+                            viewModel.setGameState(
+                                GameState(
+                                    game.gameState.type,
+                                    param1 = game.gameState.param1,
+                                    param2 = game.gameState.param2,
+                                    param3 = game.gameState.param3,
+                                    param4 = true,
+                                    card = card
+                                )
+                            )
+                        } else {
+                            viewModel.setGameState(GameState(GameStateTypes.Turn))
+                            viewModel.passTurnToNextPlayer()
+                        }
+                    }, onTickCallback = {})
+                }
+                return
+            }
+            if (result.isEmpty()) { //rolling dice
+                binding.frgGameDiceLayout.includeDiceDialogIvDice.isClickable =
+                    game.currentPlayerId == viewModel.currentUserId
+                binding.frgGameToothLayout.includeToothDialogTvDescription.visibility = View.GONE
+                binding.frgGameToothLayout.root.visibility = View.GONE
+                binding.frgGameDiceLayout.root.visibility = View.VISIBLE
+                if (game.currentPlayerId == viewModel.currentUserId) {
+                    binding.frgGameDiceLayout.includeDiceDialogTvTitle.setText(
+                        R.string.roll_dice_tooth
+                    )
+                } else {
+                    binding.frgGameDiceLayout.includeDiceDialogTvTitle.setText(R.string.determining_tooth)
+                }
+                if (game.currentPlayerId != viewModel.currentUserId && isRolled) {
+                    binding.frgGameDiceLayout.includeDiceDialogIvDice.performClick()
+                }
+            } else { //displaying outcome
+                binding.frgGameDiceLayout.root.visibility = View.GONE
+                binding.frgGameToothLayout.includeToothDialogTvDescription.visibility = View.VISIBLE
+                binding.frgGameToothLayout.root.visibility = View.VISIBLE
+                binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.GONE
+                val type = ToothResult.valueOf(result)
+                when (type) {
+                    ToothResult.Sieve -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
+                        val currPlayer = game.players[game.currentPlayerId]
+                        if (game.currentPlayerId == viewModel.currentUserId) {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.inventory_sieve)
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.visibility =
+                                View.VISIBLE
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_sieve_78)
+                        } else {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.text =
+                                getString(R.string.inventory_player_receive, currPlayer?.name)
+                        }
+                        val oldValue =
+                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
+                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                    }
+                    ToothResult.Brush -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
+                        val currPlayer = game.players[game.currentPlayerId]
+                        if (game.currentPlayerId == viewModel.currentUserId) {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.inventory_brush)
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.visibility =
+                                View.VISIBLE
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_brush_78)
+                        } else {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.text =
+                                getString(R.string.inventory_player_receive, currPlayer?.name)
+                        }
+                        val oldValue =
+                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
+                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                    }
+                    ToothResult.Rope -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
+                        val currPlayer = game.players[game.currentPlayerId]
+                        if (game.currentPlayerId == viewModel.currentUserId) {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.inventory_rope)
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.visibility =
+                                View.VISIBLE
+                            binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_rope_78)
+                        } else {
+                            binding.frgGameToothLayout.includeToothDialogTvDescription.text =
+                                getString(R.string.inventory_player_receive, currPlayer?.name)
+                        }
+                        val oldValue =
+                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
+                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                    }
+                    ToothResult.Treasure -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_treasure)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_treasure_desc)
+                    }
+                    ToothResult.ToolLoss -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_tool_loss)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_tool_loss_desc)
+                    }
+                    ToothResult.Collapse -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_collapse)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_collapse_desc)
+                    }
+                    ToothResult.Rainfall -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_rainfall)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_rainfall_desc)
+                    }
+                    ToothResult.RiverHorizontal -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_river)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_river_desc_1)
+                    }
+                    ToothResult.RiverVertical -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_river)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_river_desc_2)
+                    }
+                    ToothResult.Cavern -> {
+                        binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_cavern)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_cavern_desc)
+                    }
+                }
+
+                viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
+
+                }, onTickCallback = {})
+            }
+        } else {
+            throw IllegalStateException("Wrong game state params!")
         }
     }
 
@@ -1345,77 +1562,143 @@ class GameFragment : BaseFragment<GameViewModel>(
         val random = Random(viewModel.gameJoiningDataWrapper.game.name.hashCode().toLong())
 
         binding.frgGameDiceLayout.includeDiceDialogIvDice.setDebounceClickListener {
-            if (viewModel.game.value.players.values.first().id == viewModel.currentUserId) {
-                viewModel.setGameState(viewModel.game.value.gameState.copy(param1 = true)) //another users should see roll
-            }
-
-            //is needed to prevent multiple rolls
-            binding.frgGameDiceLayout.includeDiceDialogIvDice.isClickable = false
-
-            binding.frgGameDiceLayout.includeDiceDialogDiceWrapper.startAnimation(
-                AnimationUtils.loadAnimation(
-                    requireContext(),
-                    R.anim.shake_animation
-                )
-            )
-            var dice = 0
-            lifecycleScope.launch {
-                for (i in 0..20) {
-                    launch(Dispatchers.Main) {
-                        dice = random.nextInt(4) + 1
-                        binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text =
-                            dice.toString()
+            when (viewModel.game.value.gameState.type) {
+                GameStateTypes.Start -> {
+                    if (viewModel.game.value.players.values.first().id == viewModel.currentUserId) {
+                        viewModel.setGameState(viewModel.game.value.gameState.copy(param1 = true)) //another users should see roll
                     }
-                    delay(30)
-                }
-                if (viewModel.game.value.players.values.first().id == viewModel.currentUserId) {
-                    if (viewModel.game.value.gameState.type == GameStateTypes.Start &&
-                        viewModel.game.value.gameState.param2 as Long == 1L
-                    ) {
-                        viewModel.setGameState(
-                            viewModel.game.value.gameState.copy(
-                                param1 = false,
-                                param2 = 2,
-                                param3 = dice
-                            )
+
+                    //is needed to prevent multiple rolls
+                    binding.frgGameDiceLayout.includeDiceDialogIvDice.isClickable = false
+
+                    binding.frgGameDiceLayout.includeDiceDialogDiceWrapper.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            requireContext(),
+                            R.anim.shake_animation
                         )
-                        viewModel.setMorganSide(dice)
-                    } else {
-                        viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
-                            val side = viewModel.game.value.morganPosition
-                            val size = binding.frgGameBoard.getSize()
-                            val position = if (dice > size) dice - size else dice
-                            viewModel.setMorganStartPosition((side - 1) * size + position - 1)
-                            val firstPlayer = viewModel.getFirstPlayerByMorganPosition(
-                                (side - 1) * size + position - 1,
-                                viewModel.game.value.players.values.toList()
-                            )
-                            viewModel.setActivePlayerId(firstPlayer.id) {
-                                viewModel.setGameState(GameState(type = GameStateTypes.Turn))
+                    )
+                    var dice = 0
+                    lifecycleScope.launch {
+                        for (i in 0..20) {
+                            launch(Dispatchers.Main) {
+                                dice = random.nextInt(4) + 1
+                                binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text =
+                                    dice.toString()
                             }
-                            viewModel.updatePlayersTurnOrders(firstPlayer.turnOrder)
-                        }, onTickCallback = {
-                        })
-//                        lifecycleScope.launch {
-//                            //delay is needed to display dice longer before closing
-//                            delay(1000) //todo maybe change to timer
-//                            val side = viewModel.game.value.morganPosition
-//                            val size = binding.frgGameBoard.getSize()
-//                            val position = if (dice > size) dice - size else dice
-//                            viewModel.setMorganStartPosition((side - 1) * size + position - 1)
-//                            val firstPlayer = viewModel.getFirstPlayerByMorganPosition(
-//                                (side - 1) * size + position - 1,
-//                                viewModel.game.value.players.values.toList()
-//                            )
-//                            viewModel.setActivePlayerId(firstPlayer.id) {
-//                                viewModel.setGameState(GameState(type = GameStateTypes.Turn))
-//                            }
-//                            viewModel.updatePlayersTurnOrders(firstPlayer.turnOrder)
-//                        }
+                            delay(30)
+                        }
+                        if (viewModel.game.value.players.values.first().id == viewModel.currentUserId) {
+                            if (viewModel.game.value.gameState.type == GameStateTypes.Start &&
+                                viewModel.game.value.gameState.param2 as Long == 1L
+                            ) {
+                                viewModel.setGameState(
+                                    viewModel.game.value.gameState.copy(
+                                        param1 = false,
+                                        param2 = 2,
+                                        param3 = dice
+                                    )
+                                )
+                                viewModel.setMorganSide(dice)
+                            } else {
+                                viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
+                                    val side = viewModel.game.value.morganPosition
+                                    val size = binding.frgGameBoard.getSize()
+                                    val position = if (dice > size) dice - size else dice
+                                    viewModel.setMorganStartPosition((side - 1) * size + position - 1)
+                                    val firstPlayer = viewModel.getFirstPlayerByMorganPosition(
+                                        (side - 1) * size + position - 1,
+                                        viewModel.game.value.players.values.toList()
+                                    )
+                                    viewModel.setActivePlayerId(firstPlayer.id) {
+                                        viewModel.setGameState(GameState(type = GameStateTypes.Turn))
+                                    }
+                                    viewModel.updatePlayersTurnOrders(firstPlayer.turnOrder)
+                                }, onTickCallback = {
+                                })
+                            }
+                        }
+                    }
+                }
+                GameStateTypes.Tooth -> {
+                    if (viewModel.game.value.currentPlayerId == viewModel.currentUserId) {
+                        viewModel.setGameState(viewModel.game.value.gameState.copy(param3 = true)) //another users should see roll
+                    }
+                    binding.frgGameDiceLayout.includeDiceDialogIvDice.isClickable = false
+
+                    binding.frgGameDiceLayout.includeDiceDialogDiceWrapper.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            requireContext(),
+                            R.anim.shake_animation
+                        )
+                    )
+                    var dice = 0
+                    lifecycleScope.launch {
+                        for (i in 0..20) {
+                            launch(Dispatchers.Main) {
+                                dice = random.nextInt(4) + 1
+                                binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text =
+                                    dice.toString()
+                            }
+                            delay(30)
+                        }
+                        if (viewModel.game.value.currentPlayerId == viewModel.currentUserId) {
+                            viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
+                                if (dice % 2 == 0) { //event
+                                    val event = mutableListOf<String>()
+                                    viewModel.game.value.eventPool.forEach {
+                                        for (i in 0 until it.value) {
+                                            event.add(it.key)
+                                        }
+                                    }
+                                    event.shuffle()
+                                    val eventDrew = event.first()
+                                    viewModel.setGameState(
+                                        viewModel.game.value.gameState.copy(
+                                            param2 = eventDrew
+                                        )
+                                    )
+                                    val oldValue = viewModel.game.value.eventPool[eventDrew] ?: 1
+                                    viewModel.setEventAmount(eventDrew, oldValue - 1)
+                                } else { //inventory
+                                    val inv = mutableListOf<String>()
+                                    viewModel.game.value.inventoryPool.forEach {
+                                        for (i in 0 until it.value) {
+                                            inv.add(it.key)
+                                        }
+                                    }
+                                    inv.shuffle()
+                                    val itemDrew = inv.first()
+                                    viewModel.setGameState(
+                                        viewModel.game.value.gameState.copy(
+                                            param2 = itemDrew
+                                        )
+                                    )
+                                    val oldValue = viewModel.game.value.inventoryPool[itemDrew] ?: 1
+                                    viewModel.setInventoryAmount(itemDrew, oldValue - 1)
+                                }
+                            }, onTickCallback = {
+                            })
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun setupToothDialog() {
+        val toothBackground = GradientDrawable()
+        toothBackground.setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(requireContext(), R.color.color_team_green)
+        )
+        toothBackground.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_transparent_background
+            )
+        )
+        toothBackground.cornerRadius = resources.getDimension(R.dimen.dp_14)
+        binding.frgGameToothLayout.root.background = toothBackground
     }
 
     private fun setupStatisticsPopup() {

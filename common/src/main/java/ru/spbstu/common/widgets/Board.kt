@@ -309,6 +309,9 @@ class Board @JvmOverloads constructor(
                         val indexInCardsList =
                             (child.getCurrentLayer() - 1) * (size * size) + cardPos
                         child.setIsCleaning(!cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty())
+                        if (cardsList[indexInCardsList].cleared) {
+                            child.reduceStack()
+                        }
                     }
                     layoutCardStack(child, childWidth, childHeight, i)
                 }

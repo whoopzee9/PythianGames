@@ -81,61 +81,61 @@ class BoardIcon @JvmOverloads constructor(
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        canvas?.drawText("texttext", 0f, 0f, textPaint)
-        canvas?.translate(0f, fontHeight)
-        super.onDraw(canvas)
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var lp: ViewGroup.LayoutParams? = layoutParams
-        if (lp == null)
-            lp = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-
-        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec)
-        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec)
-
-        width += paddingLeft + paddingRight
-        height += paddingTop + paddingBottom
-
-        setMeasuredDimension(width, height)
-    }
-
-    private fun calculateSize(suggestedSize: Int, paramSize: Int, measureSpec: Int): Int {
-        var result = 0
-        val size = MeasureSpec.getSize(measureSpec)
-        val mode = MeasureSpec.getMode(measureSpec)
-
-        when (mode) {
-            MeasureSpec.AT_MOST ->
-                result = when (paramSize) {
-                    ViewGroup.LayoutParams.WRAP_CONTENT -> min(suggestedSize, size)
-                    ViewGroup.LayoutParams.MATCH_PARENT -> size
-                    else -> min(paramSize, size)
-                }
-            MeasureSpec.EXACTLY -> result = size
-            MeasureSpec.UNSPECIFIED ->
-                result =
-                    if (paramSize == ViewGroup.LayoutParams.WRAP_CONTENT ||
-                        paramSize == ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                        suggestedSize
-                    else {
-                        paramSize
-                    }
-        }
-
-        return result
-    }
-
-    override fun getSuggestedMinimumHeight(): Int {
-        return iconHeight.toInt() + fontHeight.toInt() + textMargin.toInt()
-    }
-
-    override fun getSuggestedMinimumWidth(): Int {
-        return iconWidth.toInt()
-    }
+//    override fun onDraw(canvas: Canvas?) {
+//        canvas?.drawText("texttext", 0f, fontHeight, textPaint)
+//        canvas?.translate(0f, fontHeight)
+//        super.onDraw(canvas)
+//    }
+//
+//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        var lp: ViewGroup.LayoutParams? = layoutParams
+//        if (lp == null)
+//            lp = ViewGroup.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+//
+//        var width = calculateSize(suggestedMinimumWidth, lp.width, widthMeasureSpec)
+//        var height = calculateSize(suggestedMinimumHeight, lp.height, heightMeasureSpec)
+//
+//        width += paddingLeft + paddingRight
+//        height += paddingTop + paddingBottom
+//
+//        setMeasuredDimension(width, height)
+//    }
+//
+//    private fun calculateSize(suggestedSize: Int, paramSize: Int, measureSpec: Int): Int {
+//        var result = 0
+//        val size = MeasureSpec.getSize(measureSpec)
+//        val mode = MeasureSpec.getMode(measureSpec)
+//
+//        when (mode) {
+//            MeasureSpec.AT_MOST ->
+//                result = when (paramSize) {
+//                    ViewGroup.LayoutParams.WRAP_CONTENT -> min(suggestedSize, size)
+//                    ViewGroup.LayoutParams.MATCH_PARENT -> size
+//                    else -> min(paramSize, size)
+//                }
+//            MeasureSpec.EXACTLY -> result = size
+//            MeasureSpec.UNSPECIFIED ->
+//                result =
+//                    if (paramSize == ViewGroup.LayoutParams.WRAP_CONTENT ||
+//                        paramSize == ViewGroup.LayoutParams.MATCH_PARENT
+//                    )
+//                        suggestedSize
+//                    else {
+//                        paramSize
+//                    }
+//        }
+//
+//        return result
+//    }
+//
+//    override fun getSuggestedMinimumHeight(): Int {
+//        return iconHeight.toInt() + fontHeight.toInt() + textMargin.toInt()
+//    }
+//
+//    override fun getSuggestedMinimumWidth(): Int {
+//        return iconWidth.toInt()
+//    }
 }

@@ -72,7 +72,7 @@ class CardStack @JvmOverloads constructor(
 //        fifthLayerColor = ContextCompat.getColor(context, R.color.color_layer_purple)
     }
 
-    fun reduceStack(amount: Int) {
+    fun reduceStack(amount: Int = 1) {
         count -= amount
         requestLayout()
     }

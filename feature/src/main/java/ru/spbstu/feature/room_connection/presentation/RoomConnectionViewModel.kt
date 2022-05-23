@@ -17,6 +17,7 @@ import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.ToothResult
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -38,6 +39,20 @@ class RoomConnectionViewModel(
             } else {
                 val id = Firebase.auth.currentUser?.uid ?: ""
                 val boardSize = if (numOfPlayers > 4) 5 else 3
+                val inventory = hashMapOf(
+                    ToothResult.Sieve.name to 16,
+                    ToothResult.Brush.name to 8,
+                    ToothResult.Rope.name to 12,
+                )
+                val events = hashMapOf(
+                    ToothResult.Treasure.name to 12,
+                    ToothResult.ToolLoss.name to 8,
+                    ToothResult.Collapse.name to 6,
+                    ToothResult.Rainfall.name to 2,
+                    ToothResult.RiverVertical.name to 2,
+                    ToothResult.RiverHorizontal.name to 2,
+                    ToothResult.Cavern.name to 4,
+                )
                 setupLayers(boardSize) { cards ->
                     val game = Game(
                         name = name,
@@ -46,7 +61,9 @@ class RoomConnectionViewModel(
                         numOfPlayers = numOfPlayers,
                         numOfPlayersJoined = 1,
                         players = hashMapOf(id to PlayerInfo(id = id)),
-                        cards = cards
+                        cards = cards,
+                        inventoryPool = inventory,
+                        eventPool = events
                     )
                     ref.child(name).setValue(game).addOnCompleteListener {
                         if (it.isSuccessful) {
