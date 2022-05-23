@@ -2,6 +2,7 @@ package ru.spbstu.feature.domain.model
 
 import androidx.annotation.DrawableRes
 import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.PlayerState
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.TeamsConstants
 
@@ -16,7 +17,8 @@ data class PlayerInfo(
     val turnOrder: Int = 0,
     val coinsCollected: HashMap<String, Int> = hashMapOf(),
     val questionsAnswered: HashMap<String, Int> = hashMapOf(),
-    val inventory: HashMap<String, InventoryElement> = hashMapOf()
+    val inventory: HashMap<String, InventoryElement> = hashMapOf(),
+    val state: PlayerState = PlayerState()
 )
 
 fun PlayerInfo.toPlayer(): Player {
@@ -28,6 +30,7 @@ fun PlayerInfo.toPlayer(): Player {
         name = name,
         isActiveTurn = false,
         position = position,
-        turnOrder = turnOrder
+        turnOrder = turnOrder,
+        state = state
     )
 }

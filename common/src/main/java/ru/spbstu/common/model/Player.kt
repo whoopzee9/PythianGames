@@ -12,13 +12,25 @@ data class Player(
     val name: String = "",
     val isActiveTurn: Boolean = false,
     val position: Position = Position(),
-    val turnOrder: Int = 0
+    val turnOrder: Int = 0,
+    val state: PlayerState = PlayerState()
 )
 
 data class Position(
     val x: Int = 0,
     val y: Int = 0
 )
+
+data class PlayerState(
+    val skippingTurn: Boolean = false,
+    val amountLeft: Int = 0,
+    val type: PlayerStateType? = null
+)
+
+enum class PlayerStateType {
+    ToolLoss,
+    Cavern
+}
 
 sealed class Team(@ColorRes val colorRes: Int) {
     object Red : Team(R.color.color_team_red)

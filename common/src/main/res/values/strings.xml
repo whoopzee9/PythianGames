@@ -69,7 +69,8 @@
     <string name="roll_dice_morgan_side">Нажмите чтобы бросить кубик и определить сторону поля для Моргана</string>
     <string name="roll_dice_morgan_position">Нажмите чтобы бросить кубик и определить позицию для Моргана</string>
     <string name="roll_dice_tooth">Нажмите чтобы бросить кубик и определить исход</string>
-    <string name="determining_morgan_position">Определение начальной позиции для Моргана</string>
+    <string name="determining_morgan_start_position">Определение начальной позиции для Моргана</string>
+    <string name="determining_morgan_position">Определение позиции для Моргана</string>
     <string name="determining_tooth">Определение исхода зуба Пифона</string>
     <string name="your_turn">Ваш ход!</string>
     <string name="players_turn">Ход %s!</string>
@@ -108,6 +109,7 @@
     <string name="event_river_desc_1">Обнаружена подземная река! Все игроки по горизонтали пропускают один ход!</string>
     <string name="event_river_desc_2">Обнаружена подземная река! Все игроки по вертикали пропускают один ход!</string>
     <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой.</string>
+    <string name="morgan_turn">Ход Моргана!</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

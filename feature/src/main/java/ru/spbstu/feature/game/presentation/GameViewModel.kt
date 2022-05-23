@@ -1,18 +1,21 @@
 package ru.spbstu.feature.game.presentation
 
 import android.os.CountDownTimer
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.model.Card
+import ru.spbstu.common.model.PlayerState
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
+import ru.spbstu.feature.domain.model.GameStateTypes
 import ru.spbstu.feature.domain.model.InventoryElement
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.domain.model.WheelBet
@@ -57,12 +60,12 @@ class GameViewModel(
         _game.value = game
     }
 
-    fun setGameState(gameState: GameState) {
+    fun setGameState(gameState: GameState, onSuccess: () -> Unit = {}) {
         ref.child(gameJoiningDataWrapper.game.name)
             .child("gameState")
             .setValue(gameState).addOnCompleteListener {
                 if (it.isSuccessful) {
-
+                    onSuccess.invoke()
                 } else {
                     Timber.tag(TAG).e(it.exception)
                 }
@@ -109,6 +112,20 @@ class GameViewModel(
             .addOnCompleteListener {
                 if (it.isSuccessful) {
 
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun setMorganPosition(position: Int, onSuccess: () -> Unit = {}) {
+        val newPosition = if (position >= (size - 1) * 4) (size - 1) * 4 - position else position
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("morganPosition")
+            .setValue(newPosition)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    onSuccess.invoke()
                 } else {
                     Timber.tag(TAG).e(it.exception)
                 }
@@ -244,25 +261,79 @@ class GameViewModel(
             }
     }
 
-    fun passTurnToNextPlayer() {
+    fun passTurnToNextPlayer(isMorganTurn: Boolean = false) {
         val currPlayer = game.value.players[currentUserId]
-        if (currPlayer?.turnOrder == game.value.players.size) {
-            // todo need to roll dice for morgan to move
-
-        } else {
-            val nextOrder = currPlayer?.turnOrder!! + 1
-            val nextPlayer = game.value.players.values.first { it.turnOrder == nextOrder }
-
-            ref.child(gameJoiningDataWrapper.game.name)
-                .child("currentPlayerId")
-                .setValue(nextPlayer.id)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-
+        val sortedPlayers = game.value.players.values.sortedBy { it.turnOrder }.toMutableList()
+        if (isMorganTurn) {
+            var firstAvailableNext: PlayerInfo? = null
+            kotlin.run {
+                sortedPlayers.forEachIndexed { index, playerInfo ->
+                    if (!playerInfo.state.skippingTurn) {
+                        firstAvailableNext = playerInfo
+                        return@run
                     } else {
-                        Timber.tag(TAG).e(it.exception)
+                        val oldState = playerInfo.state
+                        val newState = PlayerState(
+                            skippingTurn = oldState.amountLeft - 1 != 0,
+                            amountLeft = oldState.amountLeft - 1,
+                            type = playerInfo.state.type
+                        )
+                        sortedPlayers[index] = playerInfo.copy(state = newState)
                     }
                 }
+            }
+            if (firstAvailableNext != null) {
+                val newGame = game.value.copy(
+                    currentPlayerId = firstAvailableNext?.id ?: "",
+                    gameState = GameState(type = GameStateTypes.Turn)
+                )
+                sortedPlayers.forEach {
+                    newGame.players[it.id] = it
+                }
+                updateGame(newGame)
+            } else {
+                //todo start another morgan turn
+            }
+
+        } else {
+            if (currPlayer?.turnOrder == game.value.players.size) {
+                setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
+            } else {
+                val nextOrder = currPlayer?.turnOrder!! + 1
+                var firstAvailableNext: PlayerInfo? = null
+                kotlin.run {
+                    sortedPlayers.forEachIndexed { index, playerInfo ->
+                        if (playerInfo.turnOrder > currPlayer.turnOrder) {
+                            if (!playerInfo.state.skippingTurn) {
+                                firstAvailableNext = playerInfo
+                                return@run
+                            } else {
+                                val oldState = playerInfo.state
+                                val newState = PlayerState(
+                                    skippingTurn = oldState.amountLeft - 1 != 0,
+                                    amountLeft = oldState.amountLeft - 1,
+                                    type = playerInfo.state.type
+                                )
+                                sortedPlayers[index] = playerInfo.copy(state = newState)
+                            }
+                        }
+                    }
+                }
+                //            val firstAvailableNext = sortedPlayers.firstOrNull { it.turnOrder > currPlayer.turnOrder && !it.state.skippingTurn }
+                if (firstAvailableNext != null) {
+                    //val nextPlayer = game.value.players.values.first { it.turnOrder == nextOrder }
+
+                    val newGame = game.value.copy(currentPlayerId = firstAvailableNext?.id ?: "")
+                    sortedPlayers.forEach {
+                        newGame.players[it.id] = it
+                    }
+                    updateGame(newGame)
+
+                } else {
+                    setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
+                    //todo need to roll dice for morgan to move
+                }
+            }
         }
     }
 
@@ -352,6 +423,18 @@ class GameViewModel(
             .addOnCompleteListener {
                 if (it.isSuccessful) {
 
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun updateGame(newGame: Game, onSuccess: () -> Unit = {}) {
+        ref.child(gameJoiningDataWrapper.game.name)
+            .setValue(newGame)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    onSuccess.invoke()
                 } else {
                     Timber.tag(TAG).e(it.exception)
                 }

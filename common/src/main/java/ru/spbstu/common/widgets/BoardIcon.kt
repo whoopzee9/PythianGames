@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.extenstions.dpToPx
 import ru.spbstu.common.model.Player
@@ -47,7 +49,20 @@ class BoardIcon @JvmOverloads constructor(
         draw?.setBounds(0, 0, iconWidth.toInt(), iconHeight.toInt())
         setImageDrawable(draw)
         updateBackground()
+        updateSkip()
         requestLayout()
+    }
+
+    fun updatePlayer(player: Player) {
+        if (this.player != player) {
+            this.player = player
+            val draw = ContextCompat.getDrawable(context, player.iconRes)
+            draw?.setBounds(0, 0, iconWidth.toInt(), iconHeight.toInt())
+            setImageDrawable(draw)
+            updateBackground()
+            updateSkip()
+            requestLayout()
+        }
     }
 
     private fun updateBackground() {
@@ -69,6 +84,26 @@ class BoardIcon @JvmOverloads constructor(
             )
         )
         background = characterBackground
+    }
+
+    private fun updateSkip() {
+        if (player.state.skippingTurn) {
+            DrawableCompat.setTintMode(
+                drawable.mutate(),
+                PorterDuff.Mode.SRC_ATOP
+            )
+            DrawableCompat.setTint(
+                drawable, ContextCompat.getColor(
+                    context,
+                    R.color.image_disabled_tint
+                )
+            )
+        } else {
+            DrawableCompat.setTintMode(
+                drawable.mutate(),
+                PorterDuff.Mode.DST
+            )
+        }
     }
 
     fun getPlayer() = player

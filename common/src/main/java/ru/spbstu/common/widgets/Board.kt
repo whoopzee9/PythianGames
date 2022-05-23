@@ -317,6 +317,7 @@ class Board @JvmOverloads constructor(
                 }
                 is BoardIcon -> {
                     child.setActivePlayerId(activeTurnPlayer?.id ?: "")
+                    child.updatePlayer(playersList[child.getPlayer().id] ?: child.getPlayer())
                     layoutBoardIcon(child, childWidth, childHeight)
                 }
                 is BoardArrow -> { //arrows

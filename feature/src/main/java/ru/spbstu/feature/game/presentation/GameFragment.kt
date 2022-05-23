@@ -34,6 +34,8 @@ import ru.spbstu.common.extenstions.viewBinding
 import ru.spbstu.common.model.CardType
 import ru.spbstu.common.model.MovingPossibilities
 import ru.spbstu.common.model.Player
+import ru.spbstu.common.model.PlayerState
+import ru.spbstu.common.model.PlayerStateType
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.common.utils.TeamsConstants
@@ -47,11 +49,13 @@ import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
 import ru.spbstu.feature.domain.model.InventoryElement
+import ru.spbstu.feature.domain.model.InventoryModel
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.domain.model.ToothResult
 import ru.spbstu.feature.domain.model.ToothType
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.domain.model.WheelBetType
+import ru.spbstu.feature.domain.model.toInventoryModel
 import ru.spbstu.feature.domain.model.toPlayer
 import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
 import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
@@ -153,14 +157,16 @@ class GameFragment : BaseFragment<GameViewModel>(
                                         )
                                     )
                                 } else {
-                                    viewModel.setGameState(GameState(
-                                        type = GameStateTypes.Tooth,
-                                        card = card,
-                                        param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
-                                        param2 = "",
-                                        param3 = false,
-                                        param4 = false
-                                    ))
+                                    viewModel.setGameState(
+                                        GameState(
+                                            type = GameStateTypes.Tooth,
+                                            card = card,
+                                            param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                            param2 = "",
+                                            param3 = false,
+                                            param4 = false
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -497,8 +503,8 @@ class GameFragment : BaseFragment<GameViewModel>(
             .subscribe(onSuccess = { snapshot ->
                 val game = snapshot.getValue(Game::class.java)
                 if (game != null) {
-                    handleGameData(game)
                     viewModel.setGame(game)
+                    handleGameData(game)
                 }
             }, onCancelled = {})
     }
@@ -541,9 +547,24 @@ class GameFragment : BaseFragment<GameViewModel>(
         binding.frgGameBoard.setActiveTurnPlayer(game.currentPlayerId)
         binding.frgGameBoard.clearArrowCallback()
         binding.frgGameBoard.setCardList(game.cards)
+
+        //inventory
+        val inventory = mutableListOf<InventoryModel>()
+        game.players[viewModel.currentUserId]?.inventory?.forEach {
+            for (i in 0 until it.value.amount) {
+                inventory.add(it.value.toInventoryModel())
+            }
+        }
+        adapter.bindData(inventory)
+
+        binding.frgGameTvTeamStatsInventory.text = inventory.size.toString()
+        //team stats
+        handleTeamStats(game)
+
         binding.frgGameDiceLayout.root.visibility = View.GONE
         binding.frgGameWheelLayout.root.visibility = View.GONE
         binding.frgGameQuestionLayout.root.visibility = View.GONE
+        binding.frgGameToothLayout.root.visibility = View.GONE
         binding.frgGameFabActionDecrease.visibility = View.GONE
         binding.frgGameFabActionIncrease.visibility = View.GONE
         binding.frgGameIvCoin.visibility = View.GONE
@@ -565,7 +586,48 @@ class GameFragment : BaseFragment<GameViewModel>(
             GameStateTypes.Tooth -> {
                 handleToothGameState(game)
             }
+            GameStateTypes.MorganTurn -> {
+                handleMorganTurnGameState(game)
+            }
         }
+    }
+
+    private fun handleTeamStats(game: Game) {
+        val coinMap = hashMapOf<String, Int>()
+        game.players.forEach {
+            if (it.value.teamStr == game.players[viewModel.currentUserId]?.teamStr) {
+                it.value.coinsCollected.forEach { coinEntry ->
+                    val old = coinMap[coinEntry.key] ?: 0
+                    coinMap[coinEntry.key] = old + coinEntry.value
+                }
+            }
+        }
+        var coins = 0
+        var coinsInYellow = 0
+        coinMap.forEach {
+            coins += it.value
+            coinsInYellow += it.value * it.key.toInt()
+        }
+        binding.frgGameTvTeamStatsCoinsValue.text = coins.toString()
+        binding.frgGameTvTeamStatsCoinsValueInYellow.text = coinsInYellow.toString()
+
+        val questionMap = hashMapOf<String, Int>()
+        game.players.forEach {
+            if (it.value.teamStr == game.players[viewModel.currentUserId]?.teamStr) {
+                it.value.questionsAnswered.forEach { questionEntry ->
+                    val old = coinMap[questionEntry.key] ?: 0
+                    questionMap[questionEntry.key] = old + questionEntry.value
+                }
+            }
+        }
+        var questions = 0
+        var questionsInYellow = 0
+        questionMap.forEach {
+            questions += it.value
+            questionsInYellow += it.value * it.key.toInt()
+        }
+        binding.frgGameTvTeamStatsQuestionsValue.text = questions.toString()
+        binding.frgGameTvTeamStatsQuestionsValueInYellow.text = questionsInYellow.toString()
     }
 
     //------------------------------------------------------------------------------ Start handler
@@ -584,7 +646,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                     if (rollNum == 1L) R.string.roll_dice_morgan_side else R.string.roll_dice_morgan_position
                 )
             } else {
-                binding.frgGameDiceLayout.includeDiceDialogTvTitle.setText(R.string.determining_morgan_position)
+                binding.frgGameDiceLayout.includeDiceDialogTvTitle.setText(R.string.determining_morgan_start_position)
             }
             if (rollUser.id != viewModel.currentUserId && isRolled) {
                 binding.frgGameDiceLayout.includeDiceDialogIvDice.performClick()
@@ -909,10 +971,10 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameDiceLayout.root.visibility = View.GONE
             binding.frgGameWheelLayout.root.visibility = View.GONE
             binding.frgGameQuestionLayout.root.visibility = View.GONE
-            binding.frgGameFabAction1.visibility = View.GONE
-            binding.frgGameFabAction2.visibility = View.GONE
-            binding.frgGameFabAction3.visibility = View.GONE
-            binding.frgGameFabAction4.visibility = View.GONE
+            binding.frgGameFabAction1.visibility = View.INVISIBLE
+            binding.frgGameFabAction2.visibility = View.INVISIBLE
+            binding.frgGameFabAction3.visibility = View.INVISIBLE
+            binding.frgGameFabAction4.visibility = View.INVISIBLE
             binding.frgGameFabActionIncrease.visibility = View.GONE
             binding.frgGameFabActionDecrease.visibility = View.GONE
             binding.frgGameIvCoin.visibility = View.GONE
@@ -951,8 +1013,9 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 )
                             )
                         } else {
-                            viewModel.setGameState(GameState(GameStateTypes.Turn))
-                            viewModel.passTurnToNextPlayer()
+                            viewModel.setGameState(GameState(GameStateTypes.Turn)) {
+                                viewModel.passTurnToNextPlayer()
+                            }
                         }
                     }, onTickCallback = {})
                 }
@@ -979,8 +1042,10 @@ class GameFragment : BaseFragment<GameViewModel>(
                 binding.frgGameToothLayout.includeToothDialogTvDescription.visibility = View.VISIBLE
                 binding.frgGameToothLayout.root.visibility = View.VISIBLE
                 binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.GONE
-                val type = ToothResult.valueOf(result)
-                when (type) {
+                val toothType = ToothResult.valueOf(result)
+                var newGame = game
+                var newCurrPlayer = game.players[game.currentPlayerId]
+                when (toothType) {
                     ToothResult.Sieve -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
                         val currPlayer = game.players[game.currentPlayerId]
@@ -994,8 +1059,13 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 getString(R.string.inventory_player_receive, currPlayer?.name)
                         }
                         val oldValue =
-                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
-                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                            currPlayer?.inventory?.get(toothType.name)
+                                ?: InventoryElement(toothType.name, 0)
+                        newCurrPlayer?.inventory?.set(
+                            toothType.name,
+                            oldValue.copy(amount = oldValue.amount + 1)
+                        )
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.Brush -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
@@ -1010,8 +1080,13 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 getString(R.string.inventory_player_receive, currPlayer?.name)
                         }
                         val oldValue =
-                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
-                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                            currPlayer?.inventory?.get(toothType.name)
+                                ?: InventoryElement(toothType.name, 0)
+                        newCurrPlayer?.inventory?.set(
+                            toothType.name,
+                            oldValue.copy(amount = oldValue.amount + 1)
+                        )
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.Rope -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
@@ -1026,45 +1101,118 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 getString(R.string.inventory_player_receive, currPlayer?.name)
                         }
                         val oldValue =
-                            currPlayer?.inventory?.get(type.name) ?: InventoryElement(type.name, 0)
-                        viewModel.setPlayerInventoryAmount(oldValue.name, oldValue.amount + 1)
+                            currPlayer?.inventory?.get(toothType.name)
+                                ?: InventoryElement(toothType.name, 0)
+                        newCurrPlayer?.inventory?.set(
+                            toothType.name,
+                            oldValue.copy(amount = oldValue.amount + 1)
+                        )
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.Treasure -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_treasure)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_treasure_desc)
+                        val oldAmount =
+                            game.players[game.currentPlayerId]?.coinsCollected?.get(card.layer.toString())
+                                ?: 0
+                        newCurrPlayer?.coinsCollected?.set(card.layer.toString(), oldAmount + 3)
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.ToolLoss -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_tool_loss)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_tool_loss_desc)
+                        newCurrPlayer = newCurrPlayer?.copy(
+                            state = PlayerState(
+                                true,
+                                3,
+                                PlayerStateType.ToolLoss
+                            )
+                        )
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.Collapse -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_collapse)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_collapse_desc)
+                        //todo handle collapse
                     }
                     ToothResult.Rainfall -> {
+                        val currPlayer = game.players[game.currentPlayerId]
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_rainfall)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_rainfall_desc)
+                        game.players.forEach {
+                            if (it.value.position.x in (currPlayer?.position?.x!! - 1)..(currPlayer.position.x + 1) &&
+                                it.value.position.y in (currPlayer.position.y - 1)..(currPlayer.position.y + 1)
+                            ) {
+                                newGame.players[it.key] =
+                                    it.value.copy(state = PlayerState(true, 1))
+                            }
+                        }
                     }
                     ToothResult.RiverHorizontal -> {
+                        val currPlayer = game.players[game.currentPlayerId]
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_river)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_river_desc_1)
+                        game.players.forEach {
+                            if (it.value.position.x == currPlayer?.position?.x) {
+                                newGame.players[it.key] =
+                                    it.value.copy(state = PlayerState(true, 1))
+                            }
+                        }
                     }
                     ToothResult.RiverVertical -> {
+                        val currPlayer = game.players[game.currentPlayerId]
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_river)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_river_desc_2)
+                        game.players.forEach {
+                            if (it.value.position.y == currPlayer?.position?.y) {
+                                newGame.players[it.key] =
+                                    it.value.copy(state = PlayerState(true, 1))
+                            }
+                        }
                     }
                     ToothResult.Cavern -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_cavern)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_cavern_desc)
+                        //todo clear card below current
                     }
                 }
 
-                viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
-
-                }, onTickCallback = {})
+                if (game.currentPlayerId == viewModel.currentUserId) {
+                    viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
+                        val key =
+                            (card.layer - 1) * (viewModel.size * viewModel.size) + card.cardNum - 1
+                        val newCards = newGame.cards.toMutableList()
+                        newCards[key] = newCards[key].copy(cleared = true)
+                        newGame =
+                            game.copy(gameState = GameState(GameStateTypes.Turn), cards = newCards)
+                        viewModel.updateGame(newGame) {
+                            viewModel.passTurnToNextPlayer()
+                        }
+                    }, onTickCallback = {})
+                }
             }
         } else {
             throw IllegalStateException("Wrong game state params!")
+        }
+    }
+
+    private fun handleMorganTurnGameState(game: Game) {
+        val flag = game.gameState.param1 as? Boolean
+        binding.frgGameTvAction.setText(R.string.morgan_turn)
+        binding.frgGameTvAction.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_morgan_outline
+            )
+        )
+        binding.frgGameFabAction1.visibility = View.INVISIBLE
+        binding.frgGameFabAction2.visibility = View.INVISIBLE
+        binding.frgGameFabAction3.visibility = View.INVISIBLE
+        binding.frgGameFabAction4.visibility = View.INVISIBLE
+        binding.frgGameDiceLayout.root.visibility = View.VISIBLE
+        binding.frgGameDiceLayout.includeDiceDialogTvTitle.setText(R.string.determining_morgan_position)
+        if (flag == false) {
+            binding.frgGameDiceLayout.includeDiceDialogIvDice.performClick()
         }
     }
 
@@ -1675,6 +1823,37 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     )
                                     val oldValue = viewModel.game.value.inventoryPool[itemDrew] ?: 1
                                     viewModel.setInventoryAmount(itemDrew, oldValue - 1)
+                                }
+                            }, onTickCallback = {
+                            })
+                        }
+                    }
+                }
+                GameStateTypes.MorganTurn -> {
+                    if (viewModel.game.value.currentPlayerId == viewModel.currentUserId) {
+                        viewModel.setGameState(viewModel.game.value.gameState.copy(param1 = true)) //another users should see roll
+                    }
+                    binding.frgGameDiceLayout.includeDiceDialogIvDice.isClickable = false
+                    binding.frgGameDiceLayout.includeDiceDialogDiceWrapper.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            requireContext(),
+                            R.anim.shake_animation
+                        )
+                    )
+                    var dice = 0
+                    lifecycleScope.launch {
+                        for (i in 0..20) {
+                            launch(Dispatchers.Main) {
+                                dice = random.nextInt(4) + 1
+                                binding.frgGameDiceLayout.includeDiceDialogTvDiceValue.text =
+                                    dice.toString()
+                            }
+                            delay(30)
+                        }
+                        if (viewModel.game.value.currentPlayerId == viewModel.currentUserId) {
+                            viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
+                                viewModel.setMorganPosition(viewModel.game.value.morganPosition + dice) {
+                                    viewModel.passTurnToNextPlayer(true)
                                 }
                             }, onTickCallback = {
                             })
