@@ -12,12 +12,14 @@ import ru.spbstu.common.model.PlayerState
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
 import ru.spbstu.feature.domain.model.InventoryElement
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.TeamStatistics
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
@@ -119,7 +121,7 @@ class GameViewModel(
     }
 
     fun setMorganPosition(position: Int, onSuccess: () -> Unit = {}) {
-        val newPosition = if (position >= (size - 1) * 4) (size - 1) * 4 - position else position
+        val newPosition = if (position >= (size - 1) * 4) position - (size - 1) * 4 else position
         ref.child(gameJoiningDataWrapper.game.name)
             .child("morganPosition")
             .setValue(newPosition)
@@ -261,7 +263,7 @@ class GameViewModel(
             }
     }
 
-    fun passTurnToNextPlayer(isMorganTurn: Boolean = false) {
+    fun passTurnToNextPlayer(isMorganTurn: Boolean = false, onSuccess: () -> Unit = {}) {
         val currPlayer = game.value.players[currentUserId]
         val sortedPlayers = game.value.players.values.sortedBy { it.turnOrder }.toMutableList()
         if (isMorganTurn) {
@@ -290,7 +292,9 @@ class GameViewModel(
                 sortedPlayers.forEach {
                     newGame.players[it.id] = it
                 }
-                updateGame(newGame)
+                if (game.value.currentPlayerId == currentUserId) {
+                    updateGame(newGame, onSuccess)
+                }
             } else {
                 //todo start another morgan turn
             }
@@ -327,7 +331,9 @@ class GameViewModel(
                     sortedPlayers.forEach {
                         newGame.players[it.id] = it
                     }
-                    updateGame(newGame)
+                    if (game.value.currentPlayerId == currentUserId) {
+                        updateGame(newGame, onSuccess)
+                    }
 
                 } else {
                     setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
@@ -354,12 +360,30 @@ class GameViewModel(
 
     fun giveCurrentPlayerCoins(layer: Int, amount: Int) {
         val oldAmount =
-            game.value.players[currentUserId]?.coinsCollected?.get(layer.toString()) ?: 0
+            game.value.players[currentUserId]?.coinsCollected?.get(GameUtils.getLayerByNumber(layer).name) ?: 0
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .child(currentUserId ?: "")
             .child("coinsCollected")
-            .child(layer.toString())
+            .child(GameUtils.getLayerByNumber(layer).name)
+            .setValue(oldAmount + amount)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    fun setCardAnswered(layer: Int, amount: Int) {
+        val oldAmount =
+            game.value.players[currentUserId]?.questionsAnswered?.get(GameUtils.getLayerByNumber(layer).name) ?: 0
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(currentUserId ?: "")
+            .child("questionsAnswered")
+            .child(GameUtils.getLayerByNumber(layer).name)
             .setValue(oldAmount + amount)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -439,6 +463,51 @@ class GameViewModel(
                     Timber.tag(TAG).e(it.exception)
                 }
             }
+    }
+
+    fun getTeamStatistics(teamStr: String) : TeamStatistics {
+        val coinMap = hashMapOf<String, Int>()
+        var inventory = 0
+        game.value.players.forEach {
+            if (it.value.teamStr == teamStr) {
+                it.value.coinsCollected.forEach { coinEntry ->
+                    val old = coinMap[coinEntry.key] ?: 0
+                    coinMap[coinEntry.key] = old + coinEntry.value
+                }
+                inventory += it.value.inventory.size
+            }
+        }
+        var coins = 0
+        var coinsInYellow = 0
+        coinMap.forEach {
+            coins += it.value
+            coinsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
+        }
+
+        val questionMap = hashMapOf<String, Int>()
+        game.value.players.forEach {
+            if (it.value.teamStr == teamStr) {
+                it.value.questionsAnswered.forEach { questionEntry ->
+                    val old = questionMap[questionEntry.key] ?: 0
+                    questionMap[questionEntry.key] = old + questionEntry.value
+                }
+            }
+        }
+        var questions = 0
+        var questionsInYellow = 0
+        questionMap.forEach {
+            questions += it.value
+            questionsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
+        }
+        return TeamStatistics(
+            id = teamStr.hashCode().toLong(),
+            team = teamStr,
+            totalCoins = coins,
+            totalCoinsInYellow = coinsInYellow,
+            totalQuestions = questions,
+            totalQuestionsInYellow = questionsInYellow,
+            totalInventory = inventory
+        )
     }
 
     companion object {

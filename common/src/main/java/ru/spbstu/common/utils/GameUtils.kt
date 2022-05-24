@@ -18,6 +18,29 @@ object GameUtils {
     private const val TOOTH_LAYER_5_SIZE_3 = 4
     private const val TOOTH_LAYER_5_SIZE_5 = 12
 
+    enum class Layers {
+        Yellow,
+        Orange,
+        Red,
+        Blue,
+        Purple
+    }
+
+    fun getLayerByNumber(num: Int): Layers {
+        return when (num) {
+            1 -> Layers.Yellow
+            2 -> Layers.Orange
+            3 -> Layers.Red
+            4 -> Layers.Blue
+            5 -> Layers.Purple
+            else -> throw IllegalStateException("Wrong layer nim")
+        }
+    }
+
+    fun getLayerNumber(layer: Layers): Int {
+        return layer.ordinal + 1
+    }
+
     fun getToothAmount(layer: Int, size: Int): Int {
         when (layer) {
             1 -> return when (size) {

@@ -8,11 +8,13 @@ import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.auth.di.AuthComponent
 import ru.spbstu.feature.character_selection.di.CharacterSelectionComponent
 import ru.spbstu.feature.game.di.GameComponent
+import ru.spbstu.feature.individual_score.di.IndividualScoreComponent
 import ru.spbstu.feature.login.di.LoginComponent
 import ru.spbstu.feature.main.di.MainComponent
 import ru.spbstu.feature.onboarding.di.OnboardingComponent
 import ru.spbstu.feature.registration.di.RegistrationComponent
 import ru.spbstu.feature.room_connection.di.RoomConnectionComponent
+import ru.spbstu.feature.team_score.di.TeamScoreComponent
 import ru.spbstu.feature.team_selection.di.TeamSelectionComponent
 import ru.spbstu.feature.teams_display.di.TeamsDisplayComponent
 import ru.spbstu.feature.test.di.TestComponent
@@ -40,6 +42,8 @@ interface FeatureComponent {
     fun characterSelectionComponentFactory(): CharacterSelectionComponent.Factory
     fun teamsDisplayComponentFactory(): TeamsDisplayComponent.Factory
     fun gameComponentFactory(): GameComponent.Factory
+    fun individualScoreComponentFactory(): IndividualScoreComponent.Factory
+    fun teamScoreComponentFactory(): TeamScoreComponent.Factory
 
     @Component.Factory
     interface Factory {

@@ -30,49 +30,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <include
-            android:id="@+id/frg_game_statistics_dialog__team_1"
-            layout="@layout/include_team_statistics"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frg_game_statistics_dialog__rv_teams"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_12"
             android:layout_marginTop="@dimen/dp_12"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_title" />
-
-        <include
-            android:id="@+id/frg_game_statistics_dialog__team_2"
-            layout="@layout/include_team_statistics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_1" />
-
-        <include
-            android:id="@+id/frg_game_statistics_dialog__team_3"
-            layout="@layout/include_team_statistics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_2" />
-
-        <include
-            android:id="@+id/frg_game_statistics_dialog__team_4"
-            layout="@layout/include_team_statistics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_3" />
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_title"
+            tools:itemCount="4"
+            tools:listitem="@layout/include_team_statistics" />
 
         <TextView
             android:id="@+id/frg_game_statistics_dialog__tv_coins"
@@ -83,7 +52,7 @@
             android:text="@string/coins"
             app:layout_constraintEnd_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_4" />
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__rv_teams" />
 
         <TextView
             android:id="@+id/frg_game_statistics_dialog__tv_questions"
@@ -94,7 +63,7 @@
             android:text="@string/questions"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
-            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__team_4" />
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__rv_teams" />
 
         <ImageView
             android:id="@+id/frg_game_statistics_dialog__iv_yellow_coin"

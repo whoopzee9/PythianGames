@@ -3,6 +3,7 @@ package ru.spbstu.feature.game.presentation
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ import ru.spbstu.common.model.PlayerState
 import ru.spbstu.common.model.PlayerStateType
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.DatabaseReferences
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.common.utils.TeamsConstants
 import ru.spbstu.common.widgets.BoardArrow
 import ru.spbstu.feature.R
@@ -51,6 +53,7 @@ import ru.spbstu.feature.domain.model.GameStateTypes
 import ru.spbstu.feature.domain.model.InventoryElement
 import ru.spbstu.feature.domain.model.InventoryModel
 import ru.spbstu.feature.domain.model.PlayerInfo
+import ru.spbstu.feature.domain.model.TeamStatistics
 import ru.spbstu.feature.domain.model.ToothResult
 import ru.spbstu.feature.domain.model.ToothType
 import ru.spbstu.feature.domain.model.WheelBet
@@ -59,6 +62,8 @@ import ru.spbstu.feature.domain.model.toInventoryModel
 import ru.spbstu.feature.domain.model.toPlayer
 import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
 import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
+import ru.spbstu.feature.game.presentation.adapter.TeamsStatisticsAdapter
+import ru.spbstu.feature.game.presentation.adapter.TeamsStatisticsItemDecoration
 import ru.spbstu.feature.game.presentation.dialog.ConfirmationDialogFragment
 import java.util.*
 
@@ -66,7 +71,8 @@ class GameFragment : BaseFragment<GameViewModel>(
     R.layout.fragment_game,
 ) {
 
-    private lateinit var adapter: InventoryAdapter
+    private lateinit var inventoryAdapter: InventoryAdapter
+    private lateinit var statisticsAdapter: TeamsStatisticsAdapter
 
     private lateinit var statisticsPopup: PopupWindow
     private val statisticsBinding by viewBinding(FragmentGameStatisticsDialogBinding::inflate)
@@ -98,7 +104,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         viewModel.size = if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
         binding.frgGameBoard.setSize(viewModel.size)
 
-        setupAdapter()
+        setupAdapters()
         setupStatisticsPopup()
 
         setupDiceDialog()
@@ -110,6 +116,43 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         binding.frgGameTeamStatsWrapper.setDebounceClickListener {
             //todo change teams stats and amount of teams
+            val list = mutableListOf<TeamStatistics>()
+            val teams = mutableSetOf<String>()
+            viewModel.game.value.players.forEach { entry ->
+                teams.add(entry.value.teamStr)
+            }
+            teams.forEach {
+                list.add(viewModel.getTeamStatistics(it))
+            }
+            statisticsAdapter.bindData(list)
+            val currPlayer = viewModel.game.value.players[viewModel.currentUserId] ?: PlayerInfo()
+            statisticsBinding.frgGameStatisticsDialogTvYellowCoinsAmount.text =
+                (currPlayer.coinsCollected[GameUtils.Layers.Yellow.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvOrangeCoinsAmount.text =
+                (currPlayer.coinsCollected[GameUtils.Layers.Orange.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvRedCoinsAmount.text =
+                (currPlayer.coinsCollected[GameUtils.Layers.Red.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvBlueCoinsAmount.text =
+                (currPlayer.coinsCollected[GameUtils.Layers.Blue.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvPurpleCoinsAmount.text =
+                (currPlayer.coinsCollected[GameUtils.Layers.Purple.name] ?: 0).toString()
+
+            statisticsBinding.frgGameStatisticsDialogTvYellowQuestionsAmount.text =
+                (currPlayer.questionsAnswered[GameUtils.Layers.Yellow.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvOrangeQuestionsAmount.text =
+                (currPlayer.questionsAnswered[GameUtils.Layers.Orange.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvRedQuestionsAmount.text =
+                (currPlayer.questionsAnswered[GameUtils.Layers.Red.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvBlueQuestionsAmount.text =
+                (currPlayer.questionsAnswered[GameUtils.Layers.Blue.name] ?: 0).toString()
+            statisticsBinding.frgGameStatisticsDialogTvPurpleQuestionsAmount.text =
+                (currPlayer.questionsAnswered[GameUtils.Layers.Purple.name] ?: 0).toString()
+
+            statisticsBinding.root.strokeColor = ContextCompat.getColor(
+                requireContext(),
+                TeamsConstants.getTeamFromString(currPlayer.teamStr).colorRes
+            )
+
             statisticsPopup.showAsDropDown(it, 0, -it.height)
 //            timer.schedule(object: TimerTask() {
 //                override fun run() {
@@ -264,7 +307,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 GameState(
                                     type = GameStateTypes.Question,
                                     card = card,
-                                    param1 = selectedAnswer
+                                    param1 = selectedAnswer,
+                                    bidInfo = viewModel.game.value.gameState.bidInfo
                                 )
                             )
                             viewModel.updateCard(card.copy(cleared = true))
@@ -279,12 +323,13 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 GameState(
                                     type = GameStateTypes.Question,
                                     card = card,
-                                    param1 = selectedAnswer
+                                    param1 = selectedAnswer,
+                                    bidInfo = viewModel.game.value.gameState.bidInfo
                                 )
                             )
                             val newAlreadyAnswered =
                                 card.question?.alreadyAnswered ?: mutableListOf()
-                            newAlreadyAnswered[selectedAnswer] = selectedAnswer
+                            newAlreadyAnswered.add(selectedAnswer)
                             viewModel.updateCard(
                                 card.copy(
                                     question = card.question?.copy(
@@ -550,14 +595,13 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         //inventory
         val inventory = mutableListOf<InventoryModel>()
-        game.players[viewModel.currentUserId]?.inventory?.forEach {
-            for (i in 0 until it.value.amount) {
-                inventory.add(it.value.toInventoryModel())
+        game.players[viewModel.currentUserId]?.inventory?.values?.forEachIndexed { index, inventoryElement ->
+            for (i in 0 until inventoryElement.amount) {
+                inventory.add(inventoryElement.toInventoryModel((index * 20) + i))
             }
         }
-        adapter.bindData(inventory)
+        inventoryAdapter.bindData(inventory)
 
-        binding.frgGameTvTeamStatsInventory.text = inventory.size.toString()
         //team stats
         handleTeamStats(game)
 
@@ -594,20 +638,23 @@ class GameFragment : BaseFragment<GameViewModel>(
 
     private fun handleTeamStats(game: Game) {
         val coinMap = hashMapOf<String, Int>()
+        var inventory = 0
         game.players.forEach {
             if (it.value.teamStr == game.players[viewModel.currentUserId]?.teamStr) {
                 it.value.coinsCollected.forEach { coinEntry ->
                     val old = coinMap[coinEntry.key] ?: 0
                     coinMap[coinEntry.key] = old + coinEntry.value
                 }
+                inventory += it.value.inventory.size
             }
         }
         var coins = 0
         var coinsInYellow = 0
         coinMap.forEach {
             coins += it.value
-            coinsInYellow += it.value * it.key.toInt()
+            coinsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
         }
+
         binding.frgGameTvTeamStatsCoinsValue.text = coins.toString()
         binding.frgGameTvTeamStatsCoinsValueInYellow.text = coinsInYellow.toString()
 
@@ -615,7 +662,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         game.players.forEach {
             if (it.value.teamStr == game.players[viewModel.currentUserId]?.teamStr) {
                 it.value.questionsAnswered.forEach { questionEntry ->
-                    val old = coinMap[questionEntry.key] ?: 0
+                    val old = questionMap[questionEntry.key] ?: 0
                     questionMap[questionEntry.key] = old + questionEntry.value
                 }
             }
@@ -624,10 +671,12 @@ class GameFragment : BaseFragment<GameViewModel>(
         var questionsInYellow = 0
         questionMap.forEach {
             questions += it.value
-            questionsInYellow += it.value * it.key.toInt()
+            questionsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
         }
         binding.frgGameTvTeamStatsQuestionsValue.text = questions.toString()
         binding.frgGameTvTeamStatsQuestionsValueInYellow.text = questionsInYellow.toString()
+
+        binding.frgGameTvTeamStatsInventoryValue.text = inventory.toString()
     }
 
     //------------------------------------------------------------------------------ Start handler
@@ -673,6 +722,8 @@ class GameFragment : BaseFragment<GameViewModel>(
             val canDig = binding.frgGameBoard.canDigInCurrentPosition()
             if (canDig.canDig) {
                 binding.frgGameFabAction1.visibility = View.VISIBLE
+                binding.frgGameFabAction1.isEnabled = true
+
                 binding.frgGameFabAction1.setImageResource(
                     if (canDig.isCleaning) R.drawable.ic_brush_24 else R.drawable.ic_shovel_24
                 )
@@ -685,15 +736,20 @@ class GameFragment : BaseFragment<GameViewModel>(
                 binding.frgGameFabAction3.visibility = View.INVISIBLE
             } else {
                 binding.frgGameFabAction2.visibility = View.VISIBLE
+                binding.frgGameFabAction2.isEnabled = true
                 binding.frgGameFabAction3.visibility = View.VISIBLE
+                binding.frgGameFabAction3.isEnabled = true
             }
 
             binding.frgGameFabAction4.visibility = View.VISIBLE
+            binding.frgGameFabAction4.isEnabled = true
 
             binding.frgGameBoard.setArrowCallback { direction, movingPossibilities ->
                 binding.frgGameFabAction2.visibility = View.VISIBLE
+                binding.frgGameFabAction2.isEnabled = true
                 if (movingPossibilities.canDig) {
                     binding.frgGameFabAction3.visibility = View.VISIBLE
+                    binding.frgGameFabAction3.isEnabled = true
                     binding.frgGameFabAction3.setImageResource(
                         if (movingPossibilities.isCleaning)
                             R.drawable.ic_walk_and_clean_24
@@ -811,13 +867,14 @@ class GameFragment : BaseFragment<GameViewModel>(
                         viewModel.setGameState(
                             GameState(
                                 type = GameStateTypes.Question,
-                                card = card
+                                card = card,
+                                bidInfo = game.gameState.bidInfo
                             )
                         )
                     } else {
                         //todo handle bets
-                        viewModel.setGameState(
-                            GameState(
+                        val newGame = game.copy(
+                            gameState = GameState(
                                 type = GameStateTypes.Tooth,
                                 card = card,
                                 param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
@@ -826,6 +883,23 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 param4 = false
                             )
                         )
+                        game.gameState.bidInfo.forEach {
+                            if (!it.value.skipped) {
+                                if (it.value.type == WheelBetType.Dragon) {
+                                    val old =
+                                        newGame.players[it.value.playerId]?.coinsCollected?.get(
+                                            GameUtils.Layers.Yellow.name
+                                        ) ?: 0
+                                    newGame.players[it.value.playerId]?.coinsCollected?.set(
+                                        GameUtils.Layers.Yellow.name,
+                                        old + it.value.amountBid
+                                    )
+                                } else {
+                                    removeCoinsAfterBid(newGame, it)
+                                }
+                            }
+                        }
+                        viewModel.updateGame(newGame)
                     }
                 }, onTickCallback = {})
             }
@@ -853,6 +927,70 @@ class GameFragment : BaseFragment<GameViewModel>(
         }
     }
 
+    private fun removeCoinsAfterBid(newGame: Game, entry: Map.Entry<String, WheelBet>) {
+        var remaining = entry.value.amountBid
+        while (remaining > 0) {
+            val coins = newGame.players[entry.value.playerId]?.coinsCollected
+            when {
+                remaining > 4 && coins?.get(GameUtils.Layers.Purple.name) != null && coins[GameUtils.Layers.Purple.name]!! > 0 -> { //remove purple coins
+                    val old =
+                        newGame.players[entry.value.playerId]?.coinsCollected?.get(
+                            GameUtils.Layers.Purple.name
+                        ) ?: 0
+                    newGame.players[entry.value.playerId]?.coinsCollected?.set(
+                        GameUtils.Layers.Purple.name,
+                        old - 1
+                    )
+                    remaining -= 5
+                }
+                remaining > 3 && coins?.get(GameUtils.Layers.Blue.name) != null && coins[GameUtils.Layers.Blue.name]!! > 0 -> { //remove blue coins
+                    val old =
+                        newGame.players[entry.value.playerId]?.coinsCollected?.get(
+                            GameUtils.Layers.Blue.name
+                        ) ?: 0
+                    newGame.players[entry.value.playerId]?.coinsCollected?.set(
+                        GameUtils.Layers.Blue.name,
+                        old - 1
+                    )
+                    remaining -= 4
+                }
+                remaining > 2 && coins?.get(GameUtils.Layers.Red.name) != null && coins[GameUtils.Layers.Red.name]!! > 0 -> { //remove red coins
+                    val old =
+                        newGame.players[entry.value.playerId]?.coinsCollected?.get(
+                            GameUtils.Layers.Red.name
+                        ) ?: 0
+                    newGame.players[entry.value.playerId]?.coinsCollected?.set(
+                        GameUtils.Layers.Red.name,
+                        old - 1
+                    )
+                    remaining -= 3
+                }
+                remaining > 1 && coins?.get(GameUtils.Layers.Orange.name) != null && coins[GameUtils.Layers.Orange.name]!! > 0 -> { //remove orange coins
+                    val old =
+                        newGame.players[entry.value.playerId]?.coinsCollected?.get(
+                            GameUtils.Layers.Orange.name
+                        ) ?: 0
+                    newGame.players[entry.value.playerId]?.coinsCollected?.set(
+                        GameUtils.Layers.Orange.name,
+                        old - 1
+                    )
+                    remaining -= 2
+                }
+                remaining > 0 && coins?.get(GameUtils.Layers.Yellow.name) != null && coins[GameUtils.Layers.Yellow.name]!! > 0 -> { //remove orange coins
+                    val old =
+                        newGame.players[entry.value.playerId]?.coinsCollected?.get(
+                            GameUtils.Layers.Yellow.name
+                        ) ?: 0
+                    newGame.players[entry.value.playerId]?.coinsCollected?.set(
+                        GameUtils.Layers.Yellow.name,
+                        old - 1
+                    )
+                    remaining -= 1
+                }
+            }
+        }
+    }
+
     //--------------------------------------------------------------------------------- Question Handler
     private fun handleQuestionGameState(game: Game) {
         val questionBackground = binding.frgGameQuestionLayout.root.background as GradientDrawable
@@ -875,6 +1013,15 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         val question = game.gameState.card?.question ?: return
 
+        val activePlayersTeam = TeamsConstants.getTeamFromString(
+            game.players[game.currentPlayerId]?.teamStr ?: ""
+        )
+        binding.frgGameTvAction.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                activePlayersTeam.colorRes
+            )
+        )
         binding.frgGameQuestionLayout.root.visibility = View.VISIBLE
         binding.frgGameQuestionLayout.includeQuestionDialogTvQuestion.text =
             question.question.questionText
@@ -903,11 +1050,15 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer3Wrapper,
             binding.frgGameQuestionLayout.includeQuestionDialogCvAnswer4Wrapper
         )
+        wrapperList.forEach {
+            it.setToUnselectedStyle()
+        }
 
         val answeredNum = game.gameState.param1 as? Long
         val card = game.gameState.card
 
         if (game.currentPlayerId == viewModel.currentUserId) { // current user is answering
+            binding.frgGameTvAction.setText(R.string.your_turn)
             binding.frgGameFabAction1.visibility = View.VISIBLE
             binding.frgGameFabAction1.isEnabled = false
             binding.frgGameFabAction1.setImageResource(R.drawable.ic_check_24)
@@ -936,11 +1087,73 @@ class GameFragment : BaseFragment<GameViewModel>(
                     }
                 }
                 viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
-                    viewModel.setGameState(GameState(GameStateTypes.Turn))
-                    viewModel.passTurnToNextPlayer()
+                    val newGame = game.copy(gameState = GameState(GameStateTypes.Turn))
+
+                    if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                        val oldQuestAmount =
+                            newGame.players[game.currentPlayerId]?.questionsAnswered?.get(
+                                GameUtils.getLayerByNumber(card.layer).name
+                            ) ?: 0
+                        newGame.players[game.currentPlayerId]?.questionsAnswered?.set(
+                            GameUtils.getLayerByNumber(card.layer).name,
+                            oldQuestAmount + 1
+                        )
+                        if (card.question?.alreadyAnswered?.isEmpty() == true) {
+                            val oldCoinsAmount =
+                                newGame.players[game.currentPlayerId]?.coinsCollected?.get(
+                                    GameUtils.getLayerByNumber(card.layer).name
+                                ) ?: 0
+                            newGame.players[game.currentPlayerId]?.coinsCollected?.set(
+                                GameUtils.getLayerByNumber(card.layer).name,
+                                oldCoinsAmount + 1
+                            )
+                        }
+                        Log.d("qwerty", "bid info ${game.gameState.bidInfo}")
+                        game.gameState.bidInfo?.forEach {
+                            Log.d("qwerty", "bid results")
+                            if (!it.value.skipped) {
+                                if (it.value.type == WheelBetType.WhiteBean) {
+                                    Log.d("qwerty", "correct bid")
+                                    val old =
+                                        newGame.players[it.value.playerId]?.coinsCollected?.get(
+                                            GameUtils.Layers.Yellow.name
+                                        ) ?: 0
+                                    newGame.players[it.value.playerId]?.coinsCollected?.set(
+                                        GameUtils.Layers.Yellow.name,
+                                        old + it.value.amountBid
+                                    )
+                                } else {
+                                    removeCoinsAfterBid(newGame, it)
+                                }
+                            }
+                        }
+                    } else {
+                        game.gameState.bidInfo?.forEach {
+                            if (!it.value.skipped) {
+                                if (it.value.type == WheelBetType.BlackBean) {
+                                    val old =
+                                        newGame.players[it.value.playerId]?.coinsCollected?.get(
+                                            GameUtils.Layers.Yellow.name
+                                        ) ?: 0
+                                    newGame.players[it.value.playerId]?.coinsCollected?.set(
+                                        GameUtils.Layers.Yellow.name,
+                                        old + it.value.amountBid
+                                    )
+                                } else {
+                                    removeCoinsAfterBid(newGame, it)
+                                }
+                            }
+                        }
+                    }
+
+                    viewModel.updateGame(newGame) {
+                        viewModel.passTurnToNextPlayer()
+                    }
                 }, onTickCallback = {})
             }
         } else { // for other users
+            binding.frgGameTvAction.text =
+                getString(R.string.players_turn, game.players[game.currentPlayerId]?.name)
             binding.frgGameFabAction1.visibility = View.INVISIBLE
             binding.frgGameFabAction2.visibility = View.INVISIBLE
             binding.frgGameFabAction3.visibility = View.INVISIBLE
@@ -1113,9 +1326,16 @@ class GameFragment : BaseFragment<GameViewModel>(
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_treasure)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_treasure_desc)
                         val oldAmount =
-                            game.players[game.currentPlayerId]?.coinsCollected?.get(card.layer.toString())
+                            game.players[game.currentPlayerId]?.coinsCollected?.get(
+                                GameUtils.getLayerByNumber(
+                                    card.layer
+                                ).name
+                            )
                                 ?: 0
-                        newCurrPlayer?.coinsCollected?.set(card.layer.toString(), oldAmount + 3)
+                        newCurrPlayer?.coinsCollected?.set(
+                            GameUtils.getLayerByNumber(card.layer).name,
+                            oldAmount + 3
+                        )
                         newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                     ToothResult.ToolLoss -> {
@@ -1303,6 +1523,7 @@ class GameFragment : BaseFragment<GameViewModel>(
     }
 
     private fun displayBidCoins(map: HashMap<String, WheelBet>) {
+        hideAllBidCoins()
         map.forEach {
             if (it.value.skipped) {
                 return@forEach
@@ -1546,6 +1767,71 @@ class GameFragment : BaseFragment<GameViewModel>(
         wheelBackground.shape = GradientDrawable.OVAL
         binding.frgGameWheelLayout.root.background = wheelBackground
 
+        hideAllBidCoins()
+
+        val list = listOf(
+            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans1,
+            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans2,
+            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans3,
+            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans1,
+            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans2,
+            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans3,
+            binding.frgGameWheelLayout.includeWheelDialogIvDragon1,
+            binding.frgGameWheelLayout.includeWheelDialogIvDragon2,
+        )
+        list.forEach {
+            it.setDebounceClickListener {
+                list.forEach {
+                    it.isActivated = false
+                }
+                it.isActivated = true
+                if (viewModel.bidAmount > 0) {
+                    binding.frgGameFabAction1.isEnabled = true
+                }
+            }
+        }
+
+        //todo check players coins total amount
+        binding.frgGameFabActionDecrease.setDebounceClickListener {
+            if (viewModel.bidAmount > 0) {
+                viewModel.bidAmount--
+                binding.frgGameTvBidAmount.text = viewModel.bidAmount.toString()
+                if (viewModel.bidAmount == 0) {
+                    binding.frgGameFabAction1.isEnabled = false
+                }
+            }
+        }
+
+        binding.frgGameFabActionIncrease.setDebounceClickListener {
+            val player = viewModel.game.value.players[viewModel.currentUserId]
+            var totalYellowCoins = 0
+            player?.coinsCollected?.forEach {
+                totalYellowCoins += (GameUtils.Layers.valueOf(it.key).ordinal + 1) * it.value
+            }
+            if (viewModel.bidAmount < totalYellowCoins && viewModel.bidAmount < 99) {
+                viewModel.bidAmount++
+                binding.frgGameTvBidAmount.text = viewModel.bidAmount.toString()
+                if (viewModel.bidAmount > 0) {
+                    listOf(
+                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans1,
+                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans2,
+                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans3,
+                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans1,
+                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans2,
+                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans3,
+                        binding.frgGameWheelLayout.includeWheelDialogIvDragon1,
+                        binding.frgGameWheelLayout.includeWheelDialogIvDragon2,
+                    ).forEach {
+                        if (it.isActivated && viewModel.bidAmount > 0) {
+                            binding.frgGameFabAction1.isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun hideAllBidCoins() {
         listOf(
             binding.frgGameWheelLayout.includeWheelDialogWhiteBeans1View1,
             binding.frgGameWheelLayout.includeWheelDialogWhiteBeans1View2,
@@ -1573,65 +1859,6 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameWheelLayout.includeWheelDialogDragon2View3,
         ).forEach {
             it.visibility = View.GONE
-        }
-
-        val list = listOf(
-            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans1,
-            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans2,
-            binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans3,
-            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans1,
-            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans2,
-            binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans3,
-            binding.frgGameWheelLayout.includeWheelDialogIvDragon1,
-            binding.frgGameWheelLayout.includeWheelDialogIvDragon2,
-        )
-        list.forEach {
-            it.setDebounceClickListener {
-                list.forEach {
-                    it.isActivated = false
-                }
-                it.isActivated = true
-                binding.frgGameFabAction1.isEnabled = true
-            }
-        }
-
-        //todo check players coins total amount
-        binding.frgGameFabActionDecrease.setDebounceClickListener {
-            if (viewModel.bidAmount > 0) {
-                viewModel.bidAmount--
-                binding.frgGameTvBidAmount.text = viewModel.bidAmount.toString()
-                if (viewModel.bidAmount == 0) {
-                    binding.frgGameFabAction1.isEnabled = false
-                }
-            }
-        }
-
-        binding.frgGameFabActionIncrease.setDebounceClickListener {
-            val player = viewModel.game.value.players[viewModel.currentUserId]
-            var totalYellowCoins = 0
-            player?.coinsCollected?.forEach {
-                totalYellowCoins += it.key.toInt() * it.value
-            }
-            if (viewModel.bidAmount < totalYellowCoins && viewModel.bidAmount < 99) {
-                viewModel.bidAmount++
-                binding.frgGameTvBidAmount.text = viewModel.bidAmount.toString()
-                if (viewModel.bidAmount > 0) {
-                    listOf(
-                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans1,
-                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans2,
-                        binding.frgGameWheelLayout.includeWheelDialogIvBlackBeans3,
-                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans1,
-                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans2,
-                        binding.frgGameWheelLayout.includeWheelDialogIvWhiteBeans3,
-                        binding.frgGameWheelLayout.includeWheelDialogIvDragon1,
-                        binding.frgGameWheelLayout.includeWheelDialogIvDragon2,
-                    ).forEach {
-                        if (it.isActivated && viewModel.bidAmount > 0) {
-                            binding.frgGameFabAction1.isEnabled = true
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -1852,8 +2079,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                         }
                         if (viewModel.game.value.currentPlayerId == viewModel.currentUserId) {
                             viewModel.setupAndStartDelayTimer(1, onFinishCallback = {
-                                viewModel.setMorganPosition(viewModel.game.value.morganPosition + dice) {
-                                    viewModel.passTurnToNextPlayer(true)
+                                viewModel.passTurnToNextPlayer(true) {
+                                    viewModel.setMorganPosition(viewModel.game.value.morganPosition + dice)
                                 }
                             }, onTickCallback = {
                             })
@@ -1904,24 +2131,14 @@ class GameFragment : BaseFragment<GameViewModel>(
         statisticsPopup.animationStyle = R.style.TopMenuAnimation
     }
 
-    private fun setupAdapter() {
-        adapter = InventoryAdapter()
-//        adapter.bindData(
-//            listOf(
-//                InventoryModel(1, "", R.drawable.ic_brush_78),
-//                InventoryModel(2, "", R.drawable.ic_rope_78),
-//                InventoryModel(3, "", R.drawable.ic_rope_78),
-//                InventoryModel(4, "", R.drawable.ic_sieve_78),
-//                InventoryModel(5, "", R.drawable.ic_sieve_78),
-//                InventoryModel(6, "", R.drawable.ic_brush_78),
-//                InventoryModel(7, "", R.drawable.ic_sieve_78),
-//                InventoryModel(8, "", R.drawable.ic_brush_78),
-//                InventoryModel(9, "", R.drawable.ic_brush_78),
-//            )
-//        )
-
+    private fun setupAdapters() {
+        inventoryAdapter = InventoryAdapter()
         binding.frgGameRvInventory.addItemDecoration(InventoryItemDecoration())
-        binding.frgGameRvInventory.adapter = adapter
+        binding.frgGameRvInventory.adapter = inventoryAdapter
+
+        statisticsAdapter = TeamsStatisticsAdapter()
+        statisticsBinding.frgGameStatisticsDialogRvTeams.addItemDecoration(TeamsStatisticsItemDecoration())
+        statisticsBinding.frgGameStatisticsDialogRvTeams.adapter = statisticsAdapter
     }
 
     override fun inject() {

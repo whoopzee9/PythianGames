@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -13,7 +12,6 @@ import androidx.core.graphics.drawable.DrawableCompat
 import ru.spbstu.common.R
 import ru.spbstu.common.model.Position
 import kotlin.math.min
-import kotlin.random.Random
 
 
 class CardStack @JvmOverloads constructor(

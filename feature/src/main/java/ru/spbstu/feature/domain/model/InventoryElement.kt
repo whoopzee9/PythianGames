@@ -7,7 +7,7 @@ data class InventoryElement(
     val amount: Int = 0
 )
 
-fun InventoryElement.toInventoryModel(): InventoryModel {
+fun InventoryElement.toInventoryModel(id: Int): InventoryModel {
     val iconRes = when (name) {
         ToothResult.Sieve.name -> R.drawable.ic_sieve_78
         ToothResult.Rope.name -> R.drawable.ic_rope_78
@@ -15,6 +15,7 @@ fun InventoryElement.toInventoryModel(): InventoryModel {
         else -> throw IllegalStateException("Wrong inventory name!")
     }
     return InventoryModel(
+        id = id.toLong(),
         name = name,
         iconRes = iconRes
     )
