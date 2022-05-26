@@ -53,6 +53,7 @@ class Navigator : FeatureRouter {
         when (navController?.currentDestination?.id) {
             R.id.loginFragment -> navController?.navigate(R.id.action_loginFragment_to_mainFragment)
             R.id.registrationFragment -> navController?.navigate(R.id.action_registrationFragment_to_mainFragment)
+            R.id.finalScoresFragment -> navController?.navigate(R.id.action_finalScoresFragment_to_mainFragment)
         }
     }
 
@@ -86,6 +87,13 @@ class Navigator : FeatureRouter {
     override fun openGameFragment() {
         when (navController?.currentDestination?.id) {
             R.id.teamsDisplayFragment -> navController?.navigate(R.id.action_teamsDisplayFragment_to_gameFragment)
+            R.id.mainFragment -> navController?.navigate(R.id.action_mainFragment_to_gameFragment)
+        }
+    }
+
+    override fun openFinalScoresFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.gameFragment -> navController?.navigate(R.id.action_gameFragment_to_finalScoresFragment)
         }
     }
 

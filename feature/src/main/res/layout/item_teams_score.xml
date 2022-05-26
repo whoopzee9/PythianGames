@@ -18,6 +18,10 @@
             android:id="@+id/item_teams_score__rv_icons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:spanCount="2"
+            android:layout_marginVertical="@dimen/dp_5"
+            android:layout_marginStart="@dimen/dp_10"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:listitem="@layout/item_score_icon"/>
         
         <TextView

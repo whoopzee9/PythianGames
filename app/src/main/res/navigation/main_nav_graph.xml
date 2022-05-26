@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/gameFragment">
+    app:startDestination="@id/finalScoresFragment">
 
     <action
         android:id="@+id/open_auth_fragment"
@@ -93,6 +93,13 @@
             app:exitAnim="@anim/close_fragment_slide_left"
             app:popEnterAnim="@anim/open_fragment_slide_left"
             app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
     </fragment>
 
     <fragment
@@ -155,5 +162,29 @@
         android:id="@+id/gameFragment"
         android:name="ru.spbstu.feature.game.presentation.GameFragment"
         android:label="GameFragment"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <action
+            android:id="@+id/action_gameFragment_to_finalScoresFragment"
+            app:destination="@id/finalScoresFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/finalScoresFragment"
+        android:name="ru.spbstu.feature.final_scores.presentation.FinalScoresFragment"
+        android:label="FinalScoresFragment"
+        tools:layout="@layout/fragment_final_scores" >
+        <action
+            android:id="@+id/action_finalScoresFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/finalScoresFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>

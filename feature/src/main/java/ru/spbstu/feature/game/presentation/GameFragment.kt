@@ -32,6 +32,7 @@ import ru.spbstu.common.extenstions.setToSelectedStyle
 import ru.spbstu.common.extenstions.setToUnselectedStyle
 import ru.spbstu.common.extenstions.subscribe
 import ru.spbstu.common.extenstions.viewBinding
+import ru.spbstu.common.model.Card
 import ru.spbstu.common.model.CardType
 import ru.spbstu.common.model.MovingPossibilities
 import ru.spbstu.common.model.Player
@@ -47,6 +48,7 @@ import ru.spbstu.feature.databinding.FragmentGameBinding
 import ru.spbstu.feature.databinding.FragmentGameStatisticsDialogBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.domain.model.CollapseState
 import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
@@ -199,7 +201,6 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 )
 
                             } else {
-                                //todo set state depending on the card (question, tooth)
                                 if (card.type == CardType.Question) {
                                     viewModel.setGameState(
                                         GameState(
@@ -542,11 +543,11 @@ class GameFragment : BaseFragment<GameViewModel>(
         }
 
         binding.frgGameInventoryWrapper.setDebounceClickListener {
-            inventoryDialogAdapter.bindData(viewModel.inventory.value)
+            inventoryDialogAdapter.bindData(viewModel.inventory.value.filter { it.name != ToothResult.Bone.name })
 
             val currPlayer = viewModel.game.value.players[viewModel.currentUserId]
             val teamPlayers = viewModel.game.value.players.filter {
-                it.key != currPlayer?.id //&& it.value.teamStr == currPlayer?.teamStr
+                it.key != currPlayer?.id && it.value.teamStr == currPlayer?.teamStr
             }.values.map { it.toInventoryPlayer() }
             inventoryDialogPlayersAdapter.bindData(teamPlayers)
 
@@ -568,6 +569,8 @@ class GameFragment : BaseFragment<GameViewModel>(
             binding.frgGameFabActionInventoryAccept.isEnabled = false
             binding.frgGameFabActionInventoryAccept.visibility = View.VISIBLE
             binding.frgGameFabActionInventoryClose.visibility = View.VISIBLE
+            binding.frgGameFabActionInventoryRepair.visibility = View.GONE
+            binding.frgGameFabActionInventoryRope.visibility = View.GONE
             binding.frgGameInventoryDialogLayout.root.visibility = View.VISIBLE
         }
 
@@ -583,6 +586,14 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         binding.frgGameFabActionInventoryClose.setDebounceClickListener {
             hideInventoryDialog()
+        }
+
+        binding.frgGameFabActionInventoryRepair.setDebounceClickListener {
+            viewModel.selectedInventoryItem?.let { it1 -> viewModel.useInventoryToClearState(it1) }
+        }
+
+        binding.frgGameFabActionInventoryRope.setDebounceClickListener {
+            viewModel.selectedInventoryItem?.let { it1 -> viewModel.useInventoryToClearState(it1) }
         }
 
         handleBackPressed { }
@@ -674,6 +685,38 @@ class GameFragment : BaseFragment<GameViewModel>(
         binding.frgGameFabActionIncrease.visibility = View.GONE
         binding.frgGameIvCoin.visibility = View.GONE
         binding.frgGameTvBidAmount.visibility = View.GONE
+        binding.frgGameInventoryWrapper.isClickable = false
+
+        //check for the end of game
+        var gameEnded = true
+        kotlin.run {
+            game.cards.forEach {
+                if (!it.cleared) {
+                    gameEnded = false
+                    return@run
+                }
+            }
+        }
+        if (gameEnded) {
+            binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text = getString(R.string.end_game, 5)
+            binding.frgGameMorganAnswerLayout.includeMorganAnswerMbClose.visibility = View.GONE
+            binding.frgGameMorganAnswerLayout.root.visibility = View.VISIBLE
+            viewModel.setupAndStartDelayTimer(5, onFinishCallback = {
+                val newGame = game.copy()
+                game.players.forEach {
+                    val bonesAmount = it.value.inventory[ToothResult.Bone.name]?.amount ?: 0
+                    val oldAmount = it.value.coinsCollected[GameUtils.Layers.Red.name] ?: 0
+                    newGame.players[it.key]?.coinsCollected?.set(GameUtils.Layers.Red.name, oldAmount + (bonesAmount * 3))
+                }
+                viewModel.gameJoiningDataWrapper.game = newGame
+                if (game.currentPlayerId == viewModel.currentUserId) {
+                    viewModel.updateGame(newGame)
+                }
+                viewModel.openFinalStatsFragment()
+            }, onTickCallback = {
+                binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text = getString(R.string.end_game, it)
+            })
+        }
 
         when (game.gameState.type) {
             GameStateTypes.Start -> {
@@ -769,6 +812,9 @@ class GameFragment : BaseFragment<GameViewModel>(
     //------------------------------------------------------------------------------ Turn handler
     private fun handleTurnGameState(game: Game) {
         clearWheelInfo()
+
+        binding.frgGameInventoryWrapper.isClickable =
+            game.players[game.currentPlayerId]?.inventory?.isNotEmpty() == true
 
         binding.frgGameDiceLayout.root.visibility = View.GONE
         val activePlayersTeam = TeamsConstants.getTeamFromString(
@@ -1148,64 +1194,136 @@ class GameFragment : BaseFragment<GameViewModel>(
                     }
                 }
                 viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
-                    val newGame = game.copy(gameState = GameState(GameStateTypes.Turn))
-
-                    if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
-                        val oldQuestAmount =
-                            newGame.players[game.currentPlayerId]?.questionsAnswered?.get(
-                                GameUtils.getLayerByNumber(card.layer).name
-                            ) ?: 0
-                        newGame.players[game.currentPlayerId]?.questionsAnswered?.set(
-                            GameUtils.getLayerByNumber(card.layer).name,
-                            oldQuestAmount + 1
+                    val newGame: Game
+                    var nextCard: Card? = null
+                    if (game.gameState.collapseNum != null) {
+                        val collapseCards = listOf(
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
                         )
-                        if (card.question?.alreadyAnswered?.isEmpty() == true) {
-                            val oldCoinsAmount =
-                                newGame.players[game.currentPlayerId]?.coinsCollected?.get(
+                        nextCard =
+                            collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
+                                .firstOrNull { it != null }
+
+                    }
+                    if (game.gameState.collapseNum == null || nextCard == null) {
+                        newGame = game.copy(gameState = GameState(GameStateTypes.Turn))
+
+                        if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                            val oldQuestAmount =
+                                newGame.players[game.currentPlayerId]?.questionsAnswered?.get(
                                     GameUtils.getLayerByNumber(card.layer).name
                                 ) ?: 0
-                            newGame.players[game.currentPlayerId]?.coinsCollected?.set(
+                            newGame.players[game.currentPlayerId]?.questionsAnswered?.set(
                                 GameUtils.getLayerByNumber(card.layer).name,
-                                oldCoinsAmount + 1
+                                oldQuestAmount + 1
                             )
-                        }
-                        game.gameState.bidInfo?.forEach {
-                            if (!it.value.skipped) {
-                                if (it.value.type == WheelBetType.WhiteBean) {
-                                    val old =
-                                        newGame.players[it.value.playerId]?.coinsCollected?.get(
-                                            GameUtils.Layers.Yellow.name
-                                        ) ?: 0
-                                    newGame.players[it.value.playerId]?.coinsCollected?.set(
-                                        GameUtils.Layers.Yellow.name,
-                                        old + it.value.amountBid
-                                    )
-                                } else {
-                                    removeCoinsAfterBid(newGame, it)
+                            if (card.question?.alreadyAnswered?.isEmpty() == true) {
+                                val oldCoinsAmount =
+                                    newGame.players[game.currentPlayerId]?.coinsCollected?.get(
+                                        GameUtils.getLayerByNumber(card.layer).name
+                                    ) ?: 0
+                                newGame.players[game.currentPlayerId]?.coinsCollected?.set(
+                                    GameUtils.getLayerByNumber(card.layer).name,
+                                    oldCoinsAmount + 1
+                                )
+                            }
+                            game.gameState.bidInfo?.forEach {
+                                if (!it.value.skipped) {
+                                    if (it.value.type == WheelBetType.WhiteBean) {
+                                        val old =
+                                            newGame.players[it.value.playerId]?.coinsCollected?.get(
+                                                GameUtils.Layers.Yellow.name
+                                            ) ?: 0
+                                        newGame.players[it.value.playerId]?.coinsCollected?.set(
+                                            GameUtils.Layers.Yellow.name,
+                                            old + it.value.amountBid
+                                        )
+                                    } else {
+                                        removeCoinsAfterBid(newGame, it)
+                                    }
                                 }
                             }
+                        } else {
+                            game.gameState.bidInfo?.forEach {
+                                if (!it.value.skipped) {
+                                    if (it.value.type == WheelBetType.BlackBean) {
+                                        val old =
+                                            newGame.players[it.value.playerId]?.coinsCollected?.get(
+                                                GameUtils.Layers.Yellow.name
+                                            ) ?: 0
+                                        newGame.players[it.value.playerId]?.coinsCollected?.set(
+                                            GameUtils.Layers.Yellow.name,
+                                            old + it.value.amountBid
+                                        )
+                                    } else {
+                                        removeCoinsAfterBid(newGame, it)
+                                    }
+                                }
+                            }
+                        }
+
+                        viewModel.updateGame(newGame) {
+                            viewModel.passTurnToNextPlayer()
                         }
                     } else {
-                        game.gameState.bidInfo?.forEach {
-                            if (!it.value.skipped) {
-                                if (it.value.type == WheelBetType.BlackBean) {
-                                    val old =
-                                        newGame.players[it.value.playerId]?.coinsCollected?.get(
-                                            GameUtils.Layers.Yellow.name
-                                        ) ?: 0
-                                    newGame.players[it.value.playerId]?.coinsCollected?.set(
-                                        GameUtils.Layers.Yellow.name,
-                                        old + it.value.amountBid
-                                    )
-                                } else {
-                                    removeCoinsAfterBid(newGame, it)
-                                }
+                        val collapseCards = listOf(
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
+                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
+                        )
+                        val newNextCard =
+                            collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
+                                .firstOrNull { it != null }
+
+                        val index = collapseCards.indexOf(newNextCard) + 1
+
+                        if (newNextCard?.type == CardType.Question) {
+                            newGame = game.copy(
+                                gameState = GameState(
+                                    type = GameStateTypes.Question,
+                                    card = card,
+                                    collapseNum = game.gameState.collapseNum.copy(num = index)
+                                )
+                            )
+                        } else {
+                            newGame = game.copy(
+                                gameState = GameState(
+                                    type = GameStateTypes.Tooth,
+                                    card = card,
+                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                    param2 = "",
+                                    param3 = false,
+                                    param4 = false,
+                                    collapseNum = game.gameState.collapseNum.copy(num = index)
+                                )
+                            )
+                        }
+
+                        if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                            val oldQuestAmount =
+                                newGame.players[game.currentPlayerId]?.questionsAnswered?.get(
+                                    GameUtils.getLayerByNumber(card.layer).name
+                                ) ?: 0
+                            newGame.players[game.currentPlayerId]?.questionsAnswered?.set(
+                                GameUtils.getLayerByNumber(card.layer).name,
+                                oldQuestAmount + 1
+                            )
+                            if (card.question?.alreadyAnswered?.isEmpty() == true) {
+                                val oldCoinsAmount =
+                                    newGame.players[game.currentPlayerId]?.coinsCollected?.get(
+                                        GameUtils.getLayerByNumber(card.layer).name
+                                    ) ?: 0
+                                newGame.players[game.currentPlayerId]?.coinsCollected?.set(
+                                    GameUtils.getLayerByNumber(card.layer).name,
+                                    oldCoinsAmount + 1
+                                )
                             }
                         }
-                    }
-
-                    viewModel.updateGame(newGame) {
-                        viewModel.passTurnToNextPlayer()
+                        viewModel.updateGame(newGame)
                     }
                 }, onTickCallback = {})
             }
@@ -1316,6 +1434,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                 val toothType = ToothResult.valueOf(result)
                 var newGame = game
                 var newCurrPlayer = game.players[game.currentPlayerId]
+                var nextGameState = GameState(GameStateTypes.Turn)
                 when (toothType) {
                     ToothResult.Sieve -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.inventory_result)
@@ -1411,7 +1530,35 @@ class GameFragment : BaseFragment<GameViewModel>(
                     ToothResult.Collapse -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_collapse)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_collapse_desc)
-                        //todo handle collapse
+                        //todo handle collapse if it triggers when another collapse is triggered
+                        if (game.gameState.collapseNum == null) {
+                            val collapseCards = listOf(
+                                game.cards.firstOrNull { it.cardNum == card.cardNum - viewModel.size && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == card.cardNum + 1 && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == card.cardNum + viewModel.size && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == card.cardNum - 1 && !it.cleared }
+                            )
+                            val nextCard = collapseCards.firstOrNull { it != null }
+
+                            val index = collapseCards.indexOf(nextCard) + 1
+                            if (nextCard?.type == CardType.Question) {
+                                nextGameState = GameState(
+                                    type = GameStateTypes.Question,
+                                    card = card,
+                                    collapseNum = CollapseState(index, card.cardNum)
+                                )
+                            } else {
+                                nextGameState = GameState(
+                                    type = GameStateTypes.Tooth,
+                                    card = card,
+                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                    param2 = "",
+                                    param3 = false,
+                                    param4 = false,
+                                    collapseNum = CollapseState(index, card.cardNum)
+                                )
+                            }
+                        }
                     }
                     ToothResult.Rainfall -> {
                         val currPlayer = game.players[game.currentPlayerId]
@@ -1451,7 +1598,21 @@ class GameFragment : BaseFragment<GameViewModel>(
                     ToothResult.Cavern -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_cavern)
                         binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_cavern_desc)
-                        //todo clear card below current
+                        //todo check if this is correct
+                        val key =
+                            (card.layer) * (viewModel.size * viewModel.size) + card.cardNum - 1
+                        val newCards = newGame.cards.toMutableList()
+                        newCards[key] = newCards[key].copy(cleared = true)
+                        newGame = game.copy(cards = newCards)
+
+                        newCurrPlayer = newCurrPlayer?.copy(
+                            state = PlayerState(
+                                true,
+                                if (card.layer < 5) 3 else 1,
+                                if (card.layer < 5) PlayerStateType.Cavern else null
+                            )
+                        )
+                        newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                     }
                 }
 
@@ -1461,10 +1622,55 @@ class GameFragment : BaseFragment<GameViewModel>(
                             (card.layer - 1) * (viewModel.size * viewModel.size) + card.cardNum - 1
                         val newCards = newGame.cards.toMutableList()
                         newCards[key] = newCards[key].copy(cleared = true)
-                        newGame =
-                            game.copy(gameState = GameState(GameStateTypes.Turn), cards = newCards)
+
+                        //give bone as an inventory
+                        if (type == ToothType.Bone.name) {
+                            val currPlayer = game.players[game.currentPlayerId]
+                            val oldValue = currPlayer?.inventory?.get(ToothResult.Bone.name)
+                                    ?: InventoryElement(ToothResult.Bone.name, 0)
+                            newCurrPlayer?.inventory?.set(
+                                ToothResult.Bone.name,
+                                oldValue.copy(amount = oldValue.amount + 1)
+                            )
+                            newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
+                        }
+
+                        if (game.gameState.collapseNum != null) {
+                            val collapseCards = listOf(
+                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
+                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
+                            )
+                            val newNextCard =
+                                collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
+                                    .firstOrNull { it != null }
+
+                            val index = collapseCards.indexOf(newNextCard) + 1
+
+                            if (newNextCard?.type == CardType.Question) {
+                                nextGameState = GameState(
+                                    type = GameStateTypes.Question,
+                                    card = card,
+                                    collapseNum = game.gameState.collapseNum.copy(num = index)
+                                )
+                            } else {
+                                nextGameState = GameState(
+                                    type = GameStateTypes.Tooth,
+                                    card = card,
+                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                    param2 = "",
+                                    param3 = false,
+                                    param4 = false,
+                                    collapseNum = game.gameState.collapseNum.copy(num = index)
+                                )
+                            }
+                        }
+                        newGame = newGame.copy(gameState = nextGameState, cards = newCards)
                         viewModel.updateGame(newGame) {
-                            viewModel.passTurnToNextPlayer()
+                            if (nextGameState.collapseNum == null) {
+                                viewModel.passTurnToNextPlayer()
+                            }
                         }
                     }, onTickCallback = {})
                 }
@@ -2218,15 +2424,30 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         inventoryDialogAdapter = InventoryDialogAdapter { item ->
             val inventory = viewModel.inventory.value.toMutableList()
-            viewModel.inventory.value.forEachIndexed { index, inventoryModel ->
-                if (item == inventoryModel) {
-                    inventory[index] = inventoryModel.copy(isSelected = true)
+            viewModel.inventory.value.filter { it.name != ToothResult.Bone.name }
+                .forEachIndexed { index, inventoryModel ->
+                    if (item == inventoryModel) {
+                        inventory[index] = inventoryModel.copy(isSelected = true)
+                    }
                 }
-            }
             viewModel.selectedInventoryItem = item
             binding.frgGameFabActionInventoryAccept.isEnabled =
                 viewModel.selectedInventoryPlayer != null
             inventoryDialogAdapter.bindData(inventory)
+
+            val currPlayer = viewModel.game.value.players[viewModel.currentUserId] ?: PlayerInfo()
+            if (currPlayer.state.skippingTurn && currPlayer.state.type == PlayerStateType.ToolLoss) {
+                //todo use item to fix tool
+                binding.frgGameFabActionInventoryRepair.visibility = View.VISIBLE
+            }
+
+            if (item.name == ToothResult.Rope.name && currPlayer.state.skippingTurn &&
+                currPlayer.state.type == PlayerStateType.Cavern
+            ) {
+                binding.frgGameFabActionInventoryRope.visibility = View.VISIBLE
+            } else {
+                binding.frgGameFabActionInventoryRope.visibility = View.GONE
+            }
         }
         binding.frgGameInventoryDialogLayout.includeInventoryDialogRvInventory.addItemDecoration(
             InventoryDialogItemDecoration()
@@ -2237,7 +2458,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         inventoryDialogPlayersAdapter = InventoryDialogPlayersAdapter { player ->
             val currPlayer = viewModel.game.value.players[viewModel.currentUserId]
             val teamPlayers = viewModel.game.value.players.filter {
-                it.key != currPlayer?.id //&& it.value.teamStr == currPlayer?.teamStr
+                it.key != currPlayer?.id && it.value.teamStr == currPlayer?.teamStr
             }.values.map {
                 it.toInventoryPlayer(player.playerId == it.id)
             }

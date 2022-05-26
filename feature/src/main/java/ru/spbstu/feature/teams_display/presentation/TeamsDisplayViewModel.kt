@@ -1,11 +1,16 @@
 package ru.spbstu.feature.teams_display.presentation
 
 import android.os.CountDownTimer
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.utils.BackViewModel
+import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
+import timber.log.Timber
 
 class TeamsDisplayViewModel(
     val router: FeatureRouter,
@@ -23,5 +28,25 @@ class TeamsDisplayViewModel(
         override fun onFinish() {
             router.openGameFragment()
         }
+    }
+
+    fun setUserLastGame() {
+        val ref = Firebase.database.getReference(DatabaseReferences.USERS_REF)
+        val currentUserId = Firebase.auth.currentUser?.uid
+
+        ref.child(currentUserId ?: "")
+            .child("lastGameName")
+            .setValue(gameJoiningDataWrapper.game.name)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
+    companion object {
+        private val TAG = TeamsDisplayViewModel::class.simpleName
     }
 }

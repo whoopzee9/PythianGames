@@ -18,6 +18,8 @@ import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentIndividualScoreBinding
 import ru.spbstu.feature.di.FeatureApi
 import ru.spbstu.feature.di.FeatureComponent
+import ru.spbstu.feature.individual_score.presentation.adapter.IndividualScoreAdapter
+import ru.spbstu.feature.individual_score.presentation.adapter.IndividualScoreItemDecoration
 
 class IndividualScoreFragment : BaseFragment<IndividualScoreViewModel>(
     R.layout.fragment_individual_score,
@@ -25,7 +27,7 @@ class IndividualScoreFragment : BaseFragment<IndividualScoreViewModel>(
     private var _binding: FragmentIndividualScoreBinding? = null
     override val binding get() = _binding!!
 
-    private var listener: ValueEventListener? = null
+    private lateinit var adapter: IndividualScoreAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,27 +43,21 @@ class IndividualScoreFragment : BaseFragment<IndividualScoreViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
+        setupAdapter()
+
         handleBackPressed { }
     }
 
-    override fun subscribe() {
-        super.subscribe()
-//        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-//        listener = ref.child(viewModel.gameJoiningDataWrapper.game.name).subscribe(onSuccess = { snapshot ->
-//            handleGameSnapshotData(snapshot)
-//        }, onCancelled = {})
-
+    private fun setupAdapter() {
+        adapter = IndividualScoreAdapter()
+        binding.frgIndividualScoreRvPlayers.adapter = adapter
+        binding.frgIndividualScoreRvPlayers.addItemDecoration(IndividualScoreItemDecoration())
+        adapter.bindData(viewModel.getPlayersStats())
     }
 
     override fun onDestroyView() {
-        val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        listener?.let { ref.removeEventListener(it) }
-        //_binding = null
+        _binding = null
         super.onDestroyView()
-    }
-
-    private fun handleGameSnapshotData(snapshot: DataSnapshot) {
-
     }
 
 

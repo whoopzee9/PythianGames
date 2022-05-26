@@ -84,6 +84,7 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
 
             if (readyCount == game.numOfPlayers) {
                 viewModel.startGameTimer.start()
+                viewModel.setUserLastGame()
             }
         }
     }

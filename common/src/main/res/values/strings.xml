@@ -108,12 +108,15 @@
     <string name="event_rainfall_desc">Внезапно пошел ливень! Все игроки на прилегающих клетках пропускают один ход!</string>
     <string name="event_river_desc_1">Обнаружена подземная река! Все игроки по горизонтали пропускают один ход!</string>
     <string name="event_river_desc_2">Обнаружена подземная река! Все игроки по вертикали пропускают один ход!</string>
-    <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой.</string>
+    <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой. Необходимо использовать веревку, чтобы выбраться, либо пропустить 3 хода!</string>
     <string name="morgan_turn">Ход Моргана!</string>
     <string name="individual_score">Личный зачёт</string>
     <string name="teams_score">Командный зачёт</string>
     <string name="equals_sign">=</string>
     <string name="give_inventory_item">Передать инвентарь</string>
+    <string name="end_game">Раскопки окончены! Конец игры!\n\nЯ выкуплю у всех кости Пифона.\n\nОтображение итоговой статистики через %d</string>
+    <string name="quit_game">Завершить игру</string>
+    <string name="return_to_game">Вернуться к игре</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

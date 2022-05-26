@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/dp_16"
         android:layout_marginHorizontal="@dimen/dp_16"
         android:layout_marginBottom="@dimen/dp_16"
-        tools:listitem="@layout/item_individual_score"
+        tools:listitem="@layout/item_teams_score"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

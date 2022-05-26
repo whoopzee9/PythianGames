@@ -263,6 +263,31 @@
         app:tint="@android:color/transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_repair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_repair_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_2"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_2"
+        app:tint="@color/background_primary" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_rope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_rope_78"
+        app:maxImageSize="@dimen/dp_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_3"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_3"
+        app:tint="@color/background_primary" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__fab_action_inventory_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

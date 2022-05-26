@@ -28,7 +28,13 @@ data class GameState(
     val param3: Any? = null,
     val param4: Any? = null,
     val bidInfo: HashMap<String, WheelBet>? = null,
-    val card: Card? = null
+    val card: Card? = null,
+    val collapseNum: CollapseState? = null
+)
+
+data class CollapseState(
+    val num: Int = 0,
+    val initialPosNum: Int = 0
 )
 
 enum class GameStateTypes {
@@ -49,6 +55,7 @@ enum class ToothResult {
     Sieve,
     Brush,
     Rope,
+    Bone,
     Treasure,
     ToolLoss,
     Collapse,

@@ -1,5 +1,6 @@
 package ru.spbstu.feature.main.presentation
 
+import android.view.View
 import ru.spbstu.common.base.BaseFragment
 import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.setDebounceClickListener
@@ -32,6 +33,18 @@ class MainFragment : BaseFragment<MainViewModel>(
         binding.frgMainMbTutorial.isEnabled = false
         binding.frgMainMbLogOut.setDebounceClickListener {
             viewModel.logout()
+        }
+
+        viewModel.getUserInfo {
+            if (viewModel.lastGameName != null) {
+                binding.frgMainMbReturnToGame.visibility = View.VISIBLE
+            } else {
+                binding.frgMainMbReturnToGame.visibility = View.GONE
+            }
+        }
+
+        binding.frgMainMbReturnToGame.setDebounceClickListener {
+            viewModel.openGameFragment()
         }
     }
 

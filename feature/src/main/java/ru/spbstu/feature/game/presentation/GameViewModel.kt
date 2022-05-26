@@ -78,6 +78,10 @@ class GameViewModel(
         _game.value = game
     }
 
+    fun openFinalStatsFragment() {
+        router.openFinalScoresFragment()
+    }
+
     fun setGameState(gameState: GameState, onSuccess: () -> Unit = {}) {
         ref.child(gameJoiningDataWrapper.game.name)
             .child("gameState")
@@ -312,7 +316,7 @@ class GameViewModel(
                     updateGame(newGame, onSuccess)
                 }
             } else {
-                //todo start another morgan turn
+                setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
             }
 
         } else {
@@ -353,7 +357,6 @@ class GameViewModel(
 
                 } else {
                     setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
-                    //todo need to roll dice for morgan to move
                 }
             }
         }
@@ -544,6 +547,20 @@ class GameViewModel(
             item.name,
             InventoryElement(oldNew.name, oldNew.amount + 1)
         )
+
+        updateGame(newGame)
+    }
+
+    fun useInventoryToClearState(item: InventoryModel) {
+        val newGame = game.value
+        val oldCurr =
+            newGame.players[currentUserId]?.inventory?.get(item.name) ?: InventoryElement()
+        newGame.players[currentUserId]?.inventory?.set(
+            item.name,
+            InventoryElement(oldCurr.name, oldCurr.amount - 1)
+        )
+        newGame.players[currentUserId ?: ""] =
+            newGame.players[currentUserId]?.copy(state = PlayerState(false, 0)) ?: PlayerInfo()
 
         updateGame(newGame)
     }

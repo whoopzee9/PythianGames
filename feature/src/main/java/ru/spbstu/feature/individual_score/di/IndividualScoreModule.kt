@@ -10,6 +10,7 @@ import ru.spbstu.common.di.viewmodel.ViewModelKey
 import ru.spbstu.common.di.viewmodel.ViewModelModule
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.individual_score.presentation.IndividualScoreViewModel
+import ru.spbstu.feature.utils.GameJoiningDataWrapper
 
 @Module(
     includes = [
@@ -21,8 +22,11 @@ class IndividualScoreModule {
     @Provides
     @IntoMap
     @ViewModelKey(IndividualScoreViewModel::class)
-    fun provideViewModel(router: FeatureRouter): ViewModel {
-        return IndividualScoreViewModel(router)
+    fun provideViewModel(
+        router: FeatureRouter,
+        gameJoiningDataWrapper: GameJoiningDataWrapper
+    ): ViewModel {
+        return IndividualScoreViewModel(router, gameJoiningDataWrapper)
     }
 
     @Provides
