@@ -2,8 +2,8 @@
 <resources>
     <color name="ic_launcher_background">#FFFFFF</color>
 
-    <color name="background_secondary">#FFFFFF</color>
     <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#FFFFFF</color>
     <color name="button_tint_primary">#9A1AFF</color>
     <color name="button_tint_secondary">#FFF500</color>
     <color name="button_tint_third">#FFFFFF</color>

@@ -3,7 +3,6 @@ package ru.spbstu.feature.game.presentation
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
@@ -59,8 +59,13 @@ import ru.spbstu.feature.domain.model.ToothType
 import ru.spbstu.feature.domain.model.WheelBet
 import ru.spbstu.feature.domain.model.WheelBetType
 import ru.spbstu.feature.domain.model.toInventoryModel
+import ru.spbstu.feature.domain.model.toInventoryPlayer
 import ru.spbstu.feature.domain.model.toPlayer
 import ru.spbstu.feature.game.presentation.adapter.InventoryAdapter
+import ru.spbstu.feature.game.presentation.adapter.InventoryDialogAdapter
+import ru.spbstu.feature.game.presentation.adapter.InventoryDialogItemDecoration
+import ru.spbstu.feature.game.presentation.adapter.InventoryDialogPlayersAdapter
+import ru.spbstu.feature.game.presentation.adapter.InventoryDialogPlayersItemDecoration
 import ru.spbstu.feature.game.presentation.adapter.InventoryItemDecoration
 import ru.spbstu.feature.game.presentation.adapter.TeamsStatisticsAdapter
 import ru.spbstu.feature.game.presentation.adapter.TeamsStatisticsItemDecoration
@@ -73,6 +78,8 @@ class GameFragment : BaseFragment<GameViewModel>(
 
     private lateinit var inventoryAdapter: InventoryAdapter
     private lateinit var statisticsAdapter: TeamsStatisticsAdapter
+    private lateinit var inventoryDialogAdapter: InventoryDialogAdapter
+    private lateinit var inventoryDialogPlayersAdapter: InventoryDialogPlayersAdapter
 
     private lateinit var statisticsPopup: PopupWindow
     private val statisticsBinding by viewBinding(FragmentGameStatisticsDialogBinding::inflate)
@@ -112,6 +119,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         setupQuestionsDialog()
         setupMorganDialog()
         setupToothDialog()
+        setupInventoryDialog()
 
 
         binding.frgGameTeamStatsWrapper.setDebounceClickListener {
@@ -533,6 +541,50 @@ class GameFragment : BaseFragment<GameViewModel>(
             viewModel.delayTimer?.cancel()
         }
 
+        binding.frgGameInventoryWrapper.setDebounceClickListener {
+            inventoryDialogAdapter.bindData(viewModel.inventory.value)
+
+            val currPlayer = viewModel.game.value.players[viewModel.currentUserId]
+            val teamPlayers = viewModel.game.value.players.filter {
+                it.key != currPlayer?.id //&& it.value.teamStr == currPlayer?.teamStr
+            }.values.map { it.toInventoryPlayer() }
+            inventoryDialogPlayersAdapter.bindData(teamPlayers)
+
+            //todo determine when we can access inventory
+            viewModel.questionVisible = binding.frgGameQuestionLayout.root.isVisible
+            viewModel.action1Visible = binding.frgGameFabAction1.isVisible
+            viewModel.action2Visible = binding.frgGameFabAction2.isVisible
+            viewModel.action3Visible = binding.frgGameFabAction3.isVisible
+            viewModel.action4Visible = binding.frgGameFabAction4.isVisible
+
+            binding.frgGameQuestionLayout.root.visibility = View.GONE
+            binding.frgGameFabAction1.visibility = View.INVISIBLE
+            binding.frgGameFabAction2.visibility = View.INVISIBLE
+            binding.frgGameFabAction3.visibility = View.INVISIBLE
+            binding.frgGameFabAction4.visibility = View.INVISIBLE
+
+            viewModel.selectedInventoryPlayer = null
+            viewModel.selectedInventoryItem = null
+            binding.frgGameFabActionInventoryAccept.isEnabled = false
+            binding.frgGameFabActionInventoryAccept.visibility = View.VISIBLE
+            binding.frgGameFabActionInventoryClose.visibility = View.VISIBLE
+            binding.frgGameInventoryDialogLayout.root.visibility = View.VISIBLE
+        }
+
+        binding.frgGameFabActionInventoryAccept.setDebounceClickListener {
+            if (viewModel.selectedInventoryItem != null && viewModel.selectedInventoryPlayer != null) {
+                viewModel.givePlayerInventoryItem(
+                    viewModel.selectedInventoryPlayer!!,
+                    viewModel.selectedInventoryItem!!
+                )
+            }
+            hideInventoryDialog()
+        }
+
+        binding.frgGameFabActionInventoryClose.setDebounceClickListener {
+            hideInventoryDialog()
+        }
+
         handleBackPressed { }
 
         binding.frgGameFabAction1.visibility = View.GONE
@@ -586,6 +638,14 @@ class GameFragment : BaseFragment<GameViewModel>(
             TeamsConstants.getTeamFromString(currPlayer?.teamStr ?: "").colorRes
         )
 
+        (binding.frgGameInventoryDialogLayout.root.background as GradientDrawable).setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(
+                requireContext(),
+                TeamsConstants.getTeamFromString(currPlayer?.teamStr ?: "").colorRes
+            )
+        )
+
         determineMorganPosition(game)
         binding.frgGameBoard.setCurrentPlayer(viewModel.currentUserId ?: "")
         binding.frgGameBoard.updatePlayers(game.players.mapValues { it.value.toPlayer() } as HashMap<String, Player>)
@@ -600,6 +660,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                 inventory.add(inventoryElement.toInventoryModel((index * 20) + i))
             }
         }
+        viewModel.setInventory(inventory)
         inventoryAdapter.bindData(inventory)
 
         //team stats
@@ -1108,12 +1169,9 @@ class GameFragment : BaseFragment<GameViewModel>(
                                 oldCoinsAmount + 1
                             )
                         }
-                        Log.d("qwerty", "bid info ${game.gameState.bidInfo}")
                         game.gameState.bidInfo?.forEach {
-                            Log.d("qwerty", "bid results")
                             if (!it.value.skipped) {
                                 if (it.value.type == WheelBetType.WhiteBean) {
-                                    Log.d("qwerty", "correct bid")
                                     val old =
                                         newGame.players[it.value.playerId]?.coinsCollected?.get(
                                             GameUtils.Layers.Yellow.name
@@ -2131,14 +2189,86 @@ class GameFragment : BaseFragment<GameViewModel>(
         statisticsPopup.animationStyle = R.style.TopMenuAnimation
     }
 
+    private fun setupInventoryDialog() {
+        val background = GradientDrawable()
+        background.setStroke(
+            resources.getDimension(R.dimen.dp_1).toInt(),
+            ContextCompat.getColor(requireContext(), R.color.color_team_green)
+        )
+        background.color = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_transparent_background
+            )
+        )
+        background.cornerRadius = resources.getDimension(R.dimen.dp_14)
+        binding.frgGameInventoryDialogLayout.root.background = background
+    }
+
     private fun setupAdapters() {
         inventoryAdapter = InventoryAdapter()
         binding.frgGameRvInventory.addItemDecoration(InventoryItemDecoration())
         binding.frgGameRvInventory.adapter = inventoryAdapter
 
         statisticsAdapter = TeamsStatisticsAdapter()
-        statisticsBinding.frgGameStatisticsDialogRvTeams.addItemDecoration(TeamsStatisticsItemDecoration())
+        statisticsBinding.frgGameStatisticsDialogRvTeams.addItemDecoration(
+            TeamsStatisticsItemDecoration()
+        )
         statisticsBinding.frgGameStatisticsDialogRvTeams.adapter = statisticsAdapter
+
+        inventoryDialogAdapter = InventoryDialogAdapter { item ->
+            val inventory = viewModel.inventory.value.toMutableList()
+            viewModel.inventory.value.forEachIndexed { index, inventoryModel ->
+                if (item == inventoryModel) {
+                    inventory[index] = inventoryModel.copy(isSelected = true)
+                }
+            }
+            viewModel.selectedInventoryItem = item
+            binding.frgGameFabActionInventoryAccept.isEnabled =
+                viewModel.selectedInventoryPlayer != null
+            inventoryDialogAdapter.bindData(inventory)
+        }
+        binding.frgGameInventoryDialogLayout.includeInventoryDialogRvInventory.addItemDecoration(
+            InventoryDialogItemDecoration()
+        )
+        binding.frgGameInventoryDialogLayout.includeInventoryDialogRvInventory.adapter =
+            inventoryDialogAdapter
+
+        inventoryDialogPlayersAdapter = InventoryDialogPlayersAdapter { player ->
+            val currPlayer = viewModel.game.value.players[viewModel.currentUserId]
+            val teamPlayers = viewModel.game.value.players.filter {
+                it.key != currPlayer?.id //&& it.value.teamStr == currPlayer?.teamStr
+            }.values.map {
+                it.toInventoryPlayer(player.playerId == it.id)
+            }
+            viewModel.selectedInventoryPlayer = viewModel.game.value.players[player.playerId]
+            binding.frgGameFabActionInventoryAccept.isEnabled =
+                viewModel.selectedInventoryItem != null
+            inventoryDialogPlayersAdapter.bindData(teamPlayers)
+        }
+        binding.frgGameInventoryDialogLayout.includeInventoryDialogRvPlayers.addItemDecoration(
+            InventoryDialogPlayersItemDecoration()
+        )
+        binding.frgGameInventoryDialogLayout.includeInventoryDialogRvPlayers.adapter =
+            inventoryDialogPlayersAdapter
+        binding.frgGameInventoryDialogLayout.includeInventoryDialogRvPlayers.itemAnimator = null
+    }
+
+    private fun hideInventoryDialog() {
+        binding.frgGameQuestionLayout.root.visibility =
+            if (viewModel.questionVisible) View.VISIBLE else View.GONE
+        binding.frgGameFabAction1.visibility =
+            if (viewModel.action1Visible) View.VISIBLE else View.INVISIBLE
+        binding.frgGameFabAction2.visibility =
+            if (viewModel.action2Visible) View.VISIBLE else View.INVISIBLE
+        binding.frgGameFabAction3.visibility =
+            if (viewModel.action3Visible) View.VISIBLE else View.INVISIBLE
+        binding.frgGameFabAction4.visibility =
+            if (viewModel.action4Visible) View.VISIBLE else View.INVISIBLE
+
+        binding.frgGameFabActionInventoryAccept.visibility = View.GONE
+        binding.frgGameFabActionInventoryClose.visibility = View.GONE
+        binding.frgGameInventoryDialogLayout.root.visibility = View.GONE
     }
 
     override fun inject() {

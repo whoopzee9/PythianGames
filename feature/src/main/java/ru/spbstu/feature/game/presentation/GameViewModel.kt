@@ -1,7 +1,6 @@
 package ru.spbstu.feature.game.presentation
 
 import android.os.CountDownTimer
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -18,6 +17,7 @@ import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.GameState
 import ru.spbstu.feature.domain.model.GameStateTypes
 import ru.spbstu.feature.domain.model.InventoryElement
+import ru.spbstu.feature.domain.model.InventoryModel
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.domain.model.TeamStatistics
 import ru.spbstu.feature.domain.model.WheelBet
@@ -31,6 +31,18 @@ class GameViewModel(
     private val _game: MutableStateFlow<Game> = MutableStateFlow(Game())
     val game: StateFlow<Game> = _game
 
+    private val _inventory: MutableStateFlow<List<InventoryModel>> = MutableStateFlow(listOf())
+    val inventory: StateFlow<List<InventoryModel>> = _inventory
+
+    var questionVisible = false
+    var action1Visible = false
+    var action2Visible = false
+    var action3Visible = false
+    var action4Visible = false
+
+    var selectedInventoryPlayer: PlayerInfo? = null
+    var selectedInventoryItem: InventoryModel? = null
+
     val currentUserId = Firebase.auth.currentUser?.uid
 
     val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
@@ -40,6 +52,10 @@ class GameViewModel(
     var size = 0
 
     var delayTimer: CountDownTimer? = null
+
+    fun setInventory(list: List<InventoryModel>) {
+        _inventory.value = list
+    }
 
     fun setupAndStartDelayTimer(
         delaySec: Long,
@@ -360,7 +376,8 @@ class GameViewModel(
 
     fun giveCurrentPlayerCoins(layer: Int, amount: Int) {
         val oldAmount =
-            game.value.players[currentUserId]?.coinsCollected?.get(GameUtils.getLayerByNumber(layer).name) ?: 0
+            game.value.players[currentUserId]?.coinsCollected?.get(GameUtils.getLayerByNumber(layer).name)
+                ?: 0
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .child(currentUserId ?: "")
@@ -378,7 +395,11 @@ class GameViewModel(
 
     fun setCardAnswered(layer: Int, amount: Int) {
         val oldAmount =
-            game.value.players[currentUserId]?.questionsAnswered?.get(GameUtils.getLayerByNumber(layer).name) ?: 0
+            game.value.players[currentUserId]?.questionsAnswered?.get(
+                GameUtils.getLayerByNumber(
+                    layer
+                ).name
+            ) ?: 0
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .child(currentUserId ?: "")
@@ -465,7 +486,7 @@ class GameViewModel(
             }
     }
 
-    fun getTeamStatistics(teamStr: String) : TeamStatistics {
+    fun getTeamStatistics(teamStr: String): TeamStatistics {
         val coinMap = hashMapOf<String, Int>()
         var inventory = 0
         game.value.players.forEach {
@@ -508,6 +529,23 @@ class GameViewModel(
             totalQuestionsInYellow = questionsInYellow,
             totalInventory = inventory
         )
+    }
+
+    fun givePlayerInventoryItem(playerInfo: PlayerInfo, item: InventoryModel) {
+        val newGame = game.value
+        val oldCurr =
+            newGame.players[currentUserId]?.inventory?.get(item.name) ?: InventoryElement()
+        newGame.players[currentUserId]?.inventory?.set(
+            item.name,
+            InventoryElement(oldCurr.name, oldCurr.amount - 1)
+        )
+        val oldNew = playerInfo.inventory[item.name] ?: InventoryElement()
+        newGame.players[playerInfo.id]?.inventory?.set(
+            item.name,
+            InventoryElement(oldNew.name, oldNew.amount + 1)
+        )
+
+        updateGame(newGame)
     }
 
     companion object {

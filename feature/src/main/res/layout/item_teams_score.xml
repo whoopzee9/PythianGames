@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="@dimen/dp_14"
+    app:strokeColor="@color/color_team_green"
+    app:strokeWidth="@dimen/dp_1">
+
+    <LinearLayout
+        android:id="@+id/item_teams_score__wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/item_teams_score__rv_icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_score_icon"/>
+        
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_coins"
+            style="@style/TextView.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:text="@string/coins" />
+
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_coins_value"
+            style="@style/TextView.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_coins_value_in_yellow"
+            style="@style/TextView.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="@color/text_color_third" />
+
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_questions"
+            style="@style/TextView.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_gravity="bottom"
+            android:text="@string/questions" />
+
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_questions_value"
+            style="@style/TextView.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:text="0"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/item_teams_score__tv_team_stats_questions_value_in_yellow"
+            style="@style/TextView.Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="@color/text_color_third" />
+        
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

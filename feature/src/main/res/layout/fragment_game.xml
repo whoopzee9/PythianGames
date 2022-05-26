@@ -169,13 +169,13 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_shovel_24"
+        android:tintMode="src_atop"
         app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@android:color/transparent"
-        android:tintMode="src_atop"/>
+        app:tint="@android:color/transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__fab_action_2"
@@ -183,13 +183,13 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_walk_24"
+        android:tintMode="src_atop"
         app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_3"
         app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@android:color/transparent"
-        android:tintMode="src_atop"/>
+        app:tint="@android:color/transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__fab_action_3"
@@ -197,14 +197,14 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_walk_and_dig_24"
+        android:tintMode="src_atop"
         app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
         app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_2"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:maxImageSize="@dimen/dp_30"
-        app:tint="@android:color/transparent"
-        android:tintMode="src_atop" />
+        app:tint="@android:color/transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__fab_action_4"
@@ -212,13 +212,13 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_close_24"
+        android:tintMode="src_atop"
         app:backgroundTint="@color/button_background_color"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_3"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
-        app:tint="@android:color/transparent"
-        android:tintMode="src_atop" />
+        app:tint="@android:color/transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/frg_game__fab_action_decrease"
@@ -226,9 +226,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_minus_24"
+        android:visibility="gone"
         app:backgroundTint="@color/button_tint_primary"
         app:fabSize="mini"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_increase"
         app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
@@ -241,14 +241,38 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:src="@drawable/ic_plus_24"
+        android:visibility="gone"
         app:backgroundTint="@color/button_tint_primary"
         app:fabSize="mini"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
         app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
         app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_decrease"
         app:layout_constraintTop_toBottomOf="@id/frg_game__board"
         app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_1"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_4"
+        app:tint="@android:color/transparent" />
 
     <ImageView
         android:id="@+id/frg_game__iv_coin"
@@ -268,9 +292,9 @@
         style="@style/TextView.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_2"
         android:text="1"
         android:visibility="gone"
-        android:layout_marginStart="@dimen/dp_2"
         app:layout_constraintBottom_toBottomOf="@id/frg_game__iv_coin"
         app:layout_constraintEnd_toEndOf="@id/frg_game__iv_coin"
         app:layout_constraintStart_toStartOf="@id/frg_game__iv_coin"
@@ -343,8 +367,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_36"
         android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -357,8 +381,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_36"
         android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -371,8 +395,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_36"
         android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -385,8 +409,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_36"
         android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -399,8 +423,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_36"
         android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__inventory_dialog_layout"
+        layout="@layout/include_inventory_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
         app:layout_constraintEnd_toEndOf="parent"

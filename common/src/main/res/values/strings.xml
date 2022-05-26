@@ -111,7 +111,9 @@
     <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой.</string>
     <string name="morgan_turn">Ход Моргана!</string>
     <string name="individual_score">Личный зачёт</string>
+    <string name="teams_score">Командный зачёт</string>
     <string name="equals_sign">=</string>
+    <string name="give_inventory_item">Передать инвентарь</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

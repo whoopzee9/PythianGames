@@ -34,3 +34,11 @@ fun PlayerInfo.toPlayer(): Player {
         state = state
     )
 }
+
+fun PlayerInfo.toInventoryPlayer(isSelected: Boolean = false): InventoryPlayer {
+    return InventoryPlayer(
+        playerId = id,
+        iconRes = iconRes,
+        isSelected = isSelected
+    )
+}
