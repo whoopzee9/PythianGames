@@ -3,6 +3,7 @@ package ru.spbstu.feature.game.presentation
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -317,7 +318,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     type = GameStateTypes.Question,
                                     card = card,
                                     param1 = selectedAnswer,
-                                    bidInfo = viewModel.game.value.gameState.bidInfo
+                                    bidInfo = viewModel.game.value.gameState.bidInfo,
+                                    collapseNum = viewModel.game.value.gameState.collapseNum
                                 )
                             )
                             viewModel.updateCard(card.copy(cleared = true))
@@ -333,7 +335,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     type = GameStateTypes.Question,
                                     card = card,
                                     param1 = selectedAnswer,
-                                    bidInfo = viewModel.game.value.gameState.bidInfo
+                                    bidInfo = viewModel.game.value.gameState.bidInfo,
+                                    collapseNum = viewModel.game.value.gameState.collapseNum
                                 )
                             )
                             val newAlreadyAnswered =
@@ -382,8 +385,9 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     Position(player.position.x + 1, player.position.y)
                                 }
                             }
-                            viewModel.movePlayer(player.id, newPosition)
-                            viewModel.passTurnToNextPlayer()
+                            viewModel.movePlayer(player.id, newPosition) {
+                                viewModel.passTurnToNextPlayer()
+                            }
                         }
                     }
                 }
@@ -698,7 +702,8 @@ class GameFragment : BaseFragment<GameViewModel>(
             }
         }
         if (gameEnded) {
-            binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text = getString(R.string.end_game, 5)
+            binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text =
+                getString(R.string.end_game, 5)
             binding.frgGameMorganAnswerLayout.includeMorganAnswerMbClose.visibility = View.GONE
             binding.frgGameMorganAnswerLayout.root.visibility = View.VISIBLE
             viewModel.setupAndStartDelayTimer(5, onFinishCallback = {
@@ -706,7 +711,10 @@ class GameFragment : BaseFragment<GameViewModel>(
                 game.players.forEach {
                     val bonesAmount = it.value.inventory[ToothResult.Bone.name]?.amount ?: 0
                     val oldAmount = it.value.coinsCollected[GameUtils.Layers.Red.name] ?: 0
-                    newGame.players[it.key]?.coinsCollected?.set(GameUtils.Layers.Red.name, oldAmount + (bonesAmount * 3))
+                    newGame.players[it.key]?.coinsCollected?.set(
+                        GameUtils.Layers.Red.name,
+                        oldAmount + (bonesAmount * 3)
+                    )
                 }
                 viewModel.gameJoiningDataWrapper.game = newGame
                 if (game.currentPlayerId == viewModel.currentUserId) {
@@ -714,7 +722,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                 }
                 viewModel.openFinalStatsFragment()
             }, onTickCallback = {
-                binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text = getString(R.string.end_game, it)
+                binding.frgGameMorganAnswerLayout.includeMorganAnswerTvAnswer.text =
+                    getString(R.string.end_game, it)
             })
         }
 
@@ -1193,15 +1202,23 @@ class GameFragment : BaseFragment<GameViewModel>(
                         materialCardView.setToDisabledStyle()
                     }
                 }
+                binding.frgGameFabAction1.isEnabled = false
+                binding.frgGameFabAction4.visibility = View.INVISIBLE
                 viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
                     val newGame: Game
                     var nextCard: Card? = null
                     if (game.gameState.collapseNum != null) {
                         val collapseCards = listOf(
                             game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
-                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                            game.cards.firstOrNull {
+                                game.gameState.collapseNum.initialPosNum % viewModel.size != 0 &&
+                                        it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared
+                            },
                             game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
-                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
+                            game.cards.firstOrNull {
+                                game.gameState.collapseNum.initialPosNum % viewModel.size != 1 &&
+                                        it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared
+                            }
                         )
                         nextCard =
                             collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
@@ -1271,9 +1288,15 @@ class GameFragment : BaseFragment<GameViewModel>(
                     } else {
                         val collapseCards = listOf(
                             game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
-                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                            game.cards.firstOrNull {
+                                game.gameState.collapseNum.initialPosNum % viewModel.size != 0 &&
+                                        it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared
+                            },
                             game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
-                            game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
+                            game.cards.firstOrNull {
+                                game.gameState.collapseNum.initialPosNum % viewModel.size != 1 &&
+                                        it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared
+                            }
                         )
                         val newNextCard =
                             collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
@@ -1281,29 +1304,29 @@ class GameFragment : BaseFragment<GameViewModel>(
 
                         val index = collapseCards.indexOf(newNextCard) + 1
 
-                        if (newNextCard?.type == CardType.Question) {
-                            newGame = game.copy(
-                                gameState = GameState(
-                                    type = GameStateTypes.Question,
-                                    card = card,
-                                    collapseNum = game.gameState.collapseNum.copy(num = index)
-                                )
-                            )
-                        } else {
-                            newGame = game.copy(
-                                gameState = GameState(
-                                    type = GameStateTypes.Tooth,
-                                    card = card,
-                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
-                                    param2 = "",
-                                    param3 = false,
-                                    param4 = false,
-                                    collapseNum = game.gameState.collapseNum.copy(num = index)
-                                )
-                            )
-                        }
 
                         if (answeredNum.toInt() == card.question?.question?.correctAnswer) {
+                            if (newNextCard?.type == CardType.Question) {
+                                newGame = game.copy(
+                                    gameState = GameState(
+                                        type = GameStateTypes.Question,
+                                        card = newNextCard,
+                                        collapseNum = game.gameState.collapseNum.copy(num = index)
+                                    )
+                                )
+                            } else {
+                                newGame = game.copy(
+                                    gameState = GameState(
+                                        type = GameStateTypes.Tooth,
+                                        card = newNextCard,
+                                        param1 = if (newNextCard?.layer!! < 5) ToothType.Tooth else ToothType.Bone,
+                                        param2 = "",
+                                        param3 = false,
+                                        param4 = false,
+                                        collapseNum = game.gameState.collapseNum.copy(num = index)
+                                    )
+                                )
+                            }
                             val oldQuestAmount =
                                 newGame.players[game.currentPlayerId]?.questionsAnswered?.get(
                                     GameUtils.getLayerByNumber(card.layer).name
@@ -1322,8 +1345,13 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     oldCoinsAmount + 1
                                 )
                             }
+                            viewModel.updateGame(newGame)
+                        } else {
+                            newGame = game.copy(gameState = GameState(GameStateTypes.Turn))
+                            viewModel.updateGame(newGame) {
+                                viewModel.passTurnToNextPlayer()
+                            }
                         }
-                        viewModel.updateGame(newGame)
                     }
                 }, onTickCallback = {})
             }
@@ -1382,10 +1410,14 @@ class GameFragment : BaseFragment<GameViewModel>(
                     binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.VISIBLE
                     binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_tooth_white_90)
                     binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.tooth)
+                    binding.frgGameToothLayout.includeToothDialogTvDescription.visibility =
+                        View.GONE
                 } else {
                     binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.VISIBLE
                     binding.frgGameToothLayout.includeToothDialogIvTooth.setImageResource(R.drawable.ic_bone_155)
                     binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.bone)
+                    binding.frgGameToothLayout.includeToothDialogTvDescription.visibility =
+                        View.GONE
                 }
                 binding.frgGameToothLayout.root.visibility = View.VISIBLE
                 if (game.currentPlayerId == viewModel.currentUserId) {
@@ -1431,6 +1463,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                 binding.frgGameToothLayout.includeToothDialogTvDescription.visibility = View.VISIBLE
                 binding.frgGameToothLayout.root.visibility = View.VISIBLE
                 binding.frgGameToothLayout.includeToothDialogIvTooth.visibility = View.GONE
+
                 val toothType = ToothResult.valueOf(result)
                 var newGame = game
                 var newCurrPlayer = game.players[game.currentPlayerId]
@@ -1501,7 +1534,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                     }
                     ToothResult.Treasure -> {
                         binding.frgGameToothLayout.includeToothDialogTvTitle.setText(R.string.event_treasure)
-                        binding.frgGameToothLayout.includeToothDialogTvDescription.setText(R.string.event_treasure_desc)
+                        binding.frgGameToothLayout.includeToothDialogTvDescription.text =
+                            getString(R.string.event_treasure_desc, card.layer)
                         val oldAmount =
                             game.players[game.currentPlayerId]?.coinsCollected?.get(
                                 GameUtils.getLayerByNumber(
@@ -1534,9 +1568,9 @@ class GameFragment : BaseFragment<GameViewModel>(
                         if (game.gameState.collapseNum == null) {
                             val collapseCards = listOf(
                                 game.cards.firstOrNull { it.cardNum == card.cardNum - viewModel.size && !it.cleared },
-                                game.cards.firstOrNull { it.cardNum == card.cardNum + 1 && !it.cleared },
+                                game.cards.firstOrNull { card.cardNum % viewModel.size != 0 && it.cardNum == card.cardNum + 1 && !it.cleared },
                                 game.cards.firstOrNull { it.cardNum == card.cardNum + viewModel.size && !it.cleared },
-                                game.cards.firstOrNull { it.cardNum == card.cardNum - 1 && !it.cleared }
+                                game.cards.firstOrNull { card.cardNum % viewModel.size != 1 && it.cardNum == card.cardNum - 1 && !it.cleared }
                             )
                             val nextCard = collapseCards.firstOrNull { it != null }
 
@@ -1544,14 +1578,14 @@ class GameFragment : BaseFragment<GameViewModel>(
                             if (nextCard?.type == CardType.Question) {
                                 nextGameState = GameState(
                                     type = GameStateTypes.Question,
-                                    card = card,
+                                    card = nextCard,
                                     collapseNum = CollapseState(index, card.cardNum)
                                 )
                             } else {
                                 nextGameState = GameState(
                                     type = GameStateTypes.Tooth,
-                                    card = card,
-                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                    card = nextCard,
+                                    param1 = if (nextCard?.layer!! < 5) ToothType.Tooth else ToothType.Bone,
                                     param2 = "",
                                     param3 = false,
                                     param4 = false,
@@ -1627,7 +1661,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                         if (type == ToothType.Bone.name) {
                             val currPlayer = game.players[game.currentPlayerId]
                             val oldValue = currPlayer?.inventory?.get(ToothResult.Bone.name)
-                                    ?: InventoryElement(ToothResult.Bone.name, 0)
+                                ?: InventoryElement(ToothResult.Bone.name, 0)
                             newCurrPlayer?.inventory?.set(
                                 ToothResult.Bone.name,
                                 oldValue.copy(amount = oldValue.amount + 1)
@@ -1635,13 +1669,20 @@ class GameFragment : BaseFragment<GameViewModel>(
                             newGame.players[newCurrPlayer?.id ?: ""] = newCurrPlayer ?: PlayerInfo()
                         }
 
-                        if (game.gameState.collapseNum != null) {
+                        if (game.gameState.collapseNum != null && !newCurrPlayer?.state?.skippingTurn!!) {
                             val collapseCards = listOf(
                                 game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - viewModel.size && !it.cleared },
-                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared },
+                                game.cards.firstOrNull {
+                                    game.gameState.collapseNum.initialPosNum % viewModel.size != 0 &&
+                                            it.cardNum == game.gameState.collapseNum.initialPosNum + 1 && !it.cleared
+                                },
                                 game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum + viewModel.size && !it.cleared },
-                                game.cards.firstOrNull { it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared }
+                                game.cards.firstOrNull {
+                                    game.gameState.collapseNum.initialPosNum % viewModel.size != 1 &&
+                                            it.cardNum == game.gameState.collapseNum.initialPosNum - 1 && !it.cleared
+                                }
                             )
+
                             val newNextCard =
                                 collapseCards.filterIndexed { index, card -> index > game.gameState.collapseNum.num - 1 }
                                     .firstOrNull { it != null }
@@ -1651,14 +1692,14 @@ class GameFragment : BaseFragment<GameViewModel>(
                             if (newNextCard?.type == CardType.Question) {
                                 nextGameState = GameState(
                                     type = GameStateTypes.Question,
-                                    card = card,
+                                    card = newNextCard,
                                     collapseNum = game.gameState.collapseNum.copy(num = index)
                                 )
                             } else {
                                 nextGameState = GameState(
                                     type = GameStateTypes.Tooth,
-                                    card = card,
-                                    param1 = if (card.layer < 5) ToothType.Tooth else ToothType.Bone,
+                                    card = newNextCard,
+                                    param1 = if (newNextCard?.layer!! < 5) ToothType.Tooth else ToothType.Bone,
                                     param2 = "",
                                     param3 = false,
                                     param4 = false,

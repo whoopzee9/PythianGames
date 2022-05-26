@@ -3,7 +3,6 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -309,7 +308,10 @@ class Board @JvmOverloads constructor(
                     if (cardsList.isNotEmpty()) {
                         val indexInCardsList =
                             (child.getCurrentLayer() - 1) * (size * size) + cardPos
-                        child.setIsCleaning(!cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty())
+                        child.setIsCleaning(
+                            !cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty()
+                                    && !cardsList[indexInCardsList].cleared
+                        )
                         if (cardsList[indexInCardsList].cleared) {
                             child.reduceStack()
                         }

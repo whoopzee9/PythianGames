@@ -268,7 +268,7 @@ class GameViewModel(
         }
     }
 
-    fun movePlayer(id: String, position: Position) {
+    fun movePlayer(id: String, position: Position, onSuccess: () -> Unit = {}) {
         ref.child(gameJoiningDataWrapper.game.name)
             .child("players")
             .child(id)
@@ -276,7 +276,7 @@ class GameViewModel(
             .setValue(position)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-
+                    onSuccess.invoke()
                 } else {
                     Timber.tag(TAG).e(it.exception)
                 }
