@@ -12,6 +12,7 @@ fun InventoryElement.toInventoryModel(id: Int): InventoryModel {
         ToothResult.Sieve.name -> R.drawable.ic_sieve_78
         ToothResult.Rope.name -> R.drawable.ic_rope_78
         ToothResult.Brush.name -> R.drawable.ic_brush_78
+        ToothResult.Bone.name -> R.drawable.ic_bone_155
         else -> throw IllegalStateException("Wrong inventory name!")
     }
     return InventoryModel(

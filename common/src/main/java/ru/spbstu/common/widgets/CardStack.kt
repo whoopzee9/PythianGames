@@ -75,6 +75,11 @@ class CardStack @JvmOverloads constructor(
         requestLayout()
     }
 
+    fun setStackCount(count: Int) {
+        this.count = count
+        requestLayout()
+    }
+
     fun getStackCount() = count
 
     fun getCurrentLayer() = 5 - count + 1

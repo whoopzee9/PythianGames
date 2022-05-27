@@ -594,10 +594,12 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         binding.frgGameFabActionInventoryRepair.setDebounceClickListener {
             viewModel.selectedInventoryItem?.let { it1 -> viewModel.useInventoryToClearState(it1) }
+            hideInventoryDialog()
         }
 
         binding.frgGameFabActionInventoryRope.setDebounceClickListener {
             viewModel.selectedInventoryItem?.let { it1 -> viewModel.useInventoryToClearState(it1) }
+            hideInventoryDialog()
         }
 
         handleBackPressed { }
@@ -715,6 +717,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                         GameUtils.Layers.Red.name,
                         oldAmount + (bonesAmount * 3)
                     )
+                    newGame.players[it.key]?.inventory?.set(ToothResult.Bone.name, InventoryElement(ToothResult.Bone.name, 0))
                 }
                 viewModel.gameJoiningDataWrapper.game = newGame
                 if (game.currentPlayerId == viewModel.currentUserId) {
@@ -732,6 +735,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                 handleStartGameState(game)
             }
             GameStateTypes.Turn -> {
+                //todo do something when another player uses item, causing current player to reset his state
                 handleTurnGameState(game)
             }
             GameStateTypes.Wheel -> {
@@ -747,6 +751,8 @@ class GameFragment : BaseFragment<GameViewModel>(
                 handleMorganTurnGameState(game)
             }
         }
+        binding.frgGameBoard.invalidate()
+        binding.frgGameBoard.requestLayout()
     }
 
     private fun handleTeamStats(game: Game) {
@@ -758,7 +764,9 @@ class GameFragment : BaseFragment<GameViewModel>(
                     val old = coinMap[coinEntry.key] ?: 0
                     coinMap[coinEntry.key] = old + coinEntry.value
                 }
-                inventory += it.value.inventory.size
+                it.value.inventory.forEach { inv ->
+                    inventory += inv.value.amount
+                }
             }
         }
         var coins = 0
@@ -823,7 +831,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         clearWheelInfo()
 
         binding.frgGameInventoryWrapper.isClickable =
-            game.players[game.currentPlayerId]?.inventory?.isNotEmpty() == true
+            game.players[viewModel.currentUserId]?.inventory?.isNotEmpty() == true
 
         binding.frgGameDiceLayout.root.visibility = View.GONE
         val activePlayersTeam = TeamsConstants.getTeamFromString(
@@ -1382,6 +1390,7 @@ class GameFragment : BaseFragment<GameViewModel>(
         val isRolled = game.gameState.param3 as? Boolean
         val toothShown = game.gameState.param4 as? Boolean
         val card = game.gameState.card
+        val collapseNum = game.gameState.collapseNum
 
         if (type != null && result != null && isRolled != null && toothShown != null && card != null) {
             binding.frgGameToothLayout.root.visibility = View.GONE
@@ -1422,7 +1431,6 @@ class GameFragment : BaseFragment<GameViewModel>(
                 binding.frgGameToothLayout.root.visibility = View.VISIBLE
                 if (game.currentPlayerId == viewModel.currentUserId) {
                     viewModel.setupAndStartDelayTimer(2, onFinishCallback = {
-                        if (type == ToothType.Tooth.name) {
                             viewModel.setGameState(
                                 GameState(
                                     game.gameState.type,
@@ -1430,14 +1438,16 @@ class GameFragment : BaseFragment<GameViewModel>(
                                     param2 = game.gameState.param2,
                                     param3 = game.gameState.param3,
                                     param4 = true,
-                                    card = card
+                                    card = card,
+                                    collapseNum = collapseNum
                                 )
                             )
-                        } else {
-                            viewModel.setGameState(GameState(GameStateTypes.Turn)) {
-                                viewModel.passTurnToNextPlayer()
-                            }
-                        }
+//                        if (type == ToothType.Tooth.name) {
+//                        } else {
+//                            viewModel.setGameState(GameState(GameStateTypes.Turn)) {
+//                                viewModel.passTurnToNextPlayer()
+//                            }
+//                        }
                     }, onTickCallback = {})
                 }
                 return
@@ -2530,6 +2540,8 @@ class GameFragment : BaseFragment<GameViewModel>(
 
         binding.frgGameFabActionInventoryAccept.visibility = View.GONE
         binding.frgGameFabActionInventoryClose.visibility = View.GONE
+        binding.frgGameFabActionInventoryRope.visibility = View.GONE
+        binding.frgGameFabActionInventoryRepair.visibility = View.GONE
         binding.frgGameInventoryDialogLayout.root.visibility = View.GONE
     }
 

@@ -3,6 +3,7 @@ package ru.spbstu.common.widgets
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -306,14 +307,25 @@ class Board @JvmOverloads constructor(
                     val cardPos = i - 1
                     child.setPosition(cardPos % size, cardPos / size)
                     if (cardsList.isNotEmpty()) {
-                        val indexInCardsList =
-                            (child.getCurrentLayer() - 1) * (size * size) + cardPos
-                        child.setIsCleaning(
-                            !cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty()
-                                    && !cardsList[indexInCardsList].cleared
-                        )
-                        if (cardsList[indexInCardsList].cleared) {
-                            child.reduceStack()
+                        //setting current stack count
+                        var count = 0
+                        cardsList.forEach {
+                            if (it.cardNum - 1 == cardPos && !it.cleared) {
+                                count++
+                            }
+                        }
+                        child.setStackCount(count)
+                        if (child.getStackCount() != 0) {
+                            val indexInCardsList =
+                                (child.getCurrentLayer() - 1) * (size * size) + cardPos
+                            child.setIsCleaning(
+                                !cardsList[indexInCardsList].question?.alreadyAnswered.isNullOrEmpty()
+                                        && !cardsList[indexInCardsList].cleared
+                            )
+                            //todo check!
+//                            if (cardsList[indexInCardsList].cleared) {
+//                                child.reduceStack()
+//                            }
                         }
                     }
                     layoutCardStack(child, childWidth, childHeight, i)

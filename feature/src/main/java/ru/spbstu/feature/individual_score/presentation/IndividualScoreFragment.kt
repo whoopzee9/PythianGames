@@ -14,6 +14,7 @@ import ru.spbstu.common.extenstions.handleBackPressed
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
 import ru.spbstu.common.utils.DatabaseReferences
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentIndividualScoreBinding
 import ru.spbstu.feature.di.FeatureApi
@@ -52,7 +53,18 @@ class IndividualScoreFragment : BaseFragment<IndividualScoreViewModel>(
         adapter = IndividualScoreAdapter()
         binding.frgIndividualScoreRvPlayers.adapter = adapter
         binding.frgIndividualScoreRvPlayers.addItemDecoration(IndividualScoreItemDecoration())
-        adapter.bindData(viewModel.getPlayersStats())
+        adapter.bindData(viewModel.getPlayersStats().sortedByDescending { stats ->
+            var totalCoins = 0
+            stats.coinsCollected.forEach {
+                totalCoins += GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key)) * it.value
+            }
+            var totalQuestions = 0
+            stats.questionsAnswered.forEach {
+                totalQuestions += GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key)) * it.value
+            }
+
+            totalCoins + totalQuestions
+        })
     }
 
     override fun onDestroyView() {

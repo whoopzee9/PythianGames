@@ -10,6 +10,7 @@ import ru.spbstu.common.di.FeatureUtils
 import ru.spbstu.common.extenstions.handleBackPressed
 import ru.spbstu.common.extenstions.setLightStatusBar
 import ru.spbstu.common.extenstions.setStatusBarColor
+import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.R
 import ru.spbstu.feature.databinding.FragmentTeamScoreBinding
 import ru.spbstu.feature.di.FeatureApi
@@ -39,7 +40,6 @@ class TeamScoreFragment : BaseFragment<TeamScoreViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
-        binding.frgTeamScoreRvTeams.layoutManager = GridLayoutManager(requireContext(), 2)
         setupAdapter()
 
         handleBackPressed { }
@@ -49,7 +49,17 @@ class TeamScoreFragment : BaseFragment<TeamScoreViewModel>(
         adapter = TeamScoreAdapter()
         binding.frgTeamScoreRvTeams.adapter = adapter
         binding.frgTeamScoreRvTeams.addItemDecoration(TeamScoreItemDecoration())
-        adapter.bindData(viewModel.getTeamsStats())
+        adapter.bindData(viewModel.getTeamsStats().sortedByDescending { stats ->
+            var totalCoinsInYellow = 0
+            stats.coinsCollected.forEach {
+                totalCoinsInYellow += GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key)) * it.value
+            }
+            var totalQuestionsInYellow = 0
+            stats.questionsAnswered.forEach {
+                totalQuestionsInYellow += GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key)) * it.value
+            }
+            totalCoinsInYellow + totalQuestionsInYellow
+        })
     }
 
     override fun onDestroyView() {
