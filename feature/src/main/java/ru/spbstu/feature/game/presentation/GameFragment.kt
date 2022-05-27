@@ -1661,7 +1661,7 @@ class GameFragment : BaseFragment<GameViewModel>(
                 }
 
                 if (game.currentPlayerId == viewModel.currentUserId) {
-                    viewModel.setupAndStartDelayTimer(3, onFinishCallback = {
+                    viewModel.setupAndStartDelayTimer(5, onFinishCallback = {
                         val key =
                             (card.layer - 1) * (viewModel.size * viewModel.size) + card.cardNum - 1
                         val newCards = newGame.cards.toMutableList()
