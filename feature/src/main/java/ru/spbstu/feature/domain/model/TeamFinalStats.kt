@@ -1,8 +1,10 @@
 package ru.spbstu.feature.domain.model
 
+import androidx.annotation.Keep
 import ru.spbstu.common.base.BaseModel
 import ru.spbstu.common.model.Team
 
+@Keep
 data class TeamFinalStats(
     override val id: Long = 0,
     val team: Team = Team.Red,

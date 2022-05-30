@@ -12,6 +12,7 @@ import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.common.utils.GameUtils
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.domain.model.PlayerInfo
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
@@ -25,6 +26,17 @@ class CharacterSelectionViewModel(
     private val _state: MutableStateFlow<UIState> = MutableStateFlow(UIState.Initial)
     val state: StateFlow<UIState> = _state
 
+    private val _game: MutableStateFlow<Game> = MutableStateFlow(Game())
+    val game: StateFlow<Game> = _game
+
+    fun setGame(game: Game) {
+        _game.value = game
+    }
+
+    fun openMainFragment() {
+        router.openMainFragment()
+    }
+
     fun setCharacter(resId: Int, name: String) {
         _state.value = UIState.Progress
         val database = Firebase.database
@@ -34,23 +46,33 @@ class CharacterSelectionViewModel(
                 val generic = object : GenericTypeIndicator<HashMap<String, PlayerInfo>>() {}
                 val players = snapshot.getValue(generic)
                 val team = gameJoiningDataWrapper.playerInfo.teamStr
-                val readyCount = players?.count { it.value.teamStr == team && it.value.readyFlag } ?: 0
+                val readyTeammates = players?.filter { it.value.teamStr == team && it.value.readyFlag }?.values?.sortedBy { it.playerNum } ?: listOf()
+                var readyCount = 1
+                kotlin.run {
+                    readyTeammates.forEach {
+                        if (it.playerNum != readyCount) {
+                            return@run
+                        }
+                        readyCount++
+                    }
+                }
+                //val readyCount = players?.count { it.value.teamStr == team && it.value.readyFlag } ?: 0
 
                 val startPos = GameUtils.getPlayerStartPosition(
                     gameJoiningDataWrapper.game.numOfTeams,
                     gameJoiningDataWrapper.game.numOfPlayers,
                     team,
-                    readyCount + 1
+                    readyCount //+ 1
                 )
                 val orderNum = GameUtils.getPlayerOrderNumber(
                     gameJoiningDataWrapper.game.numOfTeams,
                     gameJoiningDataWrapper.game.numOfPlayers,
                     team,
-                    readyCount + 1
+                    readyCount //+ 1
                 )
                 val currPlayer = gameJoiningDataWrapper.playerInfo.copy(
                     iconRes = resId,
-                    playerNum = readyCount + 1,
+                    playerNum = readyCount /*+ 1*/,
                     name = name,
                     readyFlag = true,
                     position = startPos,
@@ -85,6 +107,20 @@ class CharacterSelectionViewModel(
             .child("teamStr")
             .setValue("")
         router.back()
+    }
+
+    fun exit() {
+        val database = Firebase.database
+        val ref = database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(Firebase.auth.currentUser?.uid ?: "")
+            .removeValue()
+
+        ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
+            .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
+
+        router.openMainFragment()
     }
 
     sealed class UIState {

@@ -15,4 +15,5 @@ interface FeatureRouter : BaseBackRouter {
     fun openTeamDisplayFragment()
     fun openGameFragment()
     fun openFinalScoresFragment()
+    fun openCreditsFragment()
 }

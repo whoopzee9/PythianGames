@@ -1,5 +1,8 @@
 package ru.spbstu.feature.domain.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class WheelBet(
     val playerId: String = "",
     val type: WheelBetType = WheelBetType.WhiteBean,

@@ -2,8 +2,10 @@ package ru.spbstu.common.model
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.Keep
 import ru.spbstu.common.R
 
+@Keep
 data class Player(
     val id: String = "",
     @DrawableRes val iconRes: Int = R.drawable.character_1,
@@ -16,22 +18,26 @@ data class Player(
     val state: PlayerState = PlayerState()
 )
 
+@Keep
 data class Position(
     val x: Int = 0,
     val y: Int = 0
 )
 
+@Keep
 data class PlayerState(
     val skippingTurn: Boolean = false,
     val amountLeft: Int = 0,
     val type: PlayerStateType? = null
 )
 
+@Keep
 enum class PlayerStateType {
     ToolLoss,
     Cavern
 }
 
+@Keep
 sealed class Team(@ColorRes val colorRes: Int) {
     object Red : Team(R.color.color_team_red)
     object Orange : Team(R.color.color_team_orange)

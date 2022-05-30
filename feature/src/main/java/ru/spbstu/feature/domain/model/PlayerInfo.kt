@@ -1,11 +1,13 @@
 package ru.spbstu.feature.domain.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.Keep
 import ru.spbstu.common.model.Player
 import ru.spbstu.common.model.PlayerState
 import ru.spbstu.common.model.Position
 import ru.spbstu.common.utils.TeamsConstants
 
+@Keep
 data class PlayerInfo(
     val id: String = "",
     @DrawableRes val iconRes: Int = 0,

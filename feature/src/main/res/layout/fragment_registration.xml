@@ -1,112 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:overScrollMode="never"
-    android:scrollbars="none">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ImageButton
+        android:id="@+id/frg_registration__ib_back"
+        android:padding="@dimen/dp_12"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
-        <ProgressBar
-            android:id="@+id/frg_registration__pb_progress"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="@dimen/dp_10"
-            android:indeterminateTint="@color/button_tint_primary"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/frg_registration__iv_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_logo_135"
-            app:layout_constraintBottom_toTopOf="@id/frg_registration__et_email_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/frg_registration__et_email_layout"
-            style="@style/TextInputLayout.InputForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_16"
-            android:hint="@string/email"
-            app:helperText=" "
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/frg_registration__et_email"
-                style="@style/EditText.InputForm"
+            <ProgressBar
+                android:id="@+id/frg_registration__pb_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:textSize="@dimen/sp_14" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:elevation="@dimen/dp_10"
+                android:indeterminateTint="@color/button_tint_primary"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/frg_registration__et_password_layout"
-            style="@style/TextInputLayout.InputForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_16"
-            android:hint="@string/password"
-            app:helperText=" "
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_registration__et_email_layout">
+            <ImageView
+                android:id="@+id/frg_registration__iv_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_logo_135"
+                app:layout_constraintBottom_toTopOf="@id/frg_registration__et_email_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/frg_registration__et_password"
-                style="@style/EditText.InputForm"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/frg_registration__et_email_layout"
+                style="@style/TextInputLayout.InputForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:textSize="@dimen/sp_14" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="@dimen/dp_16"
+                android:hint="@string/email"
+                app:helperText=" "
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/frg_registration__et_repeat_password_layout"
-            style="@style/TextInputLayout.InputForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_16"
-            android:hint="@string/repeat_password"
-            app:helperText=" "
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_registration__et_password_layout">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/frg_registration__et_email"
+                    style="@style/EditText.InputForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:textSize="@dimen/sp_14" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/frg_registration__et_repeat_password"
-                style="@style/EditText.InputForm"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/frg_registration__et_password_layout"
+                style="@style/TextInputLayout.InputForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:textSize="@dimen/sp_14" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="@dimen/dp_16"
+                android:hint="@string/password"
+                app:helperText=" "
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_registration__et_email_layout">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/frg_registration__mb_registration"
-            style="@style/MaterialButton.Default"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_16"
-            android:layout_marginTop="@dimen/dp_16"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:text="@string/register"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/frg_registration__et_repeat_password_layout" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/frg_registration__et_password"
+                    style="@style/EditText.InputForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/sp_14" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/frg_registration__et_repeat_password_layout"
+                style="@style/TextInputLayout.InputForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_16"
+                android:hint="@string/repeat_password"
+                app:helperText=" "
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_registration__et_password_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/frg_registration__et_repeat_password"
+                    style="@style/EditText.InputForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/sp_14" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/frg_registration__mb_registration"
+                style="@style/MaterialButton.Default"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_16"
+                android:layout_marginTop="@dimen/dp_16"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:text="@string/register"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_registration__et_repeat_password_layout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

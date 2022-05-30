@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -19,6 +20,9 @@ class TeamsDisplayViewModel(
     private val _timerData: MutableStateFlow<Long> =
         MutableStateFlow(1000L * 6)
     val timerData: StateFlow<Long> get() = _timerData
+
+    private val _game: MutableStateFlow<Game> = MutableStateFlow(Game())
+    val game: StateFlow<Game> = _game
 
     val startGameTimer: CountDownTimer = object : CountDownTimer(1000L * 6, 1000L) {
         override fun onTick(millisUntilFinished: Long) {
@@ -44,6 +48,38 @@ class TeamsDisplayViewModel(
                     Timber.tag(TAG).e(it.exception)
                 }
             }
+    }
+
+    fun openMainFragment() {
+        router.openMainFragment()
+    }
+
+    fun setGame(game: Game) {
+        _game.value = game
+    }
+
+    fun exit() {
+        startGameTimer.cancel()
+        val database = Firebase.database
+        val ref = database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(gameJoiningDataWrapper.game.name)
+            .child("players")
+            .child(Firebase.auth.currentUser?.uid ?: "")
+            .removeValue()
+
+        ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
+            .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
+
+        //todo clear user last game
+        router.openMainFragment()
+    }
+
+    fun deleteRoom() {
+        val database = Firebase.database
+        val ref = database.getReference(DatabaseReferences.GAMES_REF)
+        ref.child(gameJoiningDataWrapper.game.name)
+            .removeValue()
+        router.openMainFragment()
     }
 
     companion object {

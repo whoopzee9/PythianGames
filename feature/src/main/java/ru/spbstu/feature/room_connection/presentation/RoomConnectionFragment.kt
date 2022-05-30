@@ -50,7 +50,7 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
                     binding.frgRoomConnectionMbNext.setText(R.string.create)
                     binding.frgRoomConnectionSpPlayers.visibility = View.VISIBLE
                     binding.frgRoomConnectionMbNext.setDebounceClickListener {
-                        checkFields { name, code ->
+                        checkFields { name ->
                             val selectedPosition = binding.frgRoomConnectionSpPlayers.selectedItemPosition
                             var numOfTeams = 0
                             var numOfPlayers = 0
@@ -81,16 +81,17 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
                                 }
                                 else -> throw IllegalStateException("Wrong selected position")
                             }
-                            viewModel.createRoom(name, code, numOfTeams, numOfPlayers)
+                            viewModel.createRoom(name, numOfTeams, numOfPlayers)
                         }
                     }
                 }
                 RoomMode.Join -> {
                     binding.frgRoomConnectionMbNext.setText(R.string.join)
+                    binding.frgRoomConnectionEtNameLayout.setHint(R.string.room_name)
                     binding.frgRoomConnectionSpPlayers.visibility = View.GONE
                     binding.frgRoomConnectionMbNext.setDebounceClickListener {
-                        checkFields { name, code ->
-                            viewModel.joinRoom(name, code)
+                        joinCheckFields { name ->
+                            viewModel.joinRoom(name)
                         }
                     }
                 }
@@ -151,19 +152,36 @@ class RoomConnectionFragment : BaseFragment<RoomConnectionViewModel>(
         binding.frgRoomConnectionMbNext.isClickable = isClickable
     }
 
-    private fun checkFields(onCheck: (name: String, code: String) -> Unit) {
-        val name = binding.frgRoomConnectionEtName.text.toString()
+    private fun checkFields(onCheck: (name: String) -> Unit) {
+        var name = binding.frgRoomConnectionEtName.text.toString()
+        if (name.isEmpty()) {
+//            binding.frgRoomConnectionEtNameLayout.error = getString(R.string.enter_room_name)
+//            return
+            name = getRandomString(6)
+        }
+
+//        val code = binding.frgRoomConnectionEtAccessCode.text.toString()
+//        if (code.isEmpty()) {
+//            binding.frgRoomConnectionEtAccessCodeLayout.error = getString(R.string.enter_code)
+//            return
+//        }
+        onCheck(name)
+    }
+
+    fun joinCheckFields(onCheck: (name: String) -> Unit) {
+        var name = binding.frgRoomConnectionEtName.text.toString()
         if (name.isEmpty()) {
             binding.frgRoomConnectionEtNameLayout.error = getString(R.string.enter_room_name)
             return
         }
+        onCheck(name)
+    }
 
-        val code = binding.frgRoomConnectionEtAccessCode.text.toString()
-        if (code.isEmpty()) {
-            binding.frgRoomConnectionEtAccessCodeLayout.error = getString(R.string.enter_code)
-            return
-        }
-        onCheck(name, code)
+    fun getRandomString(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') //+ ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 
     override fun inject() {

@@ -46,6 +46,10 @@ class MainFragment : BaseFragment<MainViewModel>(
         binding.frgMainMbReturnToGame.setDebounceClickListener {
             viewModel.openGameFragment()
         }
+
+        binding.frgMainMbCredits.setDebounceClickListener {
+            viewModel.openCreditsFragment()
+        }
     }
 
     override fun inject() {

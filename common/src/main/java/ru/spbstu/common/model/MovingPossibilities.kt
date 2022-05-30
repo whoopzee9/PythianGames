@@ -1,5 +1,8 @@
 package ru.spbstu.common.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class MovingPossibilities(
     val canDig: Boolean = false,
     val isCleaning: Boolean = false,

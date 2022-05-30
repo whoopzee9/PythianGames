@@ -54,6 +54,9 @@ class Navigator : FeatureRouter {
             R.id.loginFragment -> navController?.navigate(R.id.action_loginFragment_to_mainFragment)
             R.id.registrationFragment -> navController?.navigate(R.id.action_registrationFragment_to_mainFragment)
             R.id.finalScoresFragment -> navController?.navigate(R.id.action_finalScoresFragment_to_mainFragment)
+            R.id.teamSelectionFragment -> navController?.navigate(R.id.action_teamSelectionFragment_to_mainFragment)
+            R.id.characterSelectionFragment -> navController?.navigate(R.id.action_characterSelectionFragment_to_mainFragment)
+            R.id.teamsDisplayFragment -> navController?.navigate(R.id.action_teamsDisplayFragment_to_mainFragment)
         }
     }
 
@@ -94,6 +97,12 @@ class Navigator : FeatureRouter {
     override fun openFinalScoresFragment() {
         when (navController?.currentDestination?.id) {
             R.id.gameFragment -> navController?.navigate(R.id.action_gameFragment_to_finalScoresFragment)
+        }
+    }
+
+    override fun openCreditsFragment() {
+        when (navController?.currentDestination?.id) {
+            R.id.mainFragment -> navController?.navigate(R.id.action_mainFragment_to_creditsFragment)
         }
     }
 

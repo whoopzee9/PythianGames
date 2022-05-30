@@ -40,6 +40,9 @@ class LoginFragment : BaseFragment<LoginViewModel>(
         binding.frgLoginEtPassword.addTextChangedListener {
             binding.frgLoginEtPasswordLayout.error = null
         }
+        binding.frgLoginIbBack.setDebounceClickListener {
+            viewModel.back()
+        }
     }
 
     override fun subscribe() {

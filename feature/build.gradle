@@ -79,4 +79,5 @@ dependencies {
     implementation platform(firebaseBomDep)
     implementation firebaseAuthDep
     implementation firebaseDatabaseDep
+    implementation firebaseDynamicLinksDep
 }

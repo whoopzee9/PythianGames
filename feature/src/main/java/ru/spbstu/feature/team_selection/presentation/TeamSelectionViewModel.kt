@@ -5,9 +5,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
+import ru.spbstu.feature.domain.model.Game
 import ru.spbstu.feature.utils.GameJoiningDataWrapper
 import timber.log.Timber
 
@@ -18,9 +20,16 @@ class TeamSelectionViewModel(
     private val _state: MutableStateFlow<UIState> = MutableStateFlow(UIState.Initial)
     val state: StateFlow<UIState> = _state
 
+    private val _game: MutableStateFlow<Game> = MutableStateFlow(Game())
+    val game: StateFlow<Game> = _game
+
     fun setTeam(teamStr: String) {
         gameJoiningDataWrapper.playerInfo =
             gameJoiningDataWrapper.playerInfo.copy(teamStr = teamStr)
+    }
+
+    fun setGame(game: Game) {
+        _game.value = game
     }
 
     fun saveTeam() {
@@ -50,7 +59,15 @@ class TeamSelectionViewModel(
             .child("players")
             .child(Firebase.auth.currentUser?.uid ?: "")
             .removeValue()
+
+        ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
+            .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
+
         router.back()
+    }
+
+    fun openMainFragment() {
+        router.openMainFragment()
     }
 
     sealed class UIState {

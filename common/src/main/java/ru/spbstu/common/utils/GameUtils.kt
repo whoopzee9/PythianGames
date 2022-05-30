@@ -90,7 +90,7 @@ object GameUtils {
                     2 -> when (teamStr) {
                         TeamsConstants.GREEN_TEAM -> when (playerNum) {
                             1 -> return Position(0, 0)
-                            2 -> return Position(0, 0)
+                            2 -> return Position(2, 2)
                         }
                         TeamsConstants.BLUE_TEAM -> when (playerNum) {
                             1 -> return Position(2, 0)

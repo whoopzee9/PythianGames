@@ -76,6 +76,17 @@
         app:iconGravity="end"
         app:iconPadding="@dimen/dp_12"
         app:iconTint="@color/text_color_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/frg_main__mb_credits"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frg_main__mb_credits"
+        style="@style/MaterialButton.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/authors"
+        android:textSize="@dimen/sp_14"
         android:layout_marginBottom="@dimen/dp_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

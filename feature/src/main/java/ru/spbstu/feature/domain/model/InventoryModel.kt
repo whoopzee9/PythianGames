@@ -1,8 +1,10 @@
 package ru.spbstu.feature.domain.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.Keep
 import ru.spbstu.common.base.BaseModel
 
+@Keep
 data class InventoryModel(
     override val id: Long = 0,
     val name: String = "",

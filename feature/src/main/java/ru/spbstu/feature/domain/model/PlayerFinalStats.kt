@@ -1,9 +1,11 @@
 package ru.spbstu.feature.domain.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.Keep
 import ru.spbstu.common.base.BaseModel
 import ru.spbstu.common.model.Team
 
+@Keep
 data class PlayerFinalStats(
     val playerId: String = "",
     override val id: Long = playerId.hashCode().toLong(),

@@ -1,7 +1,9 @@
 package ru.spbstu.feature.domain.model
 
+import androidx.annotation.Keep
 import ru.spbstu.common.base.BaseModel
 
+@Keep
 data class TeamStatistics(
     override val id: Long = 0,
     val team: String = "",

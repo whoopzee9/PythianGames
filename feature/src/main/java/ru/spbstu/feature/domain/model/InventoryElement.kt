@@ -1,7 +1,9 @@
 package ru.spbstu.feature.domain.model
 
+import androidx.annotation.Keep
 import ru.spbstu.feature.R
 
+@Keep
 data class InventoryElement(
     val name: String = "",
     val amount: Int = 0

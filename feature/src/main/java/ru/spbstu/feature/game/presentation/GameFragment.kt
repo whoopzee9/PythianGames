@@ -625,7 +625,7 @@ class GameFragment : BaseFragment<GameViewModel>(
 
     override fun onDestroyView() {
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        listener?.let { ref.removeEventListener(it) }
+        listener?.let { ref.child(viewModel.gameJoiningDataWrapper.game.name).removeEventListener(it) }
         //_binding = null
         super.onDestroyView()
     }

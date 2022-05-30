@@ -100,6 +100,13 @@
             app:exitAnim="@anim/close_fragment_slide_left"
             app:popEnterAnim="@anim/open_fragment_slide_left"
             app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_creditsFragment"
+            app:destination="@id/creditsFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
     </fragment>
 
     <fragment
@@ -128,6 +135,15 @@
             app:exitAnim="@anim/close_fragment_slide_left"
             app:popEnterAnim="@anim/open_fragment_slide_left"
             app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_teamSelectionFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/teamSelectionFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -142,6 +158,15 @@
             app:exitAnim="@anim/close_fragment_slide_left"
             app:popEnterAnim="@anim/open_fragment_slide_left"
             app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_characterSelectionFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/characterSelectionFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -156,6 +181,15 @@
             app:exitAnim="@anim/close_fragment_slide_left"
             app:popEnterAnim="@anim/open_fragment_slide_left"
             app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_teamsDisplayFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/teamsDisplayFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -186,5 +220,12 @@
             app:popExitAnim="@anim/close_fragment_slide_right"
             app:popUpTo="@id/finalScoresFragment"
             app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/creditsFragment"
+        android:name="ru.spbstu.feature.credits.presentation.CreditsFragment"
+        android:label="CreditsFragment"
+        tools:layout="@layout/fragment_credits" >
     </fragment>
 </navigation>

@@ -48,6 +48,10 @@ class MainViewModel(val router: FeatureRouter, val gameJoiningDataWrapper: GameJ
         router.openGameFragment()
     }
 
+    fun openCreditsFragment() {
+        router.openCreditsFragment()
+    }
+
     companion object {
         private val TAG = MainViewModel::class.simpleName
     }

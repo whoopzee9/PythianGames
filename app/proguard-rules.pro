@@ -20,3 +20,13 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keepclassmembers class * { public <init>(...); }
+-keep class com.google.crypto.** { *; }
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes SourceFile,LineNumberTable
+-keep class com.google.firebase.** { *; }
+-keepclassmembers class ru.spbstu.feature.domain.model.** { *; }

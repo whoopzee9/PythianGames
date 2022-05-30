@@ -92,4 +92,5 @@ dependencies {
     implementation firebaseCrashlyticsDep
     implementation firebaseAuthDep
     implementation firebaseDatabaseDep
+    implementation firebaseDynamicLinksDep
 }

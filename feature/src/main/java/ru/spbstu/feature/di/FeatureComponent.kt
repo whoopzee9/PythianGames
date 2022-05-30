@@ -7,6 +7,7 @@ import ru.spbstu.common.di.scope.FeatureScope
 import ru.spbstu.feature.FeatureRouter
 import ru.spbstu.feature.auth.di.AuthComponent
 import ru.spbstu.feature.character_selection.di.CharacterSelectionComponent
+import ru.spbstu.feature.credits.di.CreditsComponent
 import ru.spbstu.feature.final_scores.di.FinalScoresComponent
 import ru.spbstu.feature.game.di.GameComponent
 import ru.spbstu.feature.individual_score.di.IndividualScoreComponent
@@ -46,6 +47,7 @@ interface FeatureComponent {
     fun individualScoreComponentFactory(): IndividualScoreComponent.Factory
     fun teamScoreComponentFactory(): TeamScoreComponent.Factory
     fun finalScoresComponentFactory(): FinalScoresComponent.Factory
+    fun creditsComponentFactory(): CreditsComponent.Factory
 
     @Component.Factory
     interface Factory {

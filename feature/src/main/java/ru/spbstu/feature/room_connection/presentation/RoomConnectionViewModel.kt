@@ -1,5 +1,6 @@
 package ru.spbstu.feature.room_connection.presentation
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
@@ -29,10 +30,11 @@ class RoomConnectionViewModel(
     private val _state: MutableStateFlow<UIState> = MutableStateFlow(UIState.Initial)
     val state: StateFlow<UIState> = _state
 
-    fun createRoom(name: String, code: String, numOfTeams: Int, numOfPlayers: Int) {
+    fun createRoom(name: String, numOfTeams: Int, numOfPlayers: Int) {
         _state.value = UIState.Progress
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
+
         ref.child(name).readValue(onSuccess = { snapshot ->
             if (snapshot.exists()) {
                 _state.value = UIState.GameAlreadyExists
@@ -56,10 +58,10 @@ class RoomConnectionViewModel(
                 setupLayers(boardSize) { cards ->
                     val game = Game(
                         name = name,
-                        code = code,
                         numOfTeams = numOfTeams,
                         numOfPlayers = numOfPlayers,
                         numOfPlayersJoined = 1,
+                        creatorId = id,
                         players = hashMapOf(id to PlayerInfo(id = id)),
                         cards = cards,
                         inventoryPool = inventory,
@@ -124,14 +126,14 @@ class RoomConnectionViewModel(
         })
     }
 
-    fun joinRoom(name: String, code: String) {
+    fun joinRoom(name: String) {
         _state.value = UIState.Progress
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
         ref.child(name).readValue(onSuccess = { snapshot ->
             if (snapshot.exists()) {
                 val game = snapshot.getValue(Game::class.java)
-                if (game?.code == code) {
+                if (game != null) { //game?.code == code
                     if (game.numOfPlayersJoined < game.numOfPlayers) {
                         ref.child(name).child("numOfPlayersJoined")
                             .setValue(game.numOfPlayersJoined + 1)

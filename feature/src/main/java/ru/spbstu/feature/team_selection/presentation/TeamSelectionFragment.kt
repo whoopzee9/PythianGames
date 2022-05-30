@@ -1,9 +1,11 @@
 package ru.spbstu.feature.team_selection.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
@@ -96,6 +98,18 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
         binding.frgTeamSelectionMbRedTeam.isCheckable = true
         binding.frgTeamSelectionMbOrangeTeam.isCheckable = true
 
+        binding.frgTeamSelectionIbExit.setDebounceClickListener {
+            viewModel.onBack()
+        }
+
+        binding.frgTeamSelectionIbShare.setDebounceClickListener {
+            val intent = Intent(Intent.ACTION_SEND)
+            val shareBody = getString(R.string.share_body, viewModel.game.value.name)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, shareBody)
+            startActivity(Intent.createChooser(intent, getString(R.string.share_using)))
+        }
+
         handleBackPressed {
             viewModel.onBack()
         }
@@ -111,7 +125,7 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
 
     override fun onDestroyView() {
         val ref = Firebase.database.getReference(DatabaseReferences.GAMES_REF)
-        listener?.let { ref.removeEventListener(it) }
+        listener?.let { ref.child(viewModel.gameJoiningDataWrapper.game.name).removeEventListener(it) }
         //_binding = null
         super.onDestroyView()
     }
@@ -119,6 +133,7 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
     private fun handleGameSnapshotData(snapshot: DataSnapshot) {
         val game = snapshot.getValue(Game::class.java)
         if (game != null) {
+            viewModel.setGame(game)
             listOf(
                 binding.frgTeamSelectionMbGreenTeam,
                 binding.frgTeamSelectionMbBlueTeam,
@@ -147,6 +162,9 @@ class TeamSelectionFragment : BaseFragment<TeamSelectionViewModel>(
             if (game.numOfTeams > 3 && game.players.filter { it.value.teamStr == TeamsConstants.ORANGE_TEAM }.size >= playersPerTeam) {
                 binding.frgTeamSelectionMbOrangeTeam.setDisabledStyle()
             }
+        } else {
+            Toast.makeText(requireContext(), R.string.game_deleted, Toast.LENGTH_SHORT).show()
+            viewModel.openMainFragment()
         }
     }
 

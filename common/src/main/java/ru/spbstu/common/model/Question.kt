@@ -1,5 +1,8 @@
 package ru.spbstu.common.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class Question(
     val id: String = "",
     val answer1: String = "",

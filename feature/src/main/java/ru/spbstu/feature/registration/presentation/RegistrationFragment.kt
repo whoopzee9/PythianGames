@@ -46,6 +46,9 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
             binding.frgRegistrationEtRepeatPasswordLayout.error = null
             //binding.frgRegistrationEtEmailLayout.isErrorEnabled = false
         }
+        binding.frgRegistrationIbBack.setDebounceClickListener {
+            viewModel.back()
+        }
     }
 
     override fun subscribe() {

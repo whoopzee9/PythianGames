@@ -13,7 +13,7 @@
     <string name="onboarding_artifacts_title">СОБИРАЙ\nАРТЕФАКТЫ</string>
     <string name="onboarding_artifacts_description">Получи зачёт по философии в форме захватывающего соревнования</string>
     <string name="onboarding_teamup_title">РАБОТАЙ\nВ КОМАНДЕ</string>
-    <string name="onboarding_teamup_description">Играй индивидуально или объединяйся с товарищами, чтобы одолеть оппонентов</string>
+    <string name="onboarding_teamup_description">Объединяйся с товарищами, чтобы одолеть оппонентов</string>
     <string name="login">Вход</string>
     <string name="registration">Регистрация</string>
     <string name="email">email</string>
@@ -29,6 +29,7 @@
     <string name="join">Присоединиться</string>
     <string name="tutorial">Обучение</string>
     <string name="room_name">название</string>
+    <string name="room_name_optional">название (не обязательно)</string>
     <string name="access_code">код доступа</string>
     <string name="enter_room_name">введите название</string>
     <string name="enter_code">введите код</string>
@@ -117,6 +118,12 @@
     <string name="end_game">Раскопки окончены! Конец игры!\n\nЯ выкуплю у всех кости Пифона.\n\nОтображение итоговой статистики через %d</string>
     <string name="quit_game">Завершить игру</string>
     <string name="return_to_game">Вернуться к игре</string>
+    <string name="authors">Об авторах</string>
+    <string name="share_using">Поделиться с помощью</string>
+    <string name="share_body">Игра \"Пифийские игры\":\nкод для входа: %s</string>
+    <string name="delete_room">Удалить комнату</string>
+    <string name="game_deleted">Игра была удалена!</string>
+    <string name="delete_confirmation">Вы действительно хотите\nудалить комнату?</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>
