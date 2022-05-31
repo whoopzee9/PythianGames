@@ -316,7 +316,15 @@ class GameViewModel(
                     updateGame(newGame, onSuccess)
                 }
             } else {
-                setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
+                val newGame = game.value.copy(
+                    gameState = GameState(type = GameStateTypes.MorganTurn, param1 = false)
+                )
+                sortedPlayers.forEach {
+                    newGame.players[it.id] = it
+                }
+                if (game.value.currentPlayerId == currentUserId) {
+                    updateGame(newGame, onSuccess)
+                }
             }
 
         } else {
@@ -356,7 +364,13 @@ class GameViewModel(
                     }
 
                 } else {
-                    setGameState(GameState(type = GameStateTypes.MorganTurn, param1 = false))
+                    val newGame = game.value.copy(gameState = GameState(type = GameStateTypes.MorganTurn, param1 = false))
+                    sortedPlayers.forEach {
+                        newGame.players[it.id] = it
+                    }
+                    if (game.value.currentPlayerId == currentUserId) {
+                        updateGame(newGame, onSuccess)
+                    }
                 }
             }
         }

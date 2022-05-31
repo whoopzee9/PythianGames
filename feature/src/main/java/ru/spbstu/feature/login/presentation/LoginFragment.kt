@@ -1,5 +1,6 @@
 package ru.spbstu.feature.login.presentation
 
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
@@ -41,6 +42,7 @@ class LoginFragment : BaseFragment<LoginViewModel>(
             binding.frgLoginEtPasswordLayout.error = null
         }
         binding.frgLoginIbBack.setDebounceClickListener {
+            Log.d("qwerty", "clicked")
             viewModel.back()
         }
     }

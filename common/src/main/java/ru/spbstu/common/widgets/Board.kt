@@ -487,16 +487,17 @@ class Board @JvmOverloads constructor(
             return
         }
         val player = currPlayer
+        child.visibility = View.GONE
         if (child.getDirection() != selectedMovingDirection) {
             child.resetHighlighted()
         }
         if (player != null && player.id == activeTurnPlayer?.id) {
             val curLeft: Int
             val curTop: Int
-            child.visibility = View.VISIBLE
             when (child.getDirection()) {
                 BoardArrow.Direction.Up -> {
                     if (player.position.y > 0) {
+                        child.visibility = View.VISIBLE
                         val arrowShift = 0.3f
                         curLeft =
                             width / 2 + context.dpToPx(-(player.position.y - arrowShift + 0.2f) * dx + player.position.x * dx)
@@ -529,6 +530,7 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Down -> {
                     if (player.position.y < size - 1) {
+                        child.visibility = View.VISIBLE
                         val arrowShift = 1.2f
                         curLeft =
                             width / 2 + context.dpToPx(-(player.position.y + arrowShift) * dx + player.position.x * dx)
@@ -560,6 +562,7 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Left -> {
                     if (player.position.x > 0) {
+                        child.visibility = View.VISIBLE
                         val arrowShift = 1.3f
                         curLeft =
                             width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x - arrowShift) * dx)
@@ -591,6 +594,7 @@ class Board @JvmOverloads constructor(
                 }
                 BoardArrow.Direction.Right -> {
                     if (player.position.x < size - 1) {
+                        child.visibility = View.VISIBLE
                         curLeft =
                             width / 2 + context.dpToPx(-player.position.y * dx + (player.position.x + 0.0f) * dx)
                                 .toInt()

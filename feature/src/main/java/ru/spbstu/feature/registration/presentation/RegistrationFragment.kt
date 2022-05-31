@@ -1,5 +1,6 @@
 package ru.spbstu.feature.registration.presentation
 
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
@@ -47,6 +48,7 @@ class RegistrationFragment : BaseFragment<RegistrationViewModel>(
             //binding.frgRegistrationEtEmailLayout.isErrorEnabled = false
         }
         binding.frgRegistrationIbBack.setDebounceClickListener {
+            Log.d("qwerty", "click")
             viewModel.back()
         }
     }
