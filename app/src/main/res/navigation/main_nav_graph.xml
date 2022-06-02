@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <action
+        android:id="@+id/open_auth_fragment"
+        app:destination="@id/authFragment"
+        app:enterAnim="@anim/open_fragment_slide_right"
+        app:exitAnim="@anim/close_fragment_slide_left"
+        app:popEnterAnim="@anim/open_fragment_slide_left"
+        app:popExitAnim="@anim/close_fragment_slide_right"
+        app:popUpTo="@id/main_nav_graph"
+        app:popUpToInclusive="true"/>
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="ru.spbstu.feature.onboarding.presentation.OnboardingFragment"
+        android:label="OnboardingFragment"
+        tools:layout="@layout/fragment_onboarding" />
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="ru.spbstu.feature.auth.presentation.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/fragment_auth" >
+        <action
+            android:id="@+id/action_authFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_authFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_authFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="ru.spbstu.feature.registration.presentation.RegistrationFragment"
+        android:label="RegistrationFragment"
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_registrationFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/registrationFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="ru.spbstu.feature.login.presentation.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="ru.spbstu.feature.main.presentation.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_roomConnectionFragment"
+            app:destination="@id/roomConnectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_creditsFragment"
+            app:destination="@id/creditsFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_mainFragment_to_teamSelectionFragment"
+            app:destination="@id/teamSelectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/roomConnectionFragment"
+        android:name="ru.spbstu.feature.room_connection.presentation.RoomConnectionFragment"
+        android:label="RoomConnectionFragment"
+        tools:layout="@layout/fragment_room_connection" >
+        <action
+            android:id="@+id/action_roomConnectionFragment_to_teamSelectionFragment"
+            app:destination="@id/teamSelectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/teamSelectionFragment"
+        android:name="ru.spbstu.feature.team_selection.presentation.TeamSelectionFragment"
+        android:label="TeamSelectionFragment"
+        tools:layout="@layout/fragment_team_selection" >
+        <action
+            android:id="@+id/action_teamSelectionFragment_to_characterSelectionFragment"
+            app:destination="@id/characterSelectionFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_teamSelectionFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/teamSelectionFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/characterSelectionFragment"
+        android:name="ru.spbstu.feature.character_selection.presentation.CharacterSelectionFragment"
+        android:label="CharacterSelectionFragment"
+        tools:layout="@layout/fragment_character_selection" >
+        <action
+            android:id="@+id/action_characterSelectionFragment_to_teamsDisplayFragment"
+            app:destination="@id/teamsDisplayFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_characterSelectionFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/characterSelectionFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/teamsDisplayFragment"
+        android:name="ru.spbstu.feature.teams_display.presentation.TeamsDisplayFragment"
+        android:label="TeamsDisplayFragment"
+        tools:layout="@layout/fragment_teams_display" >
+        <action
+            android:id="@+id/action_teamsDisplayFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+        <action
+            android:id="@+id/action_teamsDisplayFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/teamsDisplayFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="ru.spbstu.feature.game.presentation.GameFragment"
+        android:label="GameFragment"
+        tools:layout="@layout/fragment_game" >
+        <action
+            android:id="@+id/action_gameFragment_to_finalScoresFragment"
+            app:destination="@id/finalScoresFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/finalScoresFragment"
+        android:name="ru.spbstu.feature.final_scores.presentation.FinalScoresFragment"
+        android:label="FinalScoresFragment"
+        tools:layout="@layout/fragment_final_scores" >
+        <action
+            android:id="@+id/action_finalScoresFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/open_fragment_slide_right"
+            app:exitAnim="@anim/close_fragment_slide_left"
+            app:popEnterAnim="@anim/open_fragment_slide_left"
+            app:popExitAnim="@anim/close_fragment_slide_right"
+            app:popUpTo="@id/finalScoresFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/creditsFragment"
+        android:name="ru.spbstu.feature.credits.presentation.CreditsFragment"
+        android:label="CreditsFragment"
+        tools:layout="@layout/fragment_credits" >
+    </fragment>
+</navigation>

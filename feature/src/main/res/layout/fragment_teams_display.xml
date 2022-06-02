@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ru.spbstu.common.widgets.FlatBoard
+        android:id="@+id/frg_teams_display__board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dp_40"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/frg_teams_display__tv_teams_display"
+        style="@style/TextView.H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_40"
+        android:text="@string/teams_placement"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/frg_teams_display__tv_waiting_for_players"
+        style="@style/TextView.H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_40"
+        android:text="@string/waiting_for_players"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_teams_display__board" />
+
+    <ImageButton
+        android:id="@+id/frg_teams_display__ib_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_log_out_24"
+        app:layout_constraintBottom_toBottomOf="@id/frg_teams_display__tv_teams_display"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frg_teams_display__tv_teams_display" />
+
+    <ImageButton
+        android:id="@+id/frg_teams_display__ib_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_16"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_share_24"
+        app:layout_constraintBottom_toBottomOf="@id/frg_teams_display__tv_teams_display"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frg_teams_display__tv_teams_display" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frg_teams_display__mb_delete"
+        style="@style/MaterialButton.Default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_16"
+        app:layout_constraintVertical_bias="1"
+        android:text="@string/delete_room"
+        android:backgroundTint="@color/color_layer_red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_teams_display__tv_waiting_for_players"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

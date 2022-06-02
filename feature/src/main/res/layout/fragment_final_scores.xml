@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/frg_final_scores__view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/frg_final_scores__view_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/frg_final_scores__view_1"
+        android:layout_width="@dimen/dp_14"
+        android:layout_height="@dimen/dp_14"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:background="@drawable/background_dot"
+        app:layout_constraintBottom_toTopOf="@id/frg_final_scores__mb_quit"
+        app:layout_constraintEnd_toStartOf="@id/frg_final_scores__middle_view" />
+
+    <View
+        android:id="@+id/frg_final_scores__view_2"
+        android:layout_width="@dimen/dp_14"
+        android:layout_height="@dimen/dp_14"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:background="@drawable/background_dot"
+        app:layout_constraintBottom_toTopOf="@id/frg_final_scores__mb_quit"
+        app:layout_constraintStart_toEndOf="@id/frg_final_scores__middle_view" />
+
+    <View
+        android:id="@+id/frg_final_scores__middle_view"
+        android:layout_width="@dimen/dp_1"
+        android:layout_height="@dimen/dp_1"
+        app:layout_constraintBottom_toTopOf="@id/frg_final_scores__mb_quit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frg_final_scores__mb_quit"
+        style="@style/MaterialButton.Default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_16"
+        android:text="@string/quit_game"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

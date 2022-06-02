@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Неизвестная ошибка, попробуйте позднее.</string>
+    <string name="error_connection">Ошибка подключения к серверу, попробуйте позднее.</string>
+
+    <string name="menu_test">Тест</string>
+
+    <string name="description_back">Вернуться назад</string>
+    <string name="next">Далее</string>
+    <string name="play">Играть</string>
+    <string name="onboarding_excavations_title">УЧАСТВУЙ\nВ РАСКОПКАХ</string>
+    <string name="onboarding_excavations_description">Узнай сотни увлекательных фактов и понятий родом из Древней Греции</string>
+    <string name="onboarding_artifacts_title">СОБИРАЙ\nАРТЕФАКТЫ</string>
+    <string name="onboarding_artifacts_description">Получи зачёт по философии в форме захватывающего соревнования</string>
+    <string name="onboarding_teamup_title">РАБОТАЙ\nВ КОМАНДЕ</string>
+    <string name="onboarding_teamup_description">Объединяйся с товарищами, чтобы одолеть оппонентов</string>
+    <string name="login">Вход</string>
+    <string name="registration">Регистрация</string>
+    <string name="email">email</string>
+    <string name="password">пароль</string>
+    <string name="repeat_password">повторите пароль</string>
+    <string name="enter_email">Введите почту</string>
+    <string name="wrong_email">Неверная почта</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="passwords_dont_match">Пароли не совпадают</string>
+    <string name="login_in">Войти</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="create">Создать</string>
+    <string name="join">Присоединиться</string>
+    <string name="tutorial">Обучение</string>
+    <string name="room_name">id</string>
+    <string name="room_name_optional">id (не обязательно)</string>
+    <string name="access_code">код доступа</string>
+    <string name="enter_room_name">введите название</string>
+    <string name="enter_code">введите код</string>
+    <string name="choose_team">Выбери команду</string>
+    <string name="red_team">Красная</string>
+    <string name="orange_team">Оранжевая</string>
+    <string name="blue_team">Синяя</string>
+    <string name="green_team">Зеленая</string>
+    <string name="choose_character">Выбери персонажа</string>
+    <string name="character_name">имя персонажа</string>
+
+    <string name="two_players">2 игрока (поле 3х3, 2 команды)</string>
+    <string name="four_players_2_teams">4 игрока (поле 3х3, 2 команды)</string>
+    <string name="four_players_4_teams">4 игрока (поле 3х3, 4 команды)</string>
+    <string name="six_players">6 игроков (поле 5х5, 3 команды)</string>
+    <string name="eight_players_2_teams">8 игроков (поле 5х5, 2 команды)</string>
+    <string name="eight_players_4_teams">8 игроков (поле 5х5, 4 команды)</string>
+    <string name="teams_placement">Расположение команд</string>
+    <string name="waiting_for_players">Ожидание игроков: %d / %d</string>
+    <string name="coins">Монеты</string>
+    <string name="questions">Вопросы</string>
+    <string name="inventory">Инвентарь</string>
+    <string name="game_stats">Игровая статистика</string>
+    <string name="question">Вопрос</string>
+    <string name="dig">Копать</string>
+    <string name="try_again_later">Ошибка, повторите позднее</string>
+    <string name="user_already_exists">Пользователь с таким email уже существует</string>
+    <string name="game_already_exists">Игра с таким названием уже существует</string>
+    <string name="wrong_code">Неправильный код комнаты</string>
+    <string name="game_doesnt_exist">Игры с таким названием не найдено</string>
+    <string name="game_is_full">Достигнуто максимальное количество игроков</string>
+    <string name="empty_name">Введите имя!</string>
+    <string name="character_not_selected">Персонаж не выбран!</string>
+    <string name="short_password">Пароль должен содержать не менее 6 символов</string>
+    <string name="game_starts_in">Игра начнется через %d</string>
+    <string name="log_out">Выйти из аккаунта</string>
+    <string name="roll_dice">Нажмите чтобы бросить кубик</string>
+    <string name="roll_dice_morgan_side">Нажмите чтобы бросить кубик и определить сторону поля для Моргана</string>
+    <string name="roll_dice_morgan_position">Нажмите чтобы бросить кубик и определить позицию для Моргана</string>
+    <string name="roll_dice_tooth">Нажмите чтобы бросить кубик и определить исход</string>
+    <string name="determining_morgan_start_position">Определение начальной позиции для Моргана</string>
+    <string name="determining_morgan_position">Определение позиции для Моргана</string>
+    <string name="determining_tooth">Определение исхода зуба Пифона</string>
+    <string name="your_turn">Ваш ход!</string>
+    <string name="players_turn">Ход %s!</string>
+    <string name="ok">Ок</string>
+    <string name="ok_delay">Ок (%d)</string>
+    <string name="cancel">Отмена</string>
+    <string name="skip_confirmation">Пропустить ход?</string>
+    <string name="bet_skip_confirmation">Пропустить этап ставок?</string>
+    <string name="test_luck">Испытайте удачу!</string>
+    <string name="bets_results">Результаты ставок:</string>
+    <string name="layer_1_question_title">Общекультурный вопрос</string>
+    <string name="layer_2_question_title">Общий вопрос по античной философии</string>
+    <string name="layer_3_question_title">Аристотелевский ликей</string>
+    <string name="layer_4_question_title">Платоновская академия</string>
+    <string name="layer_5_question_title">Пифагорейцы</string>
+    <string name="morgan_question_answer">Морган отвечает, что ответ - %d</string>
+    <string name="morgan_coin_answer">Морган загадочно улыбается и молча дает вам монетку</string>
+    <string name="choose_answer">Выберите вариант ответа!</string>
+    <string name="tooth">Зуб Пифона!</string>
+    <string name="bone">Кость Пифона!</string>
+    <string name="inventory_result">Получен инвентарь!</string>
+    <string name="inventory_player_receive">Игрок %s получил предмет инвентаря!</string>
+    <string name="inventory_sieve">Получено сито!</string>
+    <string name="inventory_brush">Получена кисть!</string>
+    <string name="inventory_rope">Получена веревка!</string>
+    <string name="event_treasure">Сокровище!</string>
+    <string name="event_tool_loss">Инструмент утрачен!</string>
+    <string name="event_collapse">Обвал!</string>
+    <string name="event_rainfall">Ливень!</string>
+    <string name="event_river">Подземная река!</string>
+    <string name="event_cavern">Каверна!</string>
+    <string name="event_treasure_desc">Обнаружен клад! Активный игрок получает 3 монеты %d слоя!</string>
+    <string name="event_tool_loss_desc">Инструмент утрачен, ход "копать" невозможен! Используйте предмет инвентаря либо пропустите 3 хода и заплатите 3 желтые монеты для восстановления.</string>
+    <string name="event_collapse_desc">Правила проведения раскопок нарушены! Активный игрок должен ответить на все прилегающие по вертикали и горизонтали вопросы.</string>
+    <string name="event_rainfall_desc">Внезапно пошел ливень! Все игроки на прилегающих клетках пропускают один ход!</string>
+    <string name="event_river_desc_1">Обнаружена подземная река! Все игроки по горизонтали пропускают один ход!</string>
+    <string name="event_river_desc_2">Обнаружена подземная река! Все игроки по вертикали пропускают один ход!</string>
+    <string name="event_cavern_desc">Под слоем обнаружилась пустота! Активный игрок провалился через слой. Необходимо использовать веревку, чтобы выбраться, либо пропустить 3 хода!</string>
+    <string name="morgan_turn">Ход Моргана!</string>
+    <string name="individual_score">Личный зачёт</string>
+    <string name="teams_score">Командный зачёт</string>
+    <string name="equals_sign">=</string>
+    <string name="give_inventory_item">Передать или использовать инвентарь</string>
+    <string name="end_game">Раскопки окончены! Конец игры!\n\nЯ выкуплю у всех кости Пифона.\n\nОтображение итоговой статистики через %d</string>
+    <string name="quit_game">Завершить игру</string>
+    <string name="return_to_game">Вернуться к игре</string>
+    <string name="authors">Об авторах</string>
+    <string name="share_using">Поделиться с помощью</string>
+    <string name="share_body">Игра \"Пифийские игры\":\nкод для входа: %s</string>
+    <string name="delete_room">Удалить комнату</string>
+    <string name="game_deleted">Игра была удалена!</string>
+    <string name="delete_confirmation">Вы действительно хотите\nудалить комнату?</string>
+    <string name="total">Всего</string>
+
+    <string-array name="number_of_players">
+        <item>@string/two_players</item>
+        <item>@string/four_players_2_teams</item>
+        <item>@string/four_players_4_teams</item>
+        <item>@string/six_players</item>
+        <item>@string/eight_players_2_teams</item>
+        <item>@string/eight_players_4_teams</item>
+    </string-array>
+</resources>

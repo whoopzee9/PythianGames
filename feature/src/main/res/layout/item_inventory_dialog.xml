@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/dp_14"
+    app:strokeWidth="@dimen/dp_1"
+    app:strokeColor="@color/stroke_color_secondary">
+
+    <ImageView
+        android:id="@+id/item_inventory_dialog__iv_item"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120"
+        android:src="@drawable/ic_rope_78"
+        android:padding="@dimen/dp_8"/>
+
+</com.google.android.material.card.MaterialCardView>

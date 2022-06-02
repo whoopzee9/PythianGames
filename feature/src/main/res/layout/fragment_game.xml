@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/frg_game__team_stats_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_12"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/dp_14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/color_team_green"
+        app:strokeWidth="@dimen/dp_1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/frg_game_stats_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_coins"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:text="@string/coins" />
+
+                <ImageView
+                    android:id="@+id/frg_game__iv_coin_stats"
+                    android:layout_width="@dimen/dp_16"
+                    android:layout_height="@dimen/dp_16"
+                    android:src="@drawable/ic_coin_24"
+                    android:tintMode="multiply"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_marginStart="@dimen/dp_5"
+                    app:tint="@color/color_layer_yellow" />
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_coins_value_in_yellow"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textColor="@color/text_color_primary" />
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_questions"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:text="@string/questions" />
+
+                <ImageView
+                    android:id="@+id/frg_game__iv_question"
+                    android:layout_width="@dimen/dp_16"
+                    android:layout_height="@dimen/dp_16"
+                    android:src="@drawable/ic_first_layer_36"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_marginStart="@dimen/dp_5" />
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_questions_value_in_yellow"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textColor="@color/text_color_primary" />
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_inventory"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:text="@string/inventory" />
+
+                <TextView
+                    android:id="@+id/frg_game__tv_team_stats_inventory_value"
+                    style="@style/TextView.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:layout_marginEnd="@dimen/dp_16"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/frg_game__divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:layout_marginHorizontal="@dimen/dp_12"
+                android:layout_marginTop="@dimen/dp_5"
+                android:background="@color/stroke_color_secondary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_game_stats_wrapper" />
+
+            <ImageView
+                android:id="@+id/frg_game__iv_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down_wide_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_game__divider" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/frg_game__tv_action"
+        style="@style/TextView.H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_36"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__board"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__team_stats_wrapper" />
+
+    <ru.spbstu.common.widgets.Board
+        android:id="@+id/frg_game__board"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_shovel_24"
+        android:tintMode="src_atop"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_walk_24"
+        android:tintMode="src_atop"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_3"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_walk_and_dig_24"
+        android:tintMode="src_atop"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_2"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:maxImageSize="@dimen/dp_30"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_close_24"
+        android:tintMode="src_atop"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_3"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_decrease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_minus_24"
+        android:visibility="gone"
+        app:backgroundTint="@color/button_tint_primary"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_1"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_increase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:src="@drawable/ic_plus_24"
+        android:visibility="gone"
+        app:backgroundTint="@color/button_tint_primary"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/frg_game__inventory_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_decrease"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__board"
+        app:tint="@color/button_tint_third" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_1"
+        app:tint="@android:color/transparent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_repair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_repair_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_2"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_2"
+        app:tint="@color/background_primary" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_rope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_rope_78"
+        app:maxImageSize="@dimen/dp_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_3"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_3"
+        app:tint="@color/background_primary" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/frg_game__fab_action_inventory_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close_24"
+        android:tintMode="src_atop"
+        android:visibility="invisible"
+        app:backgroundTint="@color/button_background_color"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_4"
+        app:layout_constraintStart_toStartOf="@id/frg_game__fab_action_4"
+        app:tint="@android:color/transparent" />
+
+    <ImageView
+        android:id="@+id/frg_game__iv_coin"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:src="@drawable/ic_coin_24"
+        android:tintMode="multiply"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintEnd_toStartOf="@id/frg_game__fab_action_increase"
+        app:layout_constraintStart_toEndOf="@id/frg_game__fab_action_decrease"
+        app:layout_constraintTop_toTopOf="@id/frg_game__fab_action_increase"
+        app:tint="@color/color_layer_yellow" />
+
+    <TextView
+        android:id="@+id/frg_game__tv_bid_amount"
+        style="@style/TextView.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_2"
+        android:text="1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/frg_game__iv_coin"
+        app:layout_constraintEnd_toEndOf="@id/frg_game__iv_coin"
+        app:layout_constraintStart_toStartOf="@id/frg_game__iv_coin"
+        app:layout_constraintTop_toTopOf="@id/frg_game__iv_coin" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/frg_game__inventory_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/dp_14"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/color_team_green"
+        app:strokeWidth="@dimen/dp_1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/frg_game__rv_inventory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_12"
+                android:layout_marginTop="@dimen/dp_5"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/item_inventory" />
+
+            <TextView
+                android:id="@+id/frg_game__tv_inventory"
+                style="@style/TextView.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_16"
+                android:layout_marginTop="@dimen/dp_5"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:text="@string/inventory"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frg_game__rv_inventory" />
+
+            <TextView
+                android:id="@+id/frg_game__tv_inventory_value"
+                style="@style/TextView.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_5"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/frg_game__tv_inventory"
+                app:layout_constraintStart_toEndOf="@id/frg_game__tv_inventory"
+                app:layout_constraintTop_toTopOf="@id/frg_game__tv_inventory"
+                tools:text="0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <include
+        android:id="@+id/frg_game__question_layout"
+        layout="@layout/include_question_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__dice_layout"
+        layout="@layout/include_dice_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__wheel_layout"
+        layout="@layout/include_wheel_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__morgan_answer_layout"
+        layout="@layout/include_morgan_answer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__tooth_layout"
+        layout="@layout/include_tooth_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+
+    <include
+        android:id="@+id/frg_game__inventory_dialog_layout"
+        layout="@layout/include_inventory_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/frg_game__fab_action_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_game__tv_action" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_white_beans_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_30"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_white_beans_40"
+        android:tintMode="multiply"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_white_beans_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_30"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_white_beans_40"
+        android:tintMode="multiply"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_white_beans_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_60"
+        android:layout_marginBottom="@dimen/dp_36"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_white_beans_40"
+        android:tintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_black_beans_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_36"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_black_beans_43"
+        android:tintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_black_beans_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_marginEnd="@dimen/dp_30"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_black_beans_43"
+        android:tintMode="multiply"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_black_beans_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_30"
+        android:layout_marginTop="@dimen/dp_30"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_black_beans_43"
+        android:tintMode="multiply"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__central_view"
+        android:layout_width="@dimen/dp_42"
+        android:layout_height="@dimen/dp_42"
+        android:layout_marginTop="@dimen/dp_60"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__iv_black_beans_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__iv_black_beans_1"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__iv_black_beans_1" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_dragon_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_45"
+        android:layout_marginEnd="@dimen/dp_36"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_dragon_41"
+        android:tintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <ImageView
+        android:id="@+id/include_wheel_dialog__iv_dragon_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_36"
+        android:layout_marginEnd="@dimen/dp_45"
+        android:clickable="true"
+        android:focusable="true"
+        android:rotationY="180"
+        android:src="@drawable/ic_dragon_41"
+        android:tintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__central_view"
+        app:tint="@color/wheel_icon_color" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_1"
+        android:layout_width="@dimen/dp_1"
+        android:layout_height="@dimen/dp_110"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toStartOf="@+id/include_wheel_dialog__iv_white_beans_2"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_black_beans_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_2"
+        android:layout_width="@dimen/dp_1"
+        android:layout_height="@dimen/dp_110"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="-22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__iv_black_beans_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_white_beans_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_3"
+        android:layout_width="@dimen/dp_110"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginTop="@dimen/dp_4"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__iv_dragon_2"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__iv_white_beans_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_4"
+        android:layout_width="@dimen/dp_110"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginTop="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="-22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__iv_dragon_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__iv_white_beans_2" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_5"
+        android:layout_width="@dimen/dp_110"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__iv_black_beans_3"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__iv_dragon_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_6"
+        android:layout_width="@dimen/dp_110"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="-22.5"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__iv_black_beans_2"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__iv_dragon_2" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_7"
+        android:layout_width="@dimen/dp_1"
+        android:layout_height="@dimen/dp_110"
+        android:layout_marginTop="@dimen/dp_4"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="-22.5"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__iv_black_beans_3"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_white_beans_3"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__divider_view_8"
+        android:layout_width="@dimen/dp_1"
+        android:layout_height="@dimen/dp_110"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginTop="@dimen/dp_4"
+        android:background="@color/stroke_color_secondary"
+        android:rotation="22.5"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__iv_white_beans_3"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_black_beans_2"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_1_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_16"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__iv_black_beans_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__iv_black_beans_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_1_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_8"
+        android:layout_marginBottom="@dimen/dp_4"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__black_beans_1_view_1"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__black_beans_1_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_1_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_8"
+        android:layout_marginBottom="@dimen/dp_4"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__black_beans_1_view_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__black_beans_1_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_2_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__divider_view_6"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__divider_view_8"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__divider_view_8"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__divider_view_6" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_2_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_2"
+        android:layout_marginEnd="@dimen/dp_24"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__black_beans_2_view_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_black_beans_2"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__black_beans_2_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_2_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_4"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__black_beans_2_view_1"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__black_beans_2_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_3_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__divider_view_5"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__divider_view_7"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__divider_view_7"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__divider_view_5" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_3_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_24"
+        android:layout_marginTop="@dimen/dp_2"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__iv_black_beans_3"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__black_beans_3_view_1"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__black_beans_3_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__black_beans_3_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_4"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__black_beans_3_view_1"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__black_beans_3_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_1_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__divider_view_3"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__divider_view_2"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__divider_view_2"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__divider_view_3" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_1_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:layout_marginBottom="@dimen/dp_2"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__white_beans_1_view_1"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__white_beans_1_view_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__iv_white_beans_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_1_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_4"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__white_beans_1_view_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__white_beans_1_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_2_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__divider_view_4"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__divider_view_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__divider_view_1"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__divider_view_4" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_2_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_24"
+        android:layout_marginBottom="@dimen/dp_2"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__white_beans_2_view_1"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__iv_white_beans_2"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__white_beans_2_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_2_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_4"
+        app:layout_constraintBottom_toTopOf="@id/include_wheel_dialog__white_beans_2_view_1"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__white_beans_2_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_3_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_16"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__iv_white_beans_3"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__iv_white_beans_3"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__central_view" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_3_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_4"
+        android:layout_marginEnd="@dimen/dp_8"
+        app:layout_constraintEnd_toEndOf="@id/include_wheel_dialog__white_beans_3_view_1"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__white_beans_3_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__white_beans_3_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_8"
+        android:layout_marginTop="@dimen/dp_4"
+        app:layout_constraintStart_toStartOf="@id/include_wheel_dialog__white_beans_3_view_1"
+        app:layout_constraintTop_toBottomOf="@id/include_wheel_dialog__white_beans_3_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_1_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_10"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__iv_dragon_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__iv_dragon_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_1_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginTop="@dimen/dp_8"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__dragon_1_view_1"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__dragon_1_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_1_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_8"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__dragon_1_view_1"
+        app:layout_constraintStart_toEndOf="@id/include_wheel_dialog__dragon_1_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_2_view_1"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_10"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__iv_dragon_2"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__central_view"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__iv_dragon_2" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_2_view_2"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_8"
+        android:layout_marginEnd="@dimen/dp_4"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__dragon_2_view_1"
+        app:layout_constraintTop_toTopOf="@id/include_wheel_dialog__dragon_2_view_1" />
+
+    <View
+        android:id="@+id/include_wheel_dialog__dragon_2_view_3"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:layout_marginBottom="@dimen/dp_8"
+        app:layout_constraintBottom_toBottomOf="@id/include_wheel_dialog__dragon_2_view_1"
+        app:layout_constraintEnd_toStartOf="@id/include_wheel_dialog__dragon_2_view_1" />
+</androidx.constraintlayout.widget.ConstraintLayout>
