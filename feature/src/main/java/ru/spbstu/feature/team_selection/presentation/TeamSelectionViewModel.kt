@@ -5,7 +5,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.spbstu.common.extenstions.readValue
 import ru.spbstu.common.utils.BackViewModel
 import ru.spbstu.common.utils.DatabaseReferences
 import ru.spbstu.feature.FeatureRouter
@@ -52,6 +51,22 @@ class TeamSelectionViewModel(
             }
     }
 
+    private fun setUserLastGame(gameName: String?) {
+        val ref = Firebase.database.getReference(DatabaseReferences.USERS_REF)
+        val currentUserId = Firebase.auth.currentUser?.uid
+
+        ref.child(currentUserId ?: "")
+            .child("lastGameName")
+            .setValue(gameName)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
     fun onBack() {
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
@@ -62,7 +77,7 @@ class TeamSelectionViewModel(
 
         ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
             .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
-
+        setUserLastGame(null)
         router.back()
     }
 

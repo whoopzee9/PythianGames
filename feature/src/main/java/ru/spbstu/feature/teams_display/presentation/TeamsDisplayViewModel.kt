@@ -34,13 +34,13 @@ class TeamsDisplayViewModel(
         }
     }
 
-    fun setUserLastGame() {
+    fun setUserLastGame(gameName: String?) {
         val ref = Firebase.database.getReference(DatabaseReferences.USERS_REF)
         val currentUserId = Firebase.auth.currentUser?.uid
 
         ref.child(currentUserId ?: "")
             .child("lastGameName")
-            .setValue(gameJoiningDataWrapper.game.name)
+            .setValue(gameName)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
 
@@ -70,10 +70,12 @@ class TeamsDisplayViewModel(
         ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
             .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
 
+        setUserLastGame(null)
         //todo clear user last game
         router.openMainFragment()
     }
 
+    //todo delete room when there are no players
     fun deleteRoom() {
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)

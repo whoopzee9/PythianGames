@@ -32,11 +32,11 @@ class TeamsStatisticsAdapter :
                 binding.root.context,
                 TeamsConstants.getTeamFromString(item.team).colorRes
             )
-            binding.includeTeamStatisticsTvTeamStatsCoinsValue.text = item.totalCoins.toString()
+//            binding.includeTeamStatisticsTvTeamStatsCoinsValue.text = item.totalCoins.toString()
             binding.includeTeamStatisticsTvTeamStatsCoinsValueInYellow.text =
                 item.totalCoinsInYellow.toString()
-            binding.includeTeamStatisticsTvTeamStatsQuestionsValue.text =
-                item.totalQuestions.toString()
+//            binding.includeTeamStatisticsTvTeamStatsQuestionsValue.text =
+//                item.totalQuestions.toString()
             binding.includeTeamStatisticsTvTeamStatsQuestionsValueInYellow.text =
                 item.totalQuestionsInYellow.toString()
             binding.includeTeamStatisticsTvTeamStatsInventoryValue.text =

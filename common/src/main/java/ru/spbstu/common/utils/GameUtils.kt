@@ -116,8 +116,8 @@ object GameUtils {
                         2 -> return Position(0, 4)
                     }
                     TeamsConstants.RED_TEAM -> when (playerNum) {
-                        1 -> return Position(0, 2)
-                        2 -> return Position(4, 2)
+                        1 -> return Position(4, 2)
+                        2 -> return Position(0, 2)
                     }
                 }
             }
@@ -127,15 +127,15 @@ object GameUtils {
                         when (teamStr) {
                             TeamsConstants.GREEN_TEAM -> when (playerNum) {
                                 1 -> return Position(0, 0)
-                                2 -> return Position(4, 4)
-                                3 -> return Position(4, 0)
+                                2 -> return Position(4, 0)
+                                3 -> return Position(4, 4)
                                 4 -> return Position(0, 4)
                             }
                             TeamsConstants.BLUE_TEAM -> when (playerNum) {
                                 1 -> return Position(2, 0)
-                                2 -> return Position(2, 4)
-                                3 -> return Position(0, 2)
-                                4 -> return Position(4, 2)
+                                2 -> return Position(4, 2)
+                                3 -> return Position(2, 4)
+                                4 -> return Position(0, 2)
                             }
                         }
                     }
@@ -154,8 +154,8 @@ object GameUtils {
                                 2 -> return Position(2, 4)
                             }
                             TeamsConstants.RED_TEAM -> when (playerNum) {
-                                1 -> return Position(0, 2)
-                                2 -> return Position(4, 2)
+                                1 -> return Position(4, 2)
+                                2 -> return Position(0, 2)
                             }
                         }
                     }

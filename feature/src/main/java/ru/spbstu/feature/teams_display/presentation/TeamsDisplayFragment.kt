@@ -123,7 +123,7 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
                     binding.frgTeamsDisplayMbDelete.visibility = View.GONE
                 }
             } else {
-                if (players.first().id == currentUserId) {
+                if (players.firstOrNull()?.id == currentUserId) {
                     binding.frgTeamsDisplayMbDelete.visibility = View.VISIBLE
                 } else {
                     binding.frgTeamsDisplayMbDelete.visibility = View.GONE
@@ -132,7 +132,7 @@ class TeamsDisplayFragment : BaseFragment<TeamsDisplayViewModel>(
 
             if (readyCount == game.numOfPlayers) {
                 viewModel.startGameTimer.start()
-                viewModel.setUserLastGame()
+                viewModel.setUserLastGame(viewModel.gameJoiningDataWrapper.game.name)
             }
         } else {
             Toast.makeText(requireContext(), R.string.game_deleted, Toast.LENGTH_SHORT).show()

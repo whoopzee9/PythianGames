@@ -111,9 +111,6 @@ class GameFragment : BaseFragment<GameViewModel>(
         requireActivity().setStatusBarColor(R.color.background_primary)
         requireView().setLightStatusBar()
 
-        viewModel.size = if (viewModel.gameJoiningDataWrapper.game.numOfPlayers > 4) 5 else 3
-        binding.frgGameBoard.setSize(viewModel.size)
-
         setupAdapters()
         setupStatisticsPopup()
 
@@ -158,6 +155,20 @@ class GameFragment : BaseFragment<GameViewModel>(
                 (currPlayer.questionsAnswered[GameUtils.Layers.Blue.name] ?: 0).toString()
             statisticsBinding.frgGameStatisticsDialogTvPurpleQuestionsAmount.text =
                 (currPlayer.questionsAnswered[GameUtils.Layers.Purple.name] ?: 0).toString()
+
+            var totalCoins = 0
+            currPlayer.coinsCollected.forEach { coin ->
+                totalCoins += coin.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(coin.key))
+            }
+
+            statisticsBinding.frgGameStatisticsDialogTvCoinsTotalAmount.text = totalCoins.toString()
+
+            var totalQuestions = 0
+            currPlayer.questionsAnswered.forEach { question ->
+                totalQuestions += question.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(question.key))
+            }
+
+            statisticsBinding.frgGameStatisticsDialogTvQuestionsTotalAmount.text = totalQuestions.toString()
 
             statisticsBinding.root.strokeColor = ContextCompat.getColor(
                 requireContext(),
@@ -633,19 +644,21 @@ class GameFragment : BaseFragment<GameViewModel>(
     //------------------------------------------------------------------------------ Main handler for the game
     private fun handleGameData(game: Game) {
         if (binding.frgGameBoard.getPlayersAmount() != game.players.values.size) {
+            viewModel.size = if (game.numOfPlayers > 4) 5 else 3
+            binding.frgGameBoard.setSize(viewModel.size)
             game.players.values.forEach {
                 binding.frgGameBoard.addPlayer(it.toPlayer())
             }
         }
         val currPlayer = game.players[viewModel.currentUserId]
 
-        (statisticsBinding.root.background as GradientDrawable).setStroke(
-            resources.getDimension(R.dimen.dp_1).toInt(),
-            ContextCompat.getColor(
-                requireContext(),
-                TeamsConstants.getTeamFromString(currPlayer?.teamStr ?: "").colorRes
-            )
-        )
+//        (statisticsBinding.root.background as GradientDrawable).setStroke(
+//            resources.getDimension(R.dimen.dp_1).toInt(),
+//            ContextCompat.getColor(
+//                requireContext(),
+//                TeamsConstants.getTeamFromString(currPlayer?.teamStr ?: "").colorRes
+//            )
+//        )
         binding.frgGameTeamStatsWrapper.strokeColor = ContextCompat.getColor(
             requireContext(),
             TeamsConstants.getTeamFromString(currPlayer?.teamStr ?: "").colorRes
@@ -776,7 +789,7 @@ class GameFragment : BaseFragment<GameViewModel>(
             coinsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
         }
 
-        binding.frgGameTvTeamStatsCoinsValue.text = coins.toString()
+        //binding.frgGameTvTeamStatsCoinsValue.text = coins.toString()
         binding.frgGameTvTeamStatsCoinsValueInYellow.text = coinsInYellow.toString()
 
         val questionMap = hashMapOf<String, Int>()
@@ -794,7 +807,7 @@ class GameFragment : BaseFragment<GameViewModel>(
             questions += it.value
             questionsInYellow += it.value * GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key))
         }
-        binding.frgGameTvTeamStatsQuestionsValue.text = questions.toString()
+        //binding.frgGameTvTeamStatsQuestionsValue.text = questions.toString()
         binding.frgGameTvTeamStatsQuestionsValueInYellow.text = questionsInYellow.toString()
 
         binding.frgGameTvTeamStatsInventoryValue.text = inventory.toString()
@@ -2423,19 +2436,19 @@ class GameFragment : BaseFragment<GameViewModel>(
     }
 
     private fun setupStatisticsPopup() {
-        val background = GradientDrawable()
-        background.setStroke(
-            resources.getDimension(R.dimen.dp_1).toInt(),
-            ContextCompat.getColor(requireContext(), R.color.color_team_green)
-        )
-        background.color = ColorStateList.valueOf(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.color_transparent_background
-            )
-        )
-        background.cornerRadius = resources.getDimension(R.dimen.dp_14)
-        statisticsBinding.root.background = background
+//        val background = GradientDrawable()
+//        background.setStroke(
+//            resources.getDimension(R.dimen.dp_1).toInt(),
+//            ContextCompat.getColor(requireContext(), R.color.color_team_green)
+//        )
+//        background.color = ColorStateList.valueOf(
+//            ContextCompat.getColor(
+//                requireContext(),
+//                R.color.color_transparent_background
+//            )
+//        )
+//        background.cornerRadius = resources.getDimension(R.dimen.dp_14)
+//        statisticsBinding.root.background = background
         statisticsPopup = PopupWindow(
             statisticsBinding.root,
             resources.displayMetrics.widthPixels - resources.getDimension(R.dimen.dp_24)

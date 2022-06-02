@@ -72,18 +72,28 @@ class Navigator : FeatureRouter {
     override fun openTeamSelectionFragment() {
         when (navController?.currentDestination?.id) {
             R.id.roomConnectionFragment -> navController?.navigate(R.id.action_roomConnectionFragment_to_teamSelectionFragment)
+            R.id.mainFragment -> navController?.navigate(R.id.action_mainFragment_to_teamSelectionFragment)
         }
     }
 
     override fun openCharacterSelectionFragment() {
         when (navController?.currentDestination?.id) {
             R.id.teamSelectionFragment -> navController?.navigate(R.id.action_teamSelectionFragment_to_characterSelectionFragment)
+            R.id.mainFragment -> {
+                navController?.navigate(R.id.action_mainFragment_to_teamSelectionFragment)
+                navController?.navigate(R.id.action_teamSelectionFragment_to_characterSelectionFragment)
+            }
         }
     }
 
     override fun openTeamDisplayFragment() {
         when (navController?.currentDestination?.id) {
             R.id.characterSelectionFragment -> navController?.navigate(R.id.action_characterSelectionFragment_to_teamsDisplayFragment)
+            R.id.mainFragment -> {
+                navController?.navigate(R.id.action_mainFragment_to_teamSelectionFragment)
+                navController?.navigate(R.id.action_teamSelectionFragment_to_characterSelectionFragment)
+                navController?.navigate(R.id.action_characterSelectionFragment_to_teamsDisplayFragment)
+            }
         }
     }
 

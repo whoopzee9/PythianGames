@@ -1,6 +1,5 @@
 package ru.spbstu.feature.character_selection.presentation
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
@@ -46,7 +45,9 @@ class CharacterSelectionViewModel(
                 val generic = object : GenericTypeIndicator<HashMap<String, PlayerInfo>>() {}
                 val players = snapshot.getValue(generic)
                 val team = gameJoiningDataWrapper.playerInfo.teamStr
-                val readyTeammates = players?.filter { it.value.teamStr == team && it.value.readyFlag }?.values?.sortedBy { it.playerNum } ?: listOf()
+                val readyTeammates =
+                    players?.filter { it.value.teamStr == team && it.value.readyFlag }?.values?.sortedBy { it.playerNum }
+                        ?: listOf()
                 var readyCount = 1
                 kotlin.run {
                     readyTeammates.forEach {
@@ -98,6 +99,22 @@ class CharacterSelectionViewModel(
         )
     }
 
+    private fun setUserLastGame(gameName: String?) {
+        val ref = Firebase.database.getReference(DatabaseReferences.USERS_REF)
+        val currentUserId = Firebase.auth.currentUser?.uid
+
+        ref.child(currentUserId ?: "")
+            .child("lastGameName")
+            .setValue(gameName)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
+    }
+
     fun onBack() {
         val database = Firebase.database
         val ref = database.getReference(DatabaseReferences.GAMES_REF)
@@ -119,7 +136,7 @@ class CharacterSelectionViewModel(
 
         ref.child(gameJoiningDataWrapper.game.name).child("numOfPlayersJoined")
             .setValue((game.value.numOfPlayersJoined ?: 0) - 1)
-
+        setUserLastGame(null)
         router.openMainFragment()
     }
 

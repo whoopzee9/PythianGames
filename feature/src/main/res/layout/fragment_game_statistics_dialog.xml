@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_12"
-    android:backgroundTint="@color/color_transparent_background"
+    android:backgroundTint="@color/background_primary"
     app:cardCornerRadius="@dimen/dp_14"
     app:strokeColor="@color/color_team_green"
     app:strokeWidth="@dimen/dp_1">
@@ -117,7 +117,6 @@
             android:layout_marginBottom="@dimen/dp_10"
             android:src="@drawable/ic_coin_24"
             android:tintMode="multiply"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
             app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_blue_coin"
             app:tint="@color/color_layer_purple" />
@@ -266,5 +265,69 @@
             app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
             app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_purple_question"
             tools:text="0" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_coins_total"
+            style="@style/TextView.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_12"
+            android:text="@string/total"
+            app:layout_constraintEnd_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_purple_coin" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_questions_total"
+            style="@style/TextView.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_12"
+            android:text="@string/total"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__iv_purple_question" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_coins_total_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_coin_total"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_coin_total"
+            tools:text="0" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_coin_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:src="@drawable/ic_coin_24"
+            android:tintMode="multiply"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_coins"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_coins_total"
+            app:tint="@color/color_layer_yellow" />
+
+        <TextView
+            android:id="@+id/frg_game_statistics_dialog__tv_questions_total_amount"
+            style="@style/TextView.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/frg_game_statistics_dialog__iv_question_total"
+            app:layout_constraintStart_toStartOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toTopOf="@id/frg_game_statistics_dialog__iv_question_total"
+            tools:text="0" />
+
+        <ImageView
+            android:id="@+id/frg_game_statistics_dialog__iv_question_total"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_10"
+            android:src="@drawable/ic_first_layer_36"
+            app:layout_constraintEnd_toEndOf="@id/frg_game_statistics_dialog__tv_questions"
+            app:layout_constraintTop_toBottomOf="@id/frg_game_statistics_dialog__tv_questions_total" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

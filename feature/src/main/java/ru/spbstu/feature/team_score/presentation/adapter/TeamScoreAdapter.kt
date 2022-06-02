@@ -47,9 +47,9 @@ class TeamScoreAdapter : BaseAdapter<TeamFinalStats, TeamScoreAdapter.TeamScoreV
                 totalQuestions += it.value
                 totalQuestionsInYellow += GameUtils.getLayerNumber(GameUtils.Layers.valueOf(it.key)) * it.value
             }
-            binding.itemTeamsScoreTvTeamStatsCoinsValue.text = totalCoins.toString()
+            //binding.itemTeamsScoreTvTeamStatsCoinsValue.text = totalCoins.toString()
             binding.itemTeamsScoreTvTeamStatsCoinsValueInYellow.text = totalCoinsInYellow.toString()
-            binding.itemTeamsScoreTvTeamStatsQuestionsValue.text = totalQuestions.toString()
+            //binding.itemTeamsScoreTvTeamStatsQuestionsValue.text = totalQuestions.toString()
             binding.itemTeamsScoreTvTeamStatsQuestionsValueInYellow.text =
                 totalQuestionsInYellow.toString()
         }

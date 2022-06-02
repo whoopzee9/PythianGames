@@ -28,8 +28,8 @@
     <string name="create">Создать</string>
     <string name="join">Присоединиться</string>
     <string name="tutorial">Обучение</string>
-    <string name="room_name">название</string>
-    <string name="room_name_optional">название (не обязательно)</string>
+    <string name="room_name">id</string>
+    <string name="room_name_optional">id (не обязательно)</string>
     <string name="access_code">код доступа</string>
     <string name="enter_room_name">введите название</string>
     <string name="enter_code">введите код</string>
@@ -114,7 +114,7 @@
     <string name="individual_score">Личный зачёт</string>
     <string name="teams_score">Командный зачёт</string>
     <string name="equals_sign">=</string>
-    <string name="give_inventory_item">Передать инвентарь</string>
+    <string name="give_inventory_item">Передать или использовать инвентарь</string>
     <string name="end_game">Раскопки окончены! Конец игры!\n\nЯ выкуплю у всех кости Пифона.\n\nОтображение итоговой статистики через %d</string>
     <string name="quit_game">Завершить игру</string>
     <string name="return_to_game">Вернуться к игре</string>
@@ -124,6 +124,7 @@
     <string name="delete_room">Удалить комнату</string>
     <string name="game_deleted">Игра была удалена!</string>
     <string name="delete_confirmation">Вы действительно хотите\nудалить комнату?</string>
+    <string name="total">Всего</string>
 
     <string-array name="number_of_players">
         <item>@string/two_players</item>

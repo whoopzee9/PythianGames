@@ -1,6 +1,5 @@
 package ru.spbstu.feature.room_connection.presentation
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ktx.database
@@ -67,6 +66,7 @@ class RoomConnectionViewModel(
                         inventoryPool = inventory,
                         eventPool = events
                     )
+                    setUserLastGame(name)
                     ref.child(name).setValue(game).addOnCompleteListener {
                         if (it.isSuccessful) {
                             gameJoiningDataWrapper.game = game
@@ -138,6 +138,7 @@ class RoomConnectionViewModel(
                         ref.child(name).child("numOfPlayersJoined")
                             .setValue(game.numOfPlayersJoined + 1)
                         val id = Firebase.auth.currentUser?.uid ?: ""
+                        setUserLastGame(name)
                         ref.child(name)
                             .child("players")
                             .child(id)
@@ -165,6 +166,22 @@ class RoomConnectionViewModel(
             Timber.tag(TAG).e(error.message)
             _state.value = UIState.Failure
         })
+    }
+
+    fun setUserLastGame(name: String) {
+        val ref = Firebase.database.getReference(DatabaseReferences.USERS_REF)
+        val currentUserId = Firebase.auth.currentUser?.uid
+
+        ref.child(currentUserId ?: "")
+            .child("lastGameName")
+            .setValue(name)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+
+                } else {
+                    Timber.tag(TAG).e(it.exception)
+                }
+            }
     }
 
     sealed class UIState {
