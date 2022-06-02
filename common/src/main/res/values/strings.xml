@@ -126,6 +126,15 @@
     <string name="delete_confirmation">Вы действительно хотите\nудалить комнату?</string>
     <string name="total">Всего</string>
 
+    <string name="authors_game_design_title">Гейм-дизайн</string>
+    <string name="authors_game_design">•	Бручас Евгений Витальевич\n•	Загребина Диана Александровна\n•	Зима Елена Алексеевна\n•	Леонтьева Татьяна Владимировна\n•	Сафонова Алла Сергеевна\n•	Селиванова Елена Николаевна\n•	Сурнина Татьяна Юрьевна</string>
+    <string name="authors_ux_design_title">UX/UI дизайн</string>
+    <string name="authors_ux_design">•	Загребина Диана Александровна</string>
+    <string name="authors_programming_title">Программирование</string>
+    <string name="authors_programming">•	Бубляев Алексей Вячеславович</string>
+    <string name="authors_qa_title">Контроль качества</string>
+    <string name="authors_qa">•	Баните Аушра Владовна\n•	Зима Елена Алексеевна\n•	Петров Александр Владимирович\n•	Плотников Дмитрий Георгиевич\n•	Сафонова Алла Сергеевна\n•	Сурнина Татьяна Юрьевна\n</string>
+
     <string-array name="number_of_players">
         <item>@string/two_players</item>
         <item>@string/four_players_2_teams</item>
